@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Optimal Brain Damage</title>
+    <h3>Annotated by: <b>Noah Schliesman</b></h3>
     <link rel="stylesheet" href="../css/additional-styles.css"> <!-- Assuming you have a common stylesheet -->
 </head>
 <body>
@@ -16,7 +17,8 @@
             <h4>Abstract</h4>
             <p>The authors begin with claims that removing unimportant weights from a neural net leads to better generalization, fewer training examples required, and impoved speed of learning/classification. Intuitively this makes sense, as we are removing redundancies that can contribute to overfitting, hence the clever title <i>Optimal Brain Damage</i>.</p>
             <h3>Introduction</h3>
-            <p>They start with a discussion on the success of large models, and how an increase in the number of parameters can lead to overfitting problems. They offer OBD as a way to selectively delete half (or more) weights and end up with a network that can better generalize. After introducing the tradeoff between training error and network complexity, they offer an optimization problem to minimize a cost function composed of the elements of this tradeoff. They mention proposed methods of complexity like VC and description length and argue that complexity can be measured as the number of non-zero free parameters.</p>
+            <p>They start with a discussion on the success of large models, and how an increase in the number of parameters can lead to overfitting problems. They offer OBD as a way to selectively delete half (or more) weights and end up with a network that can better generalize. After introducing the tradeoff between training error and network complexity, they offer an optimization problem to minimize a cost function composed of these elements. They mention proposed methods of complexity like VC and description length and argue that complexity can be measured as the number of non-zero free parameters.</p>
+            <p>The goal is to delete parameters with small salency, which have the least effect on training error.</p>
             <h4>Conclusion</h4>
             <p>This conclusion summarizes the key points of the paper and offers thoughts on future directions for research.</p>
         </article>
