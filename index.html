@@ -45,6 +45,16 @@
     </style>
 </head>
 <body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="/index.html">Home</a>
+        <a href="/articles.html">Articles</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact Me</a>
+    </div>
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
     <header>
         <h1>Pay Attention</h1>
         <p>Exploring and annotating the latest research in Generative AI</p>
