@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pay Attention: Optimal Brain Damage</title>
+    <title>A Primer on Binary Classification in Supervised Learning</title>
     <link rel="stylesheet" href="../css/styles.css"> <!-- Ensure the path is correct -->
     <script src="/js/script.js"></script> <!-- Ensure the path is correct -->
 </head>
@@ -24,20 +24,68 @@
 
     <main>
         <article>
-            <h2>Optimal Brain Damage</h2>
+            <h2>A Primer on Binary Classification in Supervised Learning</h2>
             <h3>Annotated by: <strong>Noah Schliesman</strong></h3>
-            <p>Published on: <time datetime="1989-01-01">January 1, 1989</time> by Yann Le Cun, John Denker, and Sara Solla</p>
-            <object data="/files/Optimal_Brain_Damage.pdf" type="application/pdf" width="100%" height="500">
-                <p>Please download the annotaated PDF to view it: <a href="/files/Optimal_Brain_Damage.pdf">Download PDF</a>.</p>
-            </object>
-            <h3>Discussion</h3>
-            <h4>Abstract</h4>
-            <p>The authors begin with claims that removing unimportant weights from a neural net leads to better generalization, fewer training examples required, and improved speed of learning/classification. Intuitively this makes sense, as we are removing redundancies that can contribute to overfitting, hence the clever title <i>Optimal Brain Damage</i>.</p>
-            <h3>Introduction</h3>
-            <p>They start with a discussion on the success of large models, and how an increase in the number of parameters can lead to overfitting problems. They offer OBD as a way to selectively delete half (or more) weights and end up with a network that can better generalize. After introducing the tradeoff between training error and network complexity, they offer an optimization problem to minimize a cost function composed of these elements. They mention proposed methods of complexity like VC and description length and argue that complexity can be measured as the number of non-zero free parameters.</p>
-            <p>The goal is to delete parameters with small salency, which have the least effect on training error.</p>
-            <h4>Conclusion</h4>
-            <p>This conclusion summarizes the key points of the paper and offers thoughts on future directions for research.</p>
+            <p>
+                When studying transformers, it is easiest to start with the formulation of supervised learning.
+                Let’s explore our first equation, the objective function, by explaining each variable first,
+                examining what we want our equation to do, and then give the equation.
+            </p>
+            <p>
+                <strong>Training Dataset:</strong> We have a training dataset, and a sample with its corresponding label.
+                We can describe the set of these labeled pairs as \( \{ (x_i, y_i) \}_{i=1}^n = X \).
+            </p>
+            <p>
+                Here’s a quick MATLAB plot of a simulated training dataset, where \( x_i = [Feature_1, Feature_2] \) and \( y_i \in \{0, 1\} \).
+            </p>
+            <p>
+                Deep learning incites us to find a set of parameters, \( \Theta \). The term parameter is daunting,
+                but it’s really just a set of knobs or controls that adjust our predictions. These can also
+                be known as our weights and biases.
+            </p>
+            <p>
+                To optimize our set of parameters, \( \Theta \), we must first discuss the usage of a predefined
+                loss function. We have countless candidates and the choice of a loss function should be
+                highly dependent on the application at hand.
+            </p>
+            <p>
+                The simplest and perhaps most intuitive loss function is maximum likelihood estimation.
+                We want to find a likelihood function that measures the probability of classifying a label
+                \( y_i \), given the training sample \( x_i \) and set of parameters \( \Theta \).
+            </p>
+            <p>
+                Due to properties of logarithms and the usage of a more stable sum, we take the log:
+                \( \ell(\Theta) = \sum_{i=1}^N \log(p(y_i|x_i, \Theta)) \)
+            </p>
+            <p>
+                This is not ideal. Don’t worry, we have a bunch of tools to increase likelihood and create
+                a more robust model. One of them is regularization, of which we prevent the model from
+                overfitting by penalizing the loss function based on the magnitude of model parameters.
+            </p>
+            <p>
+                That's a little better, so now let’s add an optimization method. Let’s start with gradient
+                descent.
+            </p>
+            <p>
+                At this point, likelihood isn’t necessarily the best way to determine the strength of a
+                model. We’re going to create a training and test split for our dataset. This will tell us the
+                correctness of our binary classification for a real task. We choose a 60:40 split.
+            </p>
+            <p>
+                Don’t get too excited. Our input data points are somewhat arbitrary and this could be a
+                sign of overfitting. Without good data, a neural network is worthless. Let’s add
+                exponentially more data around two centers for binary classification.
+            </p>
+            <p>
+                That’s really good. By using a simple averaged Bayesian log-likelihood as our loss
+                function, L2 ridge regulation to penalize our loss function, and gradient descent to
+                optimize our weights and biases, our network has learned to classify a synthetic
+                dataset.
+            </p>
+            <h4>Appendix:</h4>
+            <p>
+                Refer to the attached MATLAB scripts for implementations of the described models and methods.
+            </p>
         </article>
     </main>
 
