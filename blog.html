@@ -3,49 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pay Attention</title>
+    <title>Contact Me</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="/js/script.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <!-- Firebase configuration -->
+    <script src="js/firebase-config.js"></script>
+    <!-- Main script -->
+    <script src="js/script.js" defer></script>
 </head>
 <body>
     <div id="mySidenav" class="nav-menu">
         <button class="closebtn" onclick="closeNav()">&times;</button>
         <a href="index.html">Home</a>
-        <a href="articles.html">Annotated Articles</a>
+        <a href="articles.html">Articles</a>
         <a href="blog.html">Blog</a>
         <a href="contact.html">Contact Me</a>
     </div>
-    
+
     <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
         &#9776;
     </button>
 
     <header>
-        <h1>Pay Attention</h1>
-        <p>Exploring and annotating the latest research in Generative AI</p>
+        <h1>Contact Me</h1>
+        <p>I'd love to hear from you. Please fill out the form below to get in touch.</p>
     </header>
 
     <main>
-        <article>
-            <h2>Binary Classification in Supervised Learning</h2>
-            <p>Date Created: <time datetime="2024-09-05">May 9, 2024</time></p>
-            <p></p>
-            <a href="articles/Optimal_Brain_Damage.html">Coming soon...</a>
-        </article>
-        <article>
-            <h2>RNNs, GRUs, and LSTMs</h2>
-            <p>Date Created: <time datetime="2024-15-05">May 15, 2024</time></p>
-            <p></p>
-            <a href="articles/Support-Vector_Networks.html">Coming soon...</a>
-        </article>
-        <article>
-            <h2>Transformer Architecture</h2>
-            <p>Date Created: <time datetime="2024-25-05">May 25, 2024</time></p>
-            <p></p>
-            <a href="articles/Support-Vector_Networks.html">Coming soon...</a>
-        </article>
+        <section class="contact-form">
+            <h2>Contact Form</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </section>
     </main>
-
     <footer>
         <p>&copy; 2024 Pay Attention. All rights reserved.</p>
     </footer>

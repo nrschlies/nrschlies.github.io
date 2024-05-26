@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     hamburger.addEventListener('keydown', handleKeyPress);
+
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            saveContactInfo(name, email, message);
+        });
+    }
 });
 
 function openNav() {
@@ -32,6 +45,20 @@ function closeNav() {
     if (mainContent) {
         mainContent.style.marginLeft = "0";
     }
+}
+
+function saveContactInfo(name, email, message) {
+    db.collection('contacts').add({
+        name: name,
+        email: email,
+        message: message,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        alert('Message sent successfully!');
+        document.getElementById('contactForm').reset();
+    }).catch((error) => {
+        console.error('Error writing document: ', error);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

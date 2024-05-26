@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Me</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script src="js/script.js" defer></script>
 </head>
 <body>
     <div id="mySidenav" class="nav-menu">
         <button class="closebtn" onclick="closeNav()">&times;</button>
         <a href="index.html">Home</a>
-        <a href="articles.html">Annotated Articles</a>
+        <a href="articles.html">Articles</a>
         <a href="blog.html">Blog</a>
         <a href="contact.html">Contact Me</a>
     </div>
@@ -44,32 +41,12 @@
                     <label for="message">Message:</label>
                     <textarea id="message" name="message" rows="5" required></textarea>
                 </div>
-                <button type="submit">Send Message</button>
+                <button type="submit" class="submit-btn">Send Message</button>
             </form>
         </section>
     </main>
     <footer>
         <p>&copy; 2024 Pay Attention. All rights reserved.</p>
     </footer>
-
-    <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-TBExcyQvyW0IIBVFnKQOsv54im3my1M",
-            authDomain: "pay-attention-2ec53.firebaseapp.com",
-            projectId: "pay-attention-2ec53",
-            storageBucket: "pay-attention-2ec53.appspot.com",
-            messagingSenderId: "336599548438",
-            appId: "1:336599548438:web:60366feeeca7631e1c6b37",
-            measurementId: "G-CKSS3P1X98"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const analytics = firebase.analytics();
-
-        // Initialize Firestore
-        const db = firebase.firestore();
-    </script>
 </body>
 </html>
