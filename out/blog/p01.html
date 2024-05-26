@@ -7,8 +7,22 @@
     <link rel="stylesheet" href="../styles.css">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
 </head>
 <body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="index.html">Home</a>
+        <a href="articles.html">Annotated Articles</a>
+        <a href="blog.html">Blog</a>
+        <!-- <a href="contact.html">Contact Me</a> TODO: Implement Firebase -->
+    </div>
+
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
     <header>
         <h1>A Primer on Binary Classification in Supervised Learning</h1>
         <p>By Noah Schliesman</p>
