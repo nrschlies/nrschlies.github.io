@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,15 +30,17 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Move build files
-      run: |
-        rm -rf *  # Remove all files except the build directory
-        mv build/* .  # Move all build files to the root
-
     - name: Deploy to GitHub Pages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        mkdir -p out
+        cp -r src/* out/
+        cd out
+        git init
+        git remote add origin https://github.com/nrschlies/nrschlies.github.io.git
+        git checkout -b gh-pages
         git add .
         git commit -m 'Deploy to GitHub Pages'
-        git push origin main
+        git push --force origin gh-pages
+
