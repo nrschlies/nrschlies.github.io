@@ -91,7 +91,6 @@ footer {
 
 .hamburger:focus {
     outline: none;
-    box-shadow: 0 0 0 3px #aaa; /* Focus outline for better accessibility */
 }
 
 @media screen and (max-height: 450px) {
@@ -158,9 +157,9 @@ button[type="submit"]:hover {
 }
 
 .profile-headshot {
-    border-radius: 50%;
+    border-radius: 5%;
     width: 200px; /* Adjust size as needed */
-    height: 200px; /* Adjust size as needed */
+    height: 300px; /* Adjust size as needed */
     object-fit: cover;
 }
 

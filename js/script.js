@@ -35,5 +35,34 @@ function closeNav() {
 }
 
 document.querySelector('.contact-btn').addEventListener('click', function() {
-    window.location.href = "mailto:nschliesman@sandiego.edu";
+    window.location.href = "contact.html";
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('contactForm');
+
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+
+        saveContactInfo(name, email, message);
+    });
+
+    function saveContactInfo(name, email, message) {
+        db.collection('contacts').add({
+            name: name,
+            email: email,
+            message: message,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            alert('Message sent successfully!');
+            contactForm.reset();
+        }).catch((error) => {
+            console.error('Error writing document: ', error);
+        });
+    }
+});
+
