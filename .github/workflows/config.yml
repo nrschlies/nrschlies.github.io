@@ -1,4 +1,4 @@
-name: Deploy Static Site to GitHub Pages
+name: Deploy React Site to GitHub Pages
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '16'
@@ -30,7 +30,7 @@ jobs:
     - name: Build site
       run: npm run build
 
-    - name: Upload _site to GitHub Pages artifact
+    - name: Upload build to GitHub Pages artifact
       uses: actions/upload-pages-artifact@v1
       with:
         path: ./build
@@ -44,3 +44,4 @@ jobs:
       uses: actions/deploy-pages@v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+
