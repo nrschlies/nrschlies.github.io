@@ -191,6 +191,7 @@ button[type="submit"]:hover {
     margin-top: 30px;
     display: flex;
     gap: 20px;
+    justify-content: center; /* Center the tags horizontally */
 }
 
 .tag {
@@ -198,4 +199,14 @@ button[type="submit"]:hover {
     padding: 10px 15px;
     border-radius: 50px;
     font-size: 0.9em;
+    text-align: center;
+    background-color: #ff6f61; /* Change the background color to suit your palette */
+    color: white; /* Text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
+
+.tag:hover {
+    background-color: #ff4f41; /* Darker color on hover */
+}
+
