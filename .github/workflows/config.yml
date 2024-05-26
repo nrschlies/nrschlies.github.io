@@ -30,6 +30,24 @@ jobs:
     - name: Build project
       run: npm run build
 
+    - name: Create redirect index.html
+      run: |
+        echo '<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Redirecting...</title>
+            <meta http-equiv="refresh" content="0; url=/src">
+            <script type="text/javascript">
+                window.location.href = "/src";
+            </script>
+        </head>
+        <body>
+            <p>If you are not redirected automatically, follow this <a href="/src">link</a>.</p>
+        </body>
+        </html>' > index.html
+
     - name: Deploy to GitHub Pages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,7 +58,11 @@ jobs:
         cp -r src/* out/
         cp -r public/* out/
         cp -r build/* out/
+        cp index.html out/
         cd out
+        cp -r * ../
+        cd ..
         git add .
         git commit -m 'Deploy to GitHub Pages'
         git push origin main
+
