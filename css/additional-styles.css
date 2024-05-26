@@ -1,0 +1,105 @@
+/* additional-styles.css */
+body {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.nav-menu {
+    height: 100%;
+    width: 0; /* Sidebar initial width */
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s; /* Smooth transition */
+    padding-top: 60px;
+}
+
+.nav-menu a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 22px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #f1f1f1;
+}
+
+.nav-menu .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.main {
+    transition: margin-left .5s; /* Smooth transition for main content */
+    padding: 16px;
+    flex-grow: 1;
+}
+
+/* Style the hamburger button */
+.hamburger {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+    cursor: pointer;
+    color: white; /* Change as needed */
+    font-size: 30px;
+    user-select: none;
+    font-size: 30px; /* Adjust size as necessary */
+    padding: 10px; /* Padding for easier click */
+    background: none;
+    border: none;
+}
+
+.hamburger:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #aaa; /* Focus outline for better accessibility */
+}
+
+@media screen and (max-height: 450px) {
+  .nav-menu {padding-top: 15px;}
+  .nav-menu a {font-size: 18px;}
+}
+
+.button, .hamburger, .closebtn {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.hamburger, .closebtn {
+    font-size: 30px; /* Adjust size as necessary */
+}
+
+.closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+}
+
+.nav-menu a, .button {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 22px;
+    color: white;
+    background-color: transparent;
+}
+
+.nav-menu a:hover, .button:hover {
+    color: #f1f1f1;
+    background-color: #444; /* Optional hover effect */
+}
