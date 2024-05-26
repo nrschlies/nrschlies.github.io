@@ -157,7 +157,6 @@ button[type="submit"]:hover {
 }
 
 .profile-headshot {
-    border-radius: 5%;
     width: 200px; /* Adjust size as needed */
     height: 300px; /* Adjust size as needed */
     object-fit: cover;
