@@ -38,7 +38,7 @@ jobs:
       run: |
         git fetch origin
         git checkout -b gh-pages || git checkout gh-pages
-        git rm -rf .
+        find . -maxdepth 1 ! -name 'src' ! -name '.git' ! -name '.' -exec rm -rf {} \;
         cp -r src/* .
         git add .
         git commit -m 'Deploy to GitHub Pages'
