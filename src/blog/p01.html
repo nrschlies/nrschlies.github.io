@@ -12,6 +12,17 @@
     <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
 </head>
 <body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="index.html">Home</a>
+        <a href="articles.html">Annotated Articles</a>
+        <a href="blog.html">Blog</a>
+        <!-- <a href="contact.html">Contact Me</a> TODO: Implement Firebase -->
+    </div>
+
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
     <header>
         <h1>A Primer on Binary Classification in Supervised Learning</h1>
         <p>By Noah Schliesman</p>
