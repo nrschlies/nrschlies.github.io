@@ -134,6 +134,7 @@ button[type="submit"]:hover {
 
 .about {
     display: flex;
+    flex-wrap: wrap;
     max-width: 1200px;
     margin: 20px auto;
     background-color: #fff;
@@ -144,16 +145,16 @@ button[type="submit"]:hover {
 }
 
 .text-container {
-    padding: 40px;
-    flex: 2;
+    padding: 20px;
+    flex: 1 1 100%;
 }
 
 .profile-container {
-    padding: 40px;
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1;
+    flex: 1 1 100%;
 }
 
 .profile-headshot {
@@ -192,6 +193,7 @@ button[type="submit"]:hover {
     display: flex;
     gap: 20px;
     justify-content: center; /* Center the tags horizontally */
+    flex-wrap: wrap;
 }
 
 .tag {
@@ -218,4 +220,18 @@ button[type="submit"]:hover {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 600px) {
+    .about {
+        flex-wrap: nowrap;
+    }
+
+    .text-container {
+        flex: 2;
+    }
+
+    .profile-container {
+        flex: 1;
+    }
 }
