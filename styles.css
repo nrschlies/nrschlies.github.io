@@ -210,3 +210,12 @@ button[type="submit"]:hover {
     background-color: #ff4f41; /* Darker color on hover */
 }
 
+.figure {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
