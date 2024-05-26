@@ -98,7 +98,7 @@ function closeNav() {
 }
 
 document.querySelector('.contact-btn').addEventListener('click', function() {
-    window.location.href = "contact.html";
+    window.location.href = "mailto:nschliesman@sandiego.edu";
 });
 
 document.addEventListener('DOMContentLoaded', () => {
