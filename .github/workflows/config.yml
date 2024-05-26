@@ -37,8 +37,8 @@ jobs:
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git fetch origin
-        git checkout -b gh-pages
-        git rm -rf .
+        git checkout -b gh-pages || git checkout gh-pages
+        git rm -rf ./*
         cp -r src/* .
         git add .
         git commit -m 'Deploy to GitHub Pages'
