@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pay Attention</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="/js/script.js"></script>
+    <script src="scripts.js" defer></script>
 </head>
 <body>
     <div id="mySidenav" class="nav-menu">
@@ -15,33 +15,37 @@
         <a href="blog.html">Blog</a>
         <a href="contact.html">Contact Me</a>
     </div>
-    
+
     <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
         &#9776;
     </button>
 
     <header>
-        <h1>Pay Attention</h1>
-        <p>Exploring and annotating the latest research in Generative AI</p>
+        <nav>
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <article>
-            <h2>Optimal Brain Damage</h2>
-            <p>Published on: <time datetime="1989-01-01">January 1, 1989</time></p>
-            <p>Yann Le Cun, John Denker, and Sara Solla examine pruning unimportant weights in this historic paper by computing parameter saliency via second derivative analysis, thereby reducing the number of redundant parameters by a factor of four.</p>
-            <a href="articles/Optimal_Brain_Damage.html">Read more</a>
-        </article>
-        <article>
-            <h2>Support-Vector Networks</h2>
-            <p>Published on: <time datetime="1995-09-15">September 15, 1995</time></p>
-            <p>Corinna Cortes and Vladimir Vapnik revolutionize two group classification with support vectors, derived from the convolution of the dot product (Kernel). The use of this kernel allows for the linear decomposition of a decision surface, which in turn can be optimized using Lagrangians for classification.</p>
-            <a href="articles/Support-Vector_Networks.html">Read more</a>
-        </article>
+        <section class="about">
+            <div class="image-container">
+                <img src="Screenshot 2024-05-25 at 5.26.47 PM.jpg" alt="Abstract objects on a table">
+            </div>
+            <div class="text-container">
+                <h1>About Myself</h1>
+                <p>I'm Noah Schliesman, an EE student at the University of San Diego. I'm targeting a PhD candidacy starting Fall 2025 in Neural Networks, Natural Language Processing, and Transformers. Here is some of my current work, and please reach out if you are interested or want to talk.</p>
+                <button class="contact-btn">Contact Me</button>
+                <div class="tags">
+                    <div class="tag">Binary Classification in Supervised Learning</div>
+                    <div class="tag">RNNs, GRUs, and LSTMs</div>
+                    <div class="tag">Transformer Architecture</div>
+                </div>
+            </div>
+        </section>
     </main>
-
-    <footer>
-        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
-    </footer>
 </body>
 </html>
+

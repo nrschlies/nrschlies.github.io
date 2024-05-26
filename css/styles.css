@@ -1,20 +1,21 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Courier New', Courier, monospace;
     line-height: 1.6;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: #f4f4f4;
+    background: #fdf1e5;
     color: #333;
 }
 
 header {
-    background: #0056b3;
-    color: #fff;
+    background: #fff;
+    color: #000;
     padding: 10px 20px;
     text-align: center;
+    border-bottom: 1px solid #ccc;
 }
 
 main {
@@ -28,7 +29,7 @@ article {
     margin: 20px 0;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 footer {
@@ -82,7 +83,7 @@ footer {
     user-select: none;
     background: none;
     border: none;
-    color: white;
+    color: #111;
     padding: 10px;
 }
 
@@ -117,7 +118,7 @@ textarea {
 }
 
 button[type="submit"] {
-    background-color: #0056b3;
+    background-color: #ff6f61;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -127,5 +128,63 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #003974;
+    background-color: #ff4f41;
+}
+
+.about {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.image-container img {
+    width: 600px;
+    height: auto;
+    object-fit: cover;
+}
+
+.text-container {
+    padding: 40px;
+}
+
+.text-container h1 {
+    margin-top: 0;
+    color: #1e3a8a;
+    font-size: 2em;
+}
+
+.text-container p {
+    font-size: 1.2em;
+}
+
+.contact-btn {
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.contact-btn:hover {
+    background-color: #ff4f41;
+}
+
+.tags {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+}
+
+.tag {
+    border: 2px solid #333;
+    padding: 10px 15px;
+    border-radius: 50px;
+    font-size: 0.9em;
 }
