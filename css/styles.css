@@ -22,6 +22,8 @@ main {
     padding: 20px;
     margin: 0 10%;
     flex-grow: 1;
+    position: relative;
+    transition: margin-left 0.5s; /* Smooth transition for margin-left */
 }
 
 article {
@@ -41,14 +43,14 @@ footer {
 
 .nav-menu {
     height: 100%;
-    width: 0; /* Sidebar initial width */
+    width: 250px; /* Fixed width */
     position: fixed;
     z-index: 1;
     top: 0;
-    left: 0;
+    left: -250px; /* Initially hidden */
     background-color: #111;
     overflow-x: hidden;
-    transition: 0.5s; /* Smooth transition */
+    transition: left 0.5s; /* Smooth transition */
     padding-top: 60px;
 }
 
@@ -134,21 +136,32 @@ button[type="submit"]:hover {
 .about {
     display: flex;
     max-width: 1200px;
-    margin: 20px;
+    margin: 20px auto;
     background-color: #fff;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.image-container img {
-    width: 600px;
-    height: auto;
-    object-fit: cover;
+    align-items: center; /* Align items to center vertically */
 }
 
 .text-container {
     padding: 40px;
+    flex: 2;
+}
+
+.profile-container {
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.profile-headshot {
+    border-radius: 50%;
+    width: 200px; /* Adjust size as needed */
+    height: 200px; /* Adjust size as needed */
+    object-fit: cover;
 }
 
 .text-container h1 {
