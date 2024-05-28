@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Primer on RNNs, GRUs, and LSTMs</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Annotated Articles</a>
+        <a href="../blog.html">Blog</a>
+        <!-- <a href="contact.html">Contact Me</a> TODO: Implement Firebase -->
+    </div>
+
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
+    <header>
+        <h1>A Primer on RNNs, GRUs, and LSTMs</h1>
+        <p>By Noah Schliesman</p>
+    </header>
+    <main>
+        <section class="content">
+            <p>If you haven’t already, please check out my primer on binary classification in supervised learning. I’ll continue where we left off in the context of a recurrent neural network.</p>
+            <p>Recall that Recurrent Neural Networks (RNNs) are a class of neural networks designed to handle sequential data, as its connections form directed cycles. This really means that we have some sort of memory, where we consider both the current and previous states in our objective function for each neuron. We refer to these dependencies as hidden states. Today we’ll start with the simple formulation of an RNN using the Backpropagation Through Time (BPTT) algorithm and then establish longer temporal connections through specialized neurons like GRUs or LSTMs. We’ll use each of these architectures to recover a noisy signal.</p>
+            <p>Let’s examine this mathematically, where:</p>
+            <p><b>Input vector:</b> \( x_t \)</p>
+            <p><b>Dimensionality of hidden state:</b> \( h_t \)</p>
+            <p><b>Output vector:</b> \( y_t \)</p>
+            <p><b>Weight matrix for input to hidden layer transition:</b> \( W_{xh} \)</p>
+            <p><b>Weight matrix for hidden layer to hidden layer transition:</b> \( W_{hh} \)</p>
+            <p><b>Weight matrix for hidden layer to output transition:</b> \( W_{hy} \)</p>
+            <p><b>Hidden layer bias:</b> \( b_h \)</p>
+            <p><b>Output bias:</b> \( b_y \)</p>
+            <p><b>Hidden state updated by previous states:</b> \( h_t \)</p>
+            <p>Where \( h_t = f(W_{hh} h_{t-1} + W_{xh} x_t + b_h) \), and \( y_t = g(W_{hy} h_t + b_y) \), with \( f \) being an activation function like \( \tanh \) or \( \text{ReLU} \) and \( g \) for regression or classification.</p>
+            <p>The initialized hidden state, \( h_0 \), can either be set to all zeros or a learned parameter. Note how \( h_t \) takes into account the last state recursively, which means backpropagation involves multiplying many partials which may lead the gradient to vanish. In RNNs, we use the Backpropagation Through Time (BPTT) algorithm.</p>
+            <img src="../files/img/figures/p02/p02-f01.png" alt="RNN Unfolding" class="figure">
+            <p>The figure above shows the first part of the BPTT algorithm: unfolding. Here, we convert the cyclic graph into an acyclic graph by expanding the hidden state into its prior dependencies. From here, we compute a forward pass and compute the total loss. After, we compute our backwards pass and compute the gradient of the loss function with respect to each of our parameters. As we did with supervised learning, we adjust our weights to follow the minimization of loss with respect to our parameters, starting from \( t = 0 \) to \( t = T \).</p>
+            <p>In other words,</p>
+            <p>\[ W = W - \eta \frac{\partial L}{\partial W} \]</p>
+            <p>Let’s implement this basic RNN using a MATLAB Script:</p>
+            <pre><code>
+% MATLAB code for Figure 1:
+T = 100;
+% Time vector
+time = linspace(0, 2*pi, T);
+% Create a sine wave as the base sequence
+data = sin(time) + 0.5 * randn(1, T); % Add some noise
+% Prepare inputs and targets
+X = data(1:end-1);
+Y = data(2:end);
+% Define the RNN parameters
+input_size = 1; % single dimension for each data point
+hidden_size = 10; % Experiment with this size, try 5, 10, 20, etc.
+output_size = 1;
+% Initialize weights and biases
+Wxh = randn(hidden_size, input_size) * 0.01; % input to hidden
+Whh = randn(hidden_size, hidden_size) * 0.01; % hidden to hidden
+Why = randn(output_size, hidden_size) * 0.01; % hidden to output
+bh = zeros(hidden_size, 1); % hidden bias
+by = zeros(output_size, 1); % output bias
+% Learning rate
+learning_rate = 0.01;
+% Initial hidden state
+h_prev = zeros(hidden_size, 1);
+% Number of epochs
+epochs = 200;
+% Store loss values
+losses = zeros(1, epochs);
+% Ensure column vectors for input and target
+X = X(:);
+Y = Y(:);
+for epoch = 1:epochs
+
+% Forward pass
+[h, y, loss] = forwardPass(X, Y, Wxh, Whh, Why, bh, by, h_prev);
+
+% Record the loss
+losses(epoch) = loss;
+
+% Display loss every 10 epochs
+if mod(epoch, 10) == 0
+
+disp(['Epoch ', num2str(epoch), ' Loss: ', num2str(loss)]);
+end
+
+% BPTT to compute gradients
+[dWxh, dWhh, dWhy, dbh, dby] = bptt(X, Y, h, y, Wxh, Whh, Why, bh, by);
+
+% Parameter updates
+Wxh = Wxh - learning_rate * dWxh;
+Whh = Whh - learning_rate * dWhh;
+Why = Why - learning_rate * dWhy;
+bh = bh - learning_rate * dbh;
+by = by - learning_rate * dby;
+
+% Update the previous hidden state for the next epoch
+h_prev = h(:,end);
+
+end
+% Plot the loss over epochs
+figure;
+plot(1:epochs, losses, 'b-', 'LineWidth', 2);
+title('Training Loss over Epochs');
+xlabel('Epoch');
+ylabel('Loss');
+grid on;
+% Plot the predictions against the actual data
+figure;
+plot(time(2:end), Y, 'r-', 'LineWidth', 2); hold on;
+plot(time(2:end), y, 'b-', 'LineWidth', 2);
+legend('Actual', 'Predicted');
+title('RNN Predictions vs Actual Data');
+xlabel('Time');
+ylabel('Value');
+grid on;
+% Forward pass function
+function [h, y, loss] = forwardPass(X, Y, Wxh, Whh, Why, bh, by, h_prev)
+
+% Number of time steps
+T = numel(X);
+
+% Initialize hidden states and outputs
+h = zeros(size(h_prev, 1), T);
+y = zeros(numel(by), T);
+loss = 0;
+
+% Forward pass
+for t = 1:T
+
+if t == 1
+h(:, t) = tanh(Wxh * X(t) + Whh * h_prev + bh);
+
+else
+h(:, t) = tanh(Wxh * X(t) + Whh * h(:, t-1) + bh);
+
+end
+% Output at time t
+y(:, t) = Why * h(:, t) + by;
+% Mean squared error loss
+loss = loss + (Y(t) - y(:, t))^2;
+
+end
+
+loss = loss / T; % Average loss over time steps
+end
+% BPTT function
+function [dWxh, dWhh, dWhy, dbh, dby] = bptt(X, Y, h, y, Wxh, Whh, Why, bh, by)
+
+% Initialize gradients as zero
+dWxh = zeros(size(Wxh));
+dWhh = zeros(size(Whh));
+dWhy = zeros(size(Why));
+dbh = zeros(size(bh));
+dby = zeros(size(by));
+
+% Initialize the next hidden state gradient as zero
+dhnext = zeros(size(h, 1), 1);
+
+% Backpropagate through time
+for t = numel(X):-1:1
+
+% Output gradients
+dy = 2 * (y(:, t) - Y(t));
+dWhy = dWhy + dy * h(:, t)';
+dby = dby + dy;
+
+% Backprop into h
+dh = Why' * dy + dhnext;
+% Backprop through tanh nonlinearity
+dhraw = (1 - h(:, t).^2) .* dh;
+dbh = dbh + dhraw;
+
+if t == 1
+dWxh = dWxh + dhraw * X(t)';
+
+else
+dWxh = dWxh + dhraw * X(t)';
+dWhh = dWhh + dhraw * h(:, t-1)';
+
+end
+
+% Next hidden state gradient
+dhnext = Whh' * dhraw;
+end
+
+end
+            </code></pre>
+            <p>That’s not very good. We’re experiencing an exploding gradient. Since the depth of our network is fairly substantial, our gradients accumulate exponentially. To promote stability, we can induce gradient clipping to limit the gradient from passing 1. We also decrease our learning rate and initialize our weights as smaller values. Let’s see what this does:</p>
+            <img src="../files/img/figures/p02/p02-f02.png" alt="RNN with Gradient Clipping" class="figure">
+            <p>Woah! That’s so much better.</p>
+            <p>RNNs have difficulty creating long term dependencies because they are bound to care less about earlier input vectors due to the nature of their updated state. Additionally, RNNs still struggle with the vanishing gradient problem due to the potential multiplication of small partial derivatives with respect to the loss surface. For this, we have a few methods: attention scores, LSTMs, GRUs, and regularization methods. We’ve already talked about the latter, and due to the recency of attention scores, we begin with a discussion of LSTMs and GRUs.</p>
+            <h2>Gated Recurrent Units (GRUs)</h2>
+            <p>The Gated Recurrent Unit (GRU) uses an update gate, reset gate, and current memory content to handle the vanishing gradient problem and capture long-term dependencies. We use GRUs when model size and training speed are vital or when there is a smaller range of temporal dependencies.</p>
+            <ul>
+                <li><b>Update gate weight matrix:</b> \( W_z \)</li>
+                <li><b>Reset gate weight matrix:</b> \( W_r \)</li>
+                <li><b>Candidate hidden state weight matrix:</b> \( W \)</li>
+                <li><b>Previous hidden state:</b> \( h_{t-1} \)</li>
+                <li><b>Update gate bias:</b> \( b_z \)</li>
+                <li><b>Reset gate bias:</b> \( b_r \)</li>
+                <li><b>Candidate hidden state bias:</b> \( b_h \)</li>
+            </ul>
+            <p>The update gate of a GRU decides how much of the past information needs to be passed to the future. Here is the sigmoid function.</p>
+            <p>\[ z_t = \sigma(W_z [h_{t-1}, x_t] + b_z) \]</p>
+            <p>The reset gate decides how much of past information to forget.</p>
+            <p>\[ r_t = \sigma(W_r [h_{t-1}, x_t] + b_r) \]</p>
+            <p>The current memory content utilizes the reset gate to determine how important past information is. It generates a candidate activation state, \( h_tilde \), given the previous state and forget gate, and linearly interpolates a new hidden state between that candidate state and the previous state. Here, the update gate controls the extent of mixing.</p>
+            <p>\[ h_tilde = \tanh(W [x_t, r_t \odot h_{t-1}] + b_h) \]</p>
+            <p>\[ h_t = (1 - z_t) \odot h_tilde + z_t \odot h_{t-1} \]</p>
+            <p>Our output vector is just:</p>
+            <p>\[ y_t = f(W_y h_t + b_y) \]</p>
+            <p>Similarly to our weight matrices in RNNs, we use backpropagation and an optimizer to find our optimal weights and biases by computing the derivative of the loss function with respect to the parameter surface. Let’s modify our current set up so we use a GRU to capture longer term dependencies and prevent a vanishing gradient. Due to the nature of GRUs, we’ll also decrease the learning rate, increase the number of hidden units, and refine our weight initialization. Let’s also improve the fidelity of our data by using a time step of 1000 instead of 100.</p>
+            <img src="../files/img/figures/p02/p02-f03.png" alt="GRU Implementation" class="figure">
+            <p>At this stage, we’re more interested in how our predicted values match the original generated wave without noise. Let’s compare our RNN model to our GRU model in terms of signal recovery:</p>
+            <img src="../files/img/figures/p02/p02-f04.png" alt="Signal Recovery with GRU" class="figure">
+            <p>In this case, the GRU does a better job recovering the original signal amidst noise. Let’s move on to our discussion of LSTMs, which are close relatives to the GRU.</p>
+            <h2>Long Short-Term Memory (LSTM) Networks</h2>
+            <p>Long Short-Term Memory (LSTM) networks have three gates (input, forget, and output), and handle the vanishing gradient problems of standard RNNs. LSTM maintains both the cell state and the hidden state \( c_t \) and \( h_t \).</p>
+            <ul>
+                <li><b>Forget gate weight matrix:</b> \( W_f \)</li>
+                <li><b>Input gate weight matrix:</b> \( W_i \)</li>
+                <li><b>Candidate memory cell weight matrix:</b> \( W_c \)</li>
+                <li><b>Output gate weight matrix:</b> \( W_o \)</li>
+                <li><b>Previous hidden state:</b> \( h_{t-1} \)</li>
+                <li><b>Forget gate bias:</b> \( b_f \)</li>
+                <li><b>Input gate bias:</b> \( b_i \)</li>
+                <li><b>Candidate memory cell bias:</b> \( b_c \)</li>
+                <li><b>Output gate bias:</b> \( b_o \)</li>
+            </ul>
+            <p>The input gate decides what to update in the cell state.</p>
+            <p>\[ i_t = \sigma(W_i [h_{t-1}, x_t] + b_i) \]</p>
+            <p>The forget gate decides what to discard from the cell state.</p>
+            <p>\[ f_t = \sigma(W_f [h_{t-1}, x_t] + b_f) \]</p>
+            <p>The candidate memory cell updates the cell state.</p>
+            <p>\[ c_tilde = \tanh(W_c [h_{t-1}, x_t] + b_c) \]</p>
+            <p>The cell state is a combination of the input gate, candidate memory cell, forget gate, and previous cell state.</p>
+            <p>\[ c_t = f_t \odot c_{t-1} + i_t \odot c_tilde \]</p>
+            <p>The output gate decides which part of the cell state to output.</p>
+            <p>\[ o_t = \sigma(W_o [h_{t-1}, x_t] + b_o) \]</p>
+            <p>And we obtain the hidden state from the cell state.</p>
+            <p>\[ h_t = o_t \odot \tanh(c_t) \]</p>
+            <p>Our output vector is again just:</p>
+            <p>\[ y_t = f(W_y h_t + b_y) \]</p>
+            <p>Let’s implement the LSTM architecture into our code. We see a slight improvement over the GRU, but honestly not that noticeable in this case:</p>
+            <img src="../files/img/figures/p02/p02-f05.png" alt="LSTM Implementation" class="figure">
+            <p>I’ll leave this figure below. It might look a bit frightening at first, but realize that \( f_T \) is the forget gate, \( i_T \) is the input gate, \( C_T \) is the cell state, \( o_T \) is the output gate, \( h_T \) is the hidden state, \( r_T \) is the reset gate, \( z_T \) is the forget gate, \( h_T \) is the candidate state, \( Fea_T \) is a feature vector, and \( Out_T \) is the output.</
+        <img src="../files/img/figures/p02/p02-f06.png" alt="LSTM and GRU Gates" class="figure">
+        <p>I expect part 3 to be about self-attention… coming soon.</p>
+        </section>
+    </main>
+  <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
