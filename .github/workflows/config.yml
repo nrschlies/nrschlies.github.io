@@ -54,15 +54,29 @@ jobs:
       run: |
         git config --global user.name "nrschlies"
         git config --global user.email "nrschlies@gmail.com"
+
+        # Ensure we're on the main branch
+        git checkout main
+
+        # Create a directory for the output
         mkdir -p out
+
+        # Copy build artifacts to the output directory
         cp -r src/* out/
         cp -r public/* out/
         cp -r build/* out/
         cp index.html out/
+
+        # Move to the output directory and copy contents back to the root
         cd out
         cp -r * ../
         cd ..
-        git add .
-        git commit -m 'Deploy to GitHub Pages'
-        git push origin main
 
+        # Check if there are any changes to commit
+        if [ -n "$(git status --porcelain)" ]; then
+          git add .
+          git commit -m 'Deploy to GitHub Pages'
+          git push origin main
+        else
+          echo "No changes to commit"
+        fi
