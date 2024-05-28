@@ -43,13 +43,13 @@
             <p><b>Hidden state updated by previous states:</b> \( h_t \)</p>
             <p>Where \( h_t = f(W_{hh} h_{t-1} + W_{xh} x_t + b_h) \), and \( y_t = g(W_{hy} h_t + b_y) \), with \( f \) being an activation function like \( \tanh \) or \( \text{ReLU} \) and \( g \) for regression or classification.</p>
             <p>The initialized hidden state, \( h_0 \), can either be set to all zeros or a learned parameter. Note how \( h_t \) takes into account the last state recursively, which means backpropagation involves multiplying many partials which may lead the gradient to vanish. In RNNs, we use the Backpropagation Through Time (BPTT) algorithm.</p>
-            <img src="../files/img/figures/p02/p02-f01.png" alt="RNN Unfolding" class="figure">
+            <img src="../files/img/figures/p02/p02-f01.jpg" alt="RNN Unfolding" class="figure">
             <p>The figure above shows the first part of the BPTT algorithm: unfolding. Here, we convert the cyclic graph into an acyclic graph by expanding the hidden state into its prior dependencies. From here, we compute a forward pass and compute the total loss. After, we compute our backwards pass and compute the gradient of the loss function with respect to each of our parameters. As we did with supervised learning, we adjust our weights to follow the minimization of loss with respect to our parameters, starting from \( t = 0 \) to \( t = T \).</p>
             <p>In other words,</p>
             <p>\[ W = W - \eta \frac{\partial L}{\partial W} \]</p>
             <p>Let’s implement this basic RNN using a MATLAB Script:</p>
             <p>That’s not very good. We’re experiencing an exploding gradient. Since the depth of our network is fairly substantial, our gradients accumulate exponentially. To promote stability, we can induce gradient clipping to limit the gradient from passing 1. We also decrease our learning rate and initialize our weights as smaller values. Let’s see what this does:</p>
-            <img src="../files/img/figures/p02/p02-f02.png" alt="RNN with Gradient Clipping" class="figure">
+            <img src="../files/img/figures/p02/p02-f02.jpg" alt="RNN with Gradient Clipping" class="figure">
             <p>Woah! That’s so much better.</p>
             <p>RNNs have difficulty creating long term dependencies because they are bound to care less about earlier input vectors due to the nature of their updated state. Additionally, RNNs still struggle with the vanishing gradient problem due to the potential multiplication of small partial derivatives with respect to the loss surface. For this, we have a few methods: attention scores, LSTMs, GRUs, and regularization methods. We’ve already talked about the latter, and due to the recency of attention scores, we begin with a discussion of LSTMs and GRUs.</p>
             <h2>Gated Recurrent Units (GRUs)</h2>
@@ -73,9 +73,9 @@
             <p>Our output vector is just:</p>
             <p>\[ y_t = f(W_y h_t + b_y) \]</p>
             <p>Similarly to our weight matrices in RNNs, we use backpropagation and an optimizer to find our optimal weights and biases by computing the derivative of the loss function with respect to the parameter surface. Let’s modify our current set up so we use a GRU to capture longer term dependencies and prevent a vanishing gradient. Due to the nature of GRUs, we’ll also decrease the learning rate, increase the number of hidden units, and refine our weight initialization. Let’s also improve the fidelity of our data by using a time step of 1000 instead of 100.</p>
-            <img src="../files/img/figures/p02/p02-f03.png" alt="GRU Implementation" class="figure">
+            <img src="../files/img/figures/p02/p02-f03.jpg" alt="GRU Implementation" class="figure">
             <p>At this stage, we’re more interested in how our predicted values match the original generated wave without noise. Let’s compare our RNN model to our GRU model in terms of signal recovery:</p>
-            <img src="../files/img/figures/p02/p02-f04.png" alt="Signal Recovery with GRU" class="figure">
+            <img src="../files/img/figures/p02/p02-f04.jpg" alt="Signal Recovery with GRU" class="figure">
             <p>In this case, the GRU does a better job recovering the original signal amidst noise. Let’s move on to our discussion of LSTMs, which are close relatives to the GRU.</p>
             <h2>Long Short-Term Memory (LSTM) Networks</h2>
             <p>Long Short-Term Memory (LSTM) networks have three gates (input, forget, and output), and handle the vanishing gradient problems of standard RNNs. LSTM maintains both the cell state and the hidden state \( c_t \) and \( h_t \).</p>
@@ -105,9 +105,9 @@
             <p>Our output vector is again just:</p>
             <p>\[ y_t = f(W_y h_t + b_y) \]</p>
             <p>Let’s implement the LSTM architecture into our code. We see a slight improvement over the GRU, but honestly not that noticeable in this case:</p>
-            <img src="../files/img/figures/p02/p02-f05.png" alt="LSTM Implementation" class="figure">
+            <img src="../files/img/figures/p02/p02-f05.jpg" alt="LSTM Implementation" class="figure">
             <p>I’ll leave this figure below. It might look a bit frightening at first, but realize that \( f_T \) is the forget gate, \( i_T \) is the input gate, \( C_T \) is the cell state, \( o_T \) is the output gate, \( h_T \) is the hidden state, \( r_T \) is the reset gate, \( z_T \) is the forget gate, \( h_T \) is the candidate state, \( Fea_T \) is a feature vector, and \( Out_T \) is the output.</
-        <img src="../files/img/figures/p02/p02-f06.png" alt="LSTM and GRU Gates" class="figure">
+        <img src="../files/img/figures/p02/p02-f06.jpg" alt="LSTM and GRU Gates" class="figure">
         <p>I expect part 3 to be about self-attention… coming soon.</p>
         </section>
     </main>
