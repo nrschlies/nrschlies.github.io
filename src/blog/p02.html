@@ -68,9 +68,9 @@
             <p>\[ z_t = \sigma(W_z [h_{t-1}, x_t] + b_z) \]</p>
             <p>The reset gate decides how much of past information to forget.</p>
             <p>\[ r_t = \sigma(W_r [h_{t-1}, x_t] + b_r) \]</p>
-            <p>The current memory content utilizes the reset gate to determine how important past information is. It generates a candidate activation state, \( h_tilde \), given the previous state and forget gate, and linearly interpolates a new hidden state between that candidate state and the previous state. Here, the update gate controls the extent of mixing.</p>
-            <p>\[ h_tilde = \tanh(W [x_t, r_t \odot h_{t-1}] + b_h) \]</p>
-            <p>\[ h_t = (1 - z_t) \odot h_tilde + z_t \odot h_{t-1} \]</p>
+            <p>The current memory content utilizes the reset gate to determine how important past information is. It generates a candidate activation state, \( \tilde{h} \), given the previous state and forget gate, and linearly interpolates a new hidden state between that candidate state and the previous state. Here, the update gate controls the extent of mixing.</p>
+            <p>\[ \tilde{h} = \tanh(W [x_t, r_t \odot h_{t-1}] + b_h) \]</p>
+            <p>\[ h_t = (1 - z_t) \odot \tilde{h} + z_t \odot h_{t-1} \]</p>
             <p>Our output vector is just:</p>
             <p>\[ y_t = f(W_y h_t + b_y) \]</p>
             <p>Similarly to our weight matrices in RNNs, we use backpropagation and an optimizer to find our optimal weights and biases by computing the derivative of the loss function with respect to the parameter surface. Let’s modify our current set up so we use a GRU to capture longer term dependencies and prevent a vanishing gradient. Due to the nature of GRUs, we’ll also decrease the learning rate, increase the number of hidden units, and refine our weight initialization. Let’s also improve the fidelity of our data by using a time step of 1000 instead of 100.</p>
@@ -96,9 +96,9 @@
             <p>The forget gate decides what to discard from the cell state.</p>
             <p>\[ f_t = \sigma(W_f [h_{t-1}, x_t] + b_f) \]</p>
             <p>The candidate memory cell updates the cell state.</p>
-            <p>\[ c_tilde = \tanh(W_c [h_{t-1}, x_t] + b_c) \]</p>
+            <p>\[ \tilde{c} = \tanh(W_c [h_{t-1}, x_t] + b_c) \]</p>
             <p>The cell state is a combination of the input gate, candidate memory cell, forget gate, and previous cell state.</p>
-            <p>\[ c_t = f_t \odot c_{t-1} + i_t \odot c_tilde \]</p>
+            <p>\[ c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c} \]</p>
             <p>The output gate decides which part of the cell state to output.</p>
             <p>\[ o_t = \sigma(W_o [h_{t-1}, x_t] + b_o) \]</p>
             <p>And we obtain the hidden state from the cell state.</p>
@@ -108,8 +108,8 @@
             <p>Let’s implement the LSTM architecture into our code. We see a slight improvement over the GRU, but honestly not that noticeable in this case:</p>
             <img src="../files/img/figures/p02/p02-f06.jpg" alt="LSTM Implementation" class="figure">
             <p>I’ll leave this figure below. It might look a bit frightening at first, but realize that \( f_T \) is the forget gate, \( i_T \) is the input gate, \( C_T \) is the cell state, \( o_T \) is the output gate, \( h_T \) is the hidden state, \( r_T \) is the reset gate, \( z_T \) is the forget gate, \( h_T \) is the candidate state, \( Fea_T \) is a feature vector, and \( Out_T \) is the output.</p>
-        <img src="../files/img/figures/p02/p02-f07.jpg" alt="LSTM and GRU Gates" class="figure">
-        <p>I expect part 3 to be about self-attention… coming soon.</p>
+            <img src="../files/img/figures/p02/p02-f07.jpg" alt="LSTM and GRU Gates" class="figure">
+            <p>I expect part 3 to be about self-attention… coming soon.</p>
         </section>
     </main>
   <footer>
