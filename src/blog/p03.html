@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Primer on the Transformer Architecture</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Annotated Articles</a>
+        <a href="../blog.html">Blog</a>
+    </div>
+
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
+    <header>
+        <h1>A Primer on the Transformer Architecture</h1>
+        <p>By Noah Schliesman</p>
+    </header>
+    <main>
+        <section class="content">
+            <p>This is the third part of a series of primers I’ve written. Please read the first two as I’ll continue with the foundation we’ve built up. Note that we first established supervised learning with a log-likelihood bayesian loss function, L1 and L2 regularization to add weight decay, gradient descent to optimize our loss function and update weights/biases, and the use of a sigmoid activation to induce nonlinearity. We applied these methods for binary classification of a synthetic dataset. In the second primer, we discussed Recurrent Neural Nets (RNNs), the Backpropagation Through Time (BPTT) algorithm, gradient clipping, the Gated Recurrent Unit (GRU), and the Long Short-Term Memory (LSTM) unit. We aim to explore the wildly popular transformer architecture next.</p>
+            <p>Recall that RNNs suffer from vanishing and exploding gradients. While we showed that GRUs and LSTMs can alleviate this problem, we still need a more robust solution. Additionally, the sequential nature of RNNs limit parallelization, as each step depends on the previous one. This makes RNNs slow to train, especially in scenarios when parallelization is not possible. Additionally, LSTMs and GRUs still struggle with very-long range dependencies. We solve these issues through the transformer architecture.</p>
+            <p>Let’s begin with the initialization of the query matrix \(W_Q\), the key matrix \(W_K\), and the value matrix \(W_V\). These matrices will learn using a gradient-based optimization method to minimize the loss function. There are two common initialization methods:</p>
+            <ul>
+                <li>We often use Xavier/Glorot Initialization when we have a symmetric activation function like \(\tanh\). Let \(d_{in}\) and \(d_{out}\) be the input and output dimensionality of the layer:</li>
+                <p>\[ W \sim U\left(-\frac{6}{d_{in} + d_{out}}, \frac{6}{d_{in} + d_{out}}\right) \]</p>
+                <li>For layers with \(\text{ReLU}\) activations, we maintain gradient variance using He Initialization:</li>
+                <p>\[ W \sim U\left(-\frac{2}{d_{in}}, \frac{2}{d_{in}}\right) \]</p>
+            </ul>
+            <p>These distributions aren’t necessarily intuitive, so I’ll use MATLAB to create a histogram of the weight distribution for each initialization.</p>
+            <img src="../files/img/figures/p03/p03-f01.jpg" alt="Transformer Distributions" class="figure">
+            <p>After initializing our weights, we project an input sequence \(X \in \mathbb{R}^{n \times d}\). We can then provide 3 projections of the input sequence: the Query (Q), the Key (K), and the Value (V). These three resulting vectors are at the heart of self-attention.</p>
+            <ul>
+                <li>The Query vector represents the token that is seeking relevant information from other tokens in the sequence:</li>
+                <p>\[ Q = XW_Q \]</p>
+                <li>The Key vector represents the metadata of each token in the sequence to match against the Query to determine relevance:</li>
+                <p>\[ K = XW_K \]</p>
+                <li>The Value vector represents the information carried by each token in the sequence:</li>
+                <p>\[ V = XW_V \]</p>
+            </ul>
+            <p>Let’s generate some random input tokens and use He initialization to show the projection of the input tokens onto the three weight matrices.</p>
+            <img src="../files/img/figures/p03/p03-f02.jpg" alt="Weight Projections" class="figure">
+            <p>Here, each row represents a token index and each column represents a projection dimension. The distribution of colors indicates the variation in projection values, with higher values in yellow and lower values in blue.</p>
+            <p>We want to compute some sort of relevance score between the Query vector of one token and the Key vectors of all tokens. Recall that the dot product has the unique property of measuring similarity. When we take the dot product between the Query vector and each Key vector, we obtain a comprehensive matrix that contains all the similarity scores between every pair of tokens in the input sequence. This can be represented as:</p>
+            <p>\[ R = QK^T \]</p>
+            <p>Let’s visualize this in a similar way of how we did the projections, except this time we have the more meaningful Query-Key relationship.</p>
+            <img src="../files/img/figures/p03/p03-f03.jpg" alt="Relevance Score Projections" class="figure">
+            <p>We refer to this as the Relevance Matrix \(R\). Since the dimensionality of the Queries (Q) and Keys (K) is the same, denoted by \(d_k\), we can divide our Relevance Matrix by \(\sqrt{d_k}\) as a form of normalization to stabilize gradients. Let’s call this \(R_{scaled}\):</p>
+            <p>\[ R_{scaled} = \frac{R}{\sqrt{d_k}} \]</p>
+            <p>Okay, so we have our normalized Relevance Matrix. We can perform a \(\text{softmax}\) activation to convert this matrix into a probability distribution matrix. We call this an Attention Matrix \(A\):</p>
+            <p>\[ A = \text{softmax}(R_{scaled}) \]</p>
+            <p>In an attention matrix, each row represents the attention distribution for the query among all keys in the sequence. Let’s see this distribution.</p>
+            <img src="../files/img/figures/p03/p03-f04.jpg" alt="Scaled Projections" class="figure">
+            <p>Note that the “hot spots” emphasize points of high attention. In practice, these attention matrices can have millions and even billions of elements in them. We project our attention matrix onto the value matrix to determine the output matrix \(Z\):</p>
+            <p>\[ Z = AV \]</p>
+            <p>Here, each row is a weighted sum of the Value vectors. We can pass these context-aware embeddings into a feedforward network.</p>
+            <p>\[ H = \text{FeedForward}(Z) \]</p>
+            <p>We can then backpropagate through our network all the way to the QKV matrices.</p>
+            <p>\[ W = W - \eta \frac{\delta L}{\delta W} \]</p>
+            <p>Let’s implement this transformer network using a simple gradient descent network to detect a simple saw pattern.</p>
+            <img src="../files/img/figures/p03/p03-f05.jpg" alt="Loss over Epochs" class="figure">
+            <p>Let’s check out where our loss is occurring:</p>
+            <p>It might be helpful to add positional encoding here. Here, we use sine-wave frequency encoding.</p>
+            <img src="../files/img/figures/p03/p03-f06.jpg" alt="RNN Unfolding" class="figure">
+            <p>For MATLAB code, please reach out:</p>
+            <button class="contact-btn">Contact Me</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+</html>
