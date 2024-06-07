@@ -33,9 +33,9 @@
             <p>Let’s begin with the initialization of the query matrix \(W_Q\), the key matrix \(W_K\), and the value matrix \(W_V\). These matrices will learn using a gradient-based optimization method to minimize the loss function. There are two common initialization methods:</p>
             <ul>
                 <li>We often use Xavier/Glorot Initialization when we have a symmetric activation function like \(\tanh\). Let \(d_{in}\) and \(d_{out}\) be the input and output dimensionality of the layer:</li>
-                <p>\[ W \sim U\left(-\frac{6}{d_{in} + d_{out}}, \frac{6}{d_{in} + d_{out}}\right) \]</p>
+                <p>\[ W \sim U\left(-\frac{\sqrt{6}}{\sqrt{d_{in} + d_{out}}}, \frac{\sqrt{6}}{\sqrt{d_{in} + d_{out}}}\right) \]</p>
                 <li>For layers with \(\text{ReLU}\) activations, we maintain gradient variance using He Initialization:</li>
-                <p>\[ W \sim U\left(-\frac{2}{d_{in}}, \frac{2}{d_{in}}\right) \]</p>
+                <p>\[ W \sim U\left(-\sqrt{\frac{2}{d_{in}}}, \sqrt{\frac{2}{d_{in}}}\right) \]</p>
             </ul>
             <p>These distributions aren’t necessarily intuitive, so I’ll use MATLAB to create a histogram of the weight distribution for each initialization.</p>
             <img src="../files/img/figures/p03/p03-f01.jpg" alt="Transformer Distributions" class="figure">
