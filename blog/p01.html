@@ -89,8 +89,28 @@
             <img src="../files/img/figures/p01/p01-f05.jpg" alt="Neural Network with increased Dataset size" class="figure">
             
             <p>That’s really good. By using a simple averaged Bayesian log-likelihood as our loss function, L2 ridge regulation to penalize our loss function, and gradient descent to optimize our weights and biases, our network has learned to classify a synthetic dataset.</p>
-            <p>For MATLAB code, please reach out:</p>
-            <button class="contact-btn">Contact Me</button>
+            <h2>Appendix:</h2>
+            <pre><code>
+% MATLAB code for Figure 1:
+n = 100;
+class1 = 0.5 + 0.5*randn(floor(n/2), 2);
+class2 = -0.5 + 0.5*randn(ceil(n/2), 2);
+labels1 = zeros(floor(n/2), 1);
+labels2 = ones(ceil(n/2), 1);
+X = [class1; class2];
+y = [labels1; labels2];
+figure;
+scatter(X(y==0, 1), X(y==0, 2), 'ro');
+hold on;
+scatter(X(y==1, 1), X(y==1, 2), 'bo');
+hold off;
+xlabel('Feature 1');
+ylabel('Feature 2');
+title('Training Dataset for a Binary Classification Problem');
+legend('Class 0', 'Class 1');
+If you're interested in the rest of the code, contact me please!
+            </code></pre>
+            <!-- Add more MATLAB code as needed -->
         </section>
     </main>
     <footer>
