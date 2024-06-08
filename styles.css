@@ -188,12 +188,27 @@ button[type="submit"]:hover {
     background-color: #ff4f41;
 }
 
-.tags {
-    margin-top: 30px;
+.categories {
     display: flex;
     gap: 20px;
-    justify-content: center; /* Center the tags horizontally */
+    justify-content: center;
     flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.category {
+    flex: 1 1 45%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.category h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
 }
 
 .tag {
@@ -206,6 +221,8 @@ button[type="submit"]:hover {
     color: white; /* Text color */
     cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
+    display: inline-block;
+    margin: 5px;
 }
 
 .tag:hover {
@@ -235,3 +252,4 @@ button[type="submit"]:hover {
         flex: 1;
     }
 }
+
