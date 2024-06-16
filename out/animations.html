@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Attention</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/script.js"></script>
+    <link rel="icon" href="files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="index.html">Home</a>
+        <a href="articles.html">Annotated Articles</a>
+        <a href="blog.html">Blog</a>
+        <a href="animations.html">Animations</a>
+        <!-- <a href="contact.html">Contact Me</a> TODO: Implement Firebase -->
+    </div>
+    
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
+
+    <header>
+        <h1>Pay Attention</h1>
+        <p>Exploring and annotating the latest research in Generative AI</p>
+    </header>
+
+    <main>
+        <article>
+            <h2>Single Neuron Activation</h2>
+            <p>Date Created: <time datetime="2024-15-06">June 15, 2024</time></p>
+            <p>Examine how a simple neuron interacts with different input given a variety of activation functions. Value of neuron and weights are illustrated from a gradient between red and blue.</p>
+            <a href="animations/Single_Neuron_Activation.html">Try Here</a>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+</html>
