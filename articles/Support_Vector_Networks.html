@@ -41,31 +41,31 @@
             <p>We discuss Quadratic and Linear Decision Functions, Mahalanobis Distance, The Universal Approximation Theorem, Optimal Hyperplanes, Lagrangian Multipliers, Karush-Kuhn-Tucker (KKT) Conditions, Slack Variables, Hilbert Spaces, the Kernel Trick, and Mercer’s Theorem</p>
             <p>A dataset can be non-linearly transformed into a higher-dimensional space and labeled using a hyperplane separation. This non-separable data can be classified using soft margins and polynomial kernels (CV95).</p>
             <p>Soft margins entail the introduction of slack variables for each data point to measure the magnitude of misclassification. We aim to maximize the margin’s width while minimizing misclassification to attain the optimal tradeoff between generalization and error. Let \( w \) be the weight vector, \( b \) be the bias term, and \( C \) be the regularization parameter for this tradeoff. A soft margin should be constructed such that,</p>
-            <p>\( \min \frac{1}{2} \|w\|^2 + C \sum_{i=1}^{n} \xi_i \)</p>
+            <p style="text-align: center;">\( \min \frac{1}{2} \|w\|^2 + C \sum_{i=1}^{n} \xi_i \)</p>
             <p>A polynomial kernel is a function that enables the algorithm to perform non-linear classification by mapping input vectors into a higher-dimensional space where linear separation is possible. The polynomial kernel is expressed as,</p>
-            <p>\( K(x, z) = (x^T z + c)^d \)</p>
+            <p style="text-align: center;">\( K(x, z) = (x^T z + c)^d \)</p>
 
             <h3>Introduction</h3>
             <p>They reference Fisher’s discriminant recognition for a quadratic decision function. Here, \( N(m_1, \Sigma_1) \) and \( N(m_2, \Sigma_2) \) are two normally distributed populations with means \( m_1 \) and \( m_2 \) and covariances \( \Sigma_1 \) and \( \Sigma_2 \). Let’s plot these distributions about two centers, -1 and +1 in MATLAB:</p>
             <img src="../files/img/figures/a02/a02-f01.jpg" alt="Normal Distributions about Two Centers" class="figure">
             <p>Cortes and Vapnik reference that the Bayesian solution to this decision can be described using a quadratic decision function:</p>
              <img src="../files/img/figures/a02/a02-f02.jpg" alt="Quadratic Decision Surface" class="figure">
-            <p>\( F_{sq}(x) = \text{sign} \left( \frac{1}{2} (x - m_1)^T \Sigma_1^{-1} (x - m_1) - \frac{1}{2} (x - m_2)^T \Sigma_2^{-1} (x - m_2) + \ln \frac{|\Sigma_2|}{|\Sigma_1|} \right) \)</p>
+            <p style="text-align: center;">\( F_{sq}(x) = \text{sign} \left( \frac{1}{2} (x - m_1)^T \Sigma_1^{-1} (x - m_1) - \frac{1}{2} (x - m_2)^T \Sigma_2^{-1} (x - m_2) + \ln \frac{|\Sigma_2|}{|\Sigma_1|} \right) \)</p>
             <p>In the context of Gaussian distributions, the Mahalanobis distance is shown as the exponent of the PDF of a normal distribution \( p(x) \)</p>
-            <p>\( P(x) = \frac{1}{(2\pi)^{k/2} |\Sigma|^{1/2}} \exp \left( -\frac{1}{2} (x - m)^T \Sigma^{-1} (x - m) \right) \)</p>
+            <p style="text-align: center;">\( P(x) = \frac{1}{(2\pi)^{k/2} |\Sigma|^{1/2}} \exp \left( -\frac{1}{2} (x - m)^T \Sigma^{-1} (x - m) \right) \)</p>
             <p>The first term, \( \frac{1}{2} (x - m_1)^T \Sigma_1^{-1} (x - m_1) \), represents the Mahalanobis distance of the point \( x \) from the mean \( m_1 \) given covariance matrix \( \Sigma_1 \).</p>
             <p>The second term, \( -\frac{1}{2} (x - m_2)^T \Sigma_2^{-1} (x - m_2) \), represents the negative Mahalanobis distance of the point \( x \) from the mean \( m_2 \), given covariance matrix \( \Sigma_2 \).</p>
             <p>The last term, \( \ln \frac{|\Sigma_2|}{|\Sigma_1|} \), adjusts for the difference in spreads of the two distributions.</p>
             <img src="../files/img/figures/a02/a02-f03.jpg" alt="Before and After Figure of Spread Adjustment" class="figure">
             <p>The authors then consider the case when \( \Sigma_1 = \Sigma_2 \), which degenerates to a linear decision function:</p>
-            <p>\( F_{lin}(x) = \text{sign} \left( (m_1 - m_2)^T \Sigma^{-1} x - \frac{1}{2} (m_1^T \Sigma^{-1} m_1 - m_2^T \Sigma^{-1} m_2) \right) \)</p>
+            <p style="text-align: center;">\( F_{lin}(x) = \text{sign} \left( (m_1 - m_2)^T \Sigma^{-1} x - \frac{1}{2} (m_1^T \Sigma^{-1} m_1 - m_2^T \Sigma^{-1} m_2) \right) \)</p>
             <p>Projection onto Discriminant Axis: The first term, \( (m_1 - m_2)^T \Sigma^{-1} x \), projects the data point \( x \) onto a direction that maximizes the separation between two classes.</p>
             <p>Decision Threshold: The second term, \( -\frac{1}{2} (m_1^T \Sigma^{-1} m_1 - m_2^T \Sigma^{-1} m_2) \), adjusts the boundary to consider the means given a common covariance.</p>
             <img src="../files/img/figures/a02/a02-f04.jpg" alt="Linear Decision Surface" class="figure">
             <p>Due to the computational complexity of the quadratic algorithm, Fisher advises to use the linear decision function such that:</p>
-            <p>\( \Sigma = \tau \Sigma_1 + (1 - \tau) \Sigma_2, \quad \tau \in [0, 1] \)</p>
+            <p style="text-align: center;">\( \Sigma = \tau \Sigma_1 + (1 - \tau) \Sigma_2, \quad \tau \in [0, 1] \)</p>
             <p>The authors then mention Rosenblatt’s Perceptron, where each neuron implements a separating hyperplane. A perceptron is a type of neural network consisting of an input layer and an output neuron. Each input is connected to the output neuron by a weight, and then the perceptron computes a weighted sum and activation to decide the output. Mathematically, this is just,</p>
-            <p>\( I(x) = \text{sign} \left( \sum_j w_j x_j \right) \)</p>
+            <p style="text-align: center;">\( I(x) = \text{sign} \left( \sum_j w_j x_j \right) \)</p>
             <p>The big picture here is that our nonlinear activation functions, when combined with a sufficiently deep and wide network, can approximate any continuous function. This is known as the Universal Approximation Theorem.</p>
             <p>The authors then provide an example of obtaining a feature space via adding polynomial features as a way of dimensionality expansion. They continue with two major concerns:</p>
             <ol>
@@ -74,105 +74,105 @@
             </ol>
             <p>To answer the first question, the authors reference Vapnik’s work on optimal hyperplanes, where they determine the maximal margin between the vectors of the two classes using support vectors. Support vectors lie on the margin boundaries and are closest to the hyperplane. Since the best hyperplane maximizes the margin between each set of points, these support vectors are crucial in generalization.</p>
             <p>The expected probability of an error on unseen data is bounded by the ratio of the expected number of support vectors to the number of training vectors. A smaller ratio leads to better generalization at the risk of underfitting. In practice, I’ve been able to get away with very few support vectors before underfitting occurs. This is described as:</p>
-            <p>\( E[Pr(error)] \leq E\left[ \frac{\text{number of support vectors}}{\text{number of training vectors}} \right] \)</p>
+            <p style="text-align: center;">\( E[Pr(error)] \leq E\left[ \frac{\text{number of support vectors}}{\text{number of training vectors}} \right] \)</p>
             <p>The authors then establish the optimal hyperplane in feature space as,</p>
-            <p>\( w_0 \cdot z + b_0 = 0 \)</p>
+            <p style="text-align: center;">\( w_0 \cdot z + b_0 = 0 \)</p>
             <p>As mentioned, the weights for the hyperplane can be described as,</p>
-            <p>\( w_0 = \sum_{\text{support vectors}} w_j x_j \)</p>
+            <p style="text-align: center;">\( w_0 = \sum_{\text{support vectors}} w_j x_j \)</p>
             <p>We can then simply expand our equation for the optimal hyperplane,</p>
-            <p>\( \sum_{\text{support vectors}} w_j x_j \cdot z + b_0 = 0 \)</p>
+            <p style="text-align: center;">\( \sum_{\text{support vectors}} w_j x_j \cdot z + b_0 = 0 \)</p>
             <p>Which in turn implies that our linear decision function is,</p>
-            <p>\( I(x) = \text{sign} \left( \sum_{\text{support vectors}} w_j x_j \cdot z + b_0 \right) \)</p>
+            <p style="text-align: center;">\( I(x) = \text{sign} \left( \sum_{\text{support vectors}} w_j x_j \cdot z + b_0 \right) \)</p>
 
             <h3>Optimal Hyperplanes</h3>
             <p>The authors continue with a mathematical description of the set of labeled training patterns,</p>
-            <p>\( \{(y_1, x_1), ..., (y_l, x_l)\}, \quad y_i \in \{-1, 1\} \)</p>
+            <p style="text-align: center;">\( \{(y_1, x_1), ..., (y_l, x_l)\}, \quad y_i \in \{-1, 1\} \)</p>
             <p>Of which they define linear separability as,</p>
-            <p>\( w \cdot x_i + b \geq 1 \quad \text{if} \quad y_i = 1 \)</p>
-            <p>\( w \cdot x_i + b \leq -1 \quad \text{if} \quad y_i = -1 \)</p>
+            <p style="text-align: center;">\( w \cdot x_i + b \geq 1 \quad \text{if} \quad y_i = 1 \)</p>
+            <p style="text-align: center;">\( w \cdot x_i + b \leq -1 \quad \text{if} \quad y_i = -1 \)</p>
             <img src="../files/img/figures/a02/a02-f05.jpg" alt="Error/Complexity Tradeoff" class="figure">
             <p>Combining these inequalities yields,</p>
-            <p>\( y_i (w \cdot x_i + b) \geq 1, \quad i = 1, ..., l \)</p>
+            <p style="text-align: center;">\( y_i (w \cdot x_i + b) \geq 1, \quad i = 1, ..., l \)</p>
             <p>As mentioned, the distance between the projections of the training vectors of the two classes should be maximized,</p>
-            <p>\( \rho(w, b) = \frac{\min_{x : y=1} x \cdot w}{\|w\|} - \frac{\max_{x : y=-1} x \cdot w}{\|w\|} \)</p>
+            <p style="text-align: center;">\( \rho(w, b) = \frac{\min_{x : y=1} x \cdot w}{\|w\|} - \frac{\max_{x : y=-1} x \cdot w}{\|w\|} \)</p>
             <p>The normalized distance between two test points, \( x_1 \) and \( x_2 \), and our optimal hyperplane is just,</p>
-            <p>\( \rho(w, x) = \frac{|w \cdot (x_2 - x_1)|}{\|w\|} \)</p>
+            <p style="text-align: center;">\( \rho(w, x) = \frac{|w \cdot (x_2 - x_1)|}{\|w\|} \)</p>
             <p>For \( w \cdot x_1 + b = 1 \), \( w \cdot x_i = 1 - b \)</p>
             <p>For \( w \cdot x_2 + b = -1 \), \( w \cdot x_i = -1 - b \)</p>
             <p>And so,</p>
-            <p>\( \rho(w) = \frac{|w \cdot (x_2 - x_1)|}{\|w\|} = \frac{|w \cdot x_2 - w \cdot x_1|}{\|w\|} = \frac{2}{\|w\|} = \frac{2}{\|w_0\|} \)</p>
+            <p style="text-align: center;">\( \rho(w) = \frac{|w \cdot (x_2 - x_1)|}{\|w\|} = \frac{|w \cdot x_2 - w \cdot x_1|}{\|w\|} = \frac{2}{\|w\|} = \frac{2}{\|w_0\|} \)</p>
             <p>The authors choose to formulate the optimal weight in terms of Lagrangian multipliers. Given a vector of Lagrangian multipliers as parameters, \( \Lambda_0 = (\alpha_0, ..., \alpha_l) \), they formulate this optimal weight vector.</p>
-            <p>\( w_0 = \sum_{i=1}^l \alpha_i^0 y_i x_i \)</p>
+            <p style="text-align: center;">\( w_0 = \sum_{i=1}^l \alpha_i^0 y_i x_i \)</p>
             <p>I’ll review the concept of Lagrangian Multipliers here, so feel free to skim to the authors formulation of \( D_{ij} \) if you’re well versed on the subject.</p>
             <p>Aside: Lagrangian Multipliers</p>
             <p>Suppose we want to find the maximum or minimum of a function \( f(x, y) \) subject to the constraint \( g(x, y) = 0 \). We can introduce a new variable called the Lagrange multiplier (often denoted by \( \lambda \) or in this case \( \alpha_0 \)) and construct a new function called the Lagrangian \( \mathcal{L} \):</p>
-            <p>\( \mathcal{L}(x, y, \alpha_0) = f(x, y) + \alpha_0 g(x, y) \)</p>
+            <p style="text-align: center;">\( \mathcal{L}(x, y, \alpha_0) = f(x, y) + \alpha_0 g(x, y) \)</p>
             <p>After forming our Lagrangian, we take the partials with respect to each variable:</p>
-            <p>\( \frac{\partial \mathcal{L}}{\partial x} = \frac{\partial f}{\partial x} + \alpha_0 \frac{\partial g}{\partial x} = 0 \)</p>
-            <p>\( \frac{\partial \mathcal{L}}{\partial y} = \frac{\partial f}{\partial y} + \alpha_0 \frac{\partial g}{\partial y} = 0 \)</p>
-            <p>\( \frac{\partial \mathcal{L}}{\partial \alpha_0} = g(x, y) = 0 \)</p>
+            <p style="text-align: center;">\( \frac{\partial \mathcal{L}}{\partial x} = \frac{\partial f}{\partial x} + \alpha_0 \frac{\partial g}{\partial x} = 0 \)</p>
+            <p style="text-align: center;">\( \frac{\partial \mathcal{L}}{\partial y} = \frac{\partial f}{\partial y} + \alpha_0 \frac{\partial g}{\partial y} = 0 \)</p>
+            <p style="text-align: center;">\( \frac{\partial \mathcal{L}}{\partial \alpha_0} = g(x, y) = 0 \)</p>
             <p>Of which we simply solve the system of equations to find \( x, y, \alpha_0 \).</p>
             <p>Let’s illustrate this with an example. Consider the optimization problem:</p>
-            <p>\( \max_{(x, y)} f(x, y) \) subject to \( g(x, y) = 0 \) such that \( f(x, y) = xy, g(x, y) = x^2 + y^2 - 1 \)</p>
+            <p style="text-align: center;">\( \max_{(x, y)} f(x, y) \) subject to \( g(x, y) = 0 \) such that \( f(x, y) = xy, g(x, y) = x^2 + y^2 - 1 \)</p>
             <p>Our Lagrangian becomes:</p>
-            <p>\( \mathcal{L}(x, y, \alpha_0) = xy + \alpha_0 (x^2 + y^2 - 1) \)</p>
+            <p style="text-align: center;">\( \mathcal{L}(x, y, \alpha_0) = xy + \alpha_0 (x^2 + y^2 - 1) \)</p>
             <p>And our partials become:</p>
-            <p>\( \frac{\partial \mathcal{L}}{\partial x} = y + 2\alpha_0 x = 0 \)</p>
-            <p>\( \frac{\partial \mathcal{L}}{\partial y} = x + 2\alpha_0 y = 0 \)</p>
-            <p>\( \frac{\partial \mathcal{L}}{\partial \alpha_0} = x^2 + y^2 - 1 = 0 \)</p>
+            <p style="text-align: center;">\( \frac{\partial \mathcal{L}}{\partial x} = y + 2\alpha_0 x = 0 \)</p>
+            <p style="text-align: center;">\( \frac{\partial \mathcal{L}}{\partial y} = x + 2\alpha_0 y = 0 \)</p>
+            <p style="text-align: center;">\( \frac{\partial \mathcal{L}}{\partial \alpha_0} = x^2 + y^2 - 1 = 0 \)</p>
             <p>Via algebraic simplification, we obtain the optimal \( (x, y) = (\frac{1}{2}, -\frac{1}{2}) \cup (-\frac{1}{2}, \frac{1}{2}) \)</p>
             <p>Let’s consider a slightly more involved problem. Suppose we want to minimize a function \( f(x) \) subject to both equality constraints \( g_i(x) = 0 \) and inequality constraints \( h_j(x) \leq 0 \). Instead of just one Lagrange multiplier, we introduce two sets of multipliers, \( \alpha_i^0 \in \Lambda \) and \( \mu_j \in M \) (one for each constraint). Our Lagrangian becomes, \( \mathcal{L} \)</p>
-            <p>\( \mathcal{L}(x, \alpha_i^0, \mu_j) = f(x) + \sum_{i=1}^m \alpha_i^0 g_i(x) + \sum_{j=1}^p \mu_j h_j(x) \)</p>
+            <p style="text-align: center;">\( \mathcal{L}(x, \alpha_i^0, \mu_j) = f(x) + \sum_{i=1}^m \alpha_i^0 g_i(x) + \sum_{j=1}^p \mu_j h_j(x) \)</p>
             <p>The Karush-Kuhn-Tucker (KKT) conditions are a set of equations and inequalities that define an optimal Lagrangian solution. There are four conditions:</p>
             <ol>
                 <li>Stationarity: The gradient of the Lagrangian with respect to its solution variable(s) must be zero,</li>
-                <p>\( \nabla_x \mathcal{L}(x, \alpha_0, \mu) = \nabla_x f(x) + \sum_{i=1}^m \alpha_i^0 \nabla_x g_i(x) + \sum_{j=1}^p \mu_j \nabla_x h_j(x) = 0 \)</p>
+                <p style="text-align: center;">\( \nabla_x \mathcal{L}(x, \alpha_0, \mu) = \nabla_x f(x) + \sum_{i=1}^m \alpha_i^0 \nabla_x g_i(x) + \sum_{j=1}^p \mu_j \nabla_x h_j(x) = 0 \)</p>
                 <li>Primal Feasibility: The optimization problem must hold the constraints posed above,</li>
-                <p>\( g_i(x) = 0 \quad \forall i \in [1, m], \quad h_j(x) \leq 0 \quad \forall j \in [1, p] \)</p>
+                <p style="text-align: center;">\( g_i(x) = 0 \quad \forall i \in [1, m], \quad h_j(x) \leq 0 \quad \forall j \in [1, p] \)</p>
                 <li>Dual Feasibility: The Lagrange multipliers for the inequality constraints must be non-negative,</li>
-                <p>\( \mu_j \geq 0 \quad \forall j \in [1, p] \)</p>
+                <p style="text-align: center;">\( \mu_j \geq 0 \quad \forall j \in [1, p] \)</p>
                 <li>Complementary Slackness: For each inequality constraint, the product of the Lagrange multiplier \( \mu_j \) and the constraint \( h_j(x) \) must be zero.</li>
-                <p>\( \mu_j h_j(x) = 0 \quad \forall j \in [1, p] \)</p>
+                <p style="text-align: center;">\( \mu_j h_j(x) = 0 \quad \forall j \in [1, p] \)</p>
             </ol>
             <p>Again, let’s illustrate this with an example similar to the one above:</p>
-            <p>\( \min_{(x, y)} f(x, y) \) subject to \( g(x, y) = 0 \) and \( h(x, y) \leq 0 \) such that \( f(x, y) = x^2 + y^2, g(x, y) = x + y - 1, h(x, y) = x - 1 \)</p>
+            <p style="text-align: center;">\( \min_{(x, y)} f(x, y) \) subject to \( g(x, y) = 0 \) and \( h(x, y) \leq 0 \) such that \( f(x, y) = x^2 + y^2, g(x, y) = x + y - 1, h(x, y) = x - 1 \)</p>
             <p>Our Lagrangian becomes:</p>
-            <p>\( \mathcal{L}(x, y, \alpha_0, \mu) = x^2 + y^2 + \alpha_0 (x + y - 1) + \mu (x - 1) \)</p>
+            <p style="text-align: center;">\( \mathcal{L}(x, y, \alpha_0, \mu) = x^2 + y^2 + \alpha_0 (x + y - 1) + \mu (x - 1) \)</p>
             <p>From here, compute the partial derivatives with respect to \( x, y, \alpha_0, \mu \) and set to zero. Using the other four equations posed by the KKT conditions, you can algebraically find a solution such that \( (x, y) = (\frac{1}{2}, \frac{1}{2}) \).</p>
             <p>We now need to find a way to capture the interactions between all pairs of training samples. We want to combine the similarity of feature vectors with the interaction of their class labels. Particularly,</p>
-            <p>\( D_{ij} = y_i y_j x_i \cdot x_j \)</p>
+            <p style="text-align: center;">\( D_{ij} = y_i y_j x_i \cdot x_j \)</p>
             <p>Intuitively, this formulation makes sense because when the labels are different \( y_i y_j = -1 \) and when the labels are the same, \( y_i y_j = 1 \), whereas the dot product measures similarity.</p>
             <p>Now it is advisable to maximize the sum of the Lagrange multipliers, while capturing the weighted pairwise interactions. The sum of Lagrangian multipliers can be expressed as,</p>
-            <p>\( \Lambda^T 1 = \sum_{i=1}^l \alpha_i \)</p>
+            <p style="text-align: center;">\( \Lambda^T 1 = \sum_{i=1}^l \alpha_i \)</p>
             <p>We also need to represent the quadratic form of the interactions between the Lagrange multipliers to penalize high values of \( \alpha_i \), promote sparsity, and maximize the margin. We also need to include a coefficient of \( \frac{1}{2} \) to avoid double counting. Thus,</p>
-            <p>\( -\frac{1}{2} \Lambda^T D \Lambda = -\frac{1}{2} \sum_{i=1}^l \sum_{j=1}^l \alpha_i \alpha_j D_{ij} \)</p>
+            <p style="text-align: center;">\( -\frac{1}{2} \Lambda^T D \Lambda = -\frac{1}{2} \sum_{i=1}^l \sum_{j=1}^l \alpha_i \alpha_j D_{ij} \)</p>
             <p>Our convex optimization problem then becomes,</p>
-            <p>\( \max_{\alpha_i, \alpha_j \in \Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda \right) = \max_{\alpha_i, \alpha_j \in \Lambda} \left( \sum_{i=1}^l \alpha_i - \frac{1}{2} \sum_{i=1}^l \sum_{j=1}^l \alpha_i \alpha_j y_i y_j x_i \cdot x_j \right) \)</p>
+            <p style="text-align: center;">\( \max_{\alpha_i, \alpha_j \in \Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda \right) = \max_{\alpha_i, \alpha_j \in \Lambda} \left( \sum_{i=1}^l \alpha_i - \frac{1}{2} \sum_{i=1}^l \sum_{j=1}^l \alpha_i \alpha_j y_i y_j x_i \cdot x_j \right) \)</p>
             <p>The authors then note the constraints to our problem. Each Lagrange multiplier corresponds to a training vector and represents the influence that vector has on the position and orientation of the optimal hyperplane. A positive means that the corresponding vector is a support vector or a margin violation (of which is later explained). The non-negativity constraint of the Lagrange multiplier ensures the nature of the maximization is possible,</p>
-            <p>\( \Lambda > 0 \)</p>
+            <p style="text-align: center;">\( \Lambda > 0 \)</p>
             <p>To ensure the optimal hyperplane is not biased towards one class, we must exert a constraint that ensures a balance between the influence exerted by positive and negative labels on the decision boundary. In other words,</p>
-            <p>\( \Lambda^T Y = \sum_{i=1}^n \alpha_i^0 y_i = 0 \)</p>
+            <p style="text-align: center;">\( \Lambda^T Y = \sum_{i=1}^n \alpha_i^0 y_i = 0 \)</p>
             <p>Since \( W(\Lambda_0) = \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda = \sum_{i=1}^l \alpha_i - \frac{1}{2} \sum_{i=1}^l \sum_{j=1}^l \alpha_i \alpha_j y_i y_j x_i \cdot x_j \), they obtain the insight that the maximum of the functional can be derived from the maximum margin.</p>
-            <p>\( W(\Lambda_0) = \frac{w_0 \cdot w_0}{2} = \frac{2}{\rho_0^2} \)</p>
+            <p style="text-align: center;">\( W(\Lambda_0) = \frac{w_0 \cdot w_0}{2} = \frac{2}{\rho_0^2} \)</p>
             <p>Furthermore, the inequality holds for a large \( W_0 \) so that the model is both optimal and generalizable,</p>
-            <p>\( W(\Lambda^*) > W_0 \)</p>
+            <p style="text-align: center;">\( W(\Lambda^*) > W_0 \)</p>
             <p>Algebraically, we can also see that all hyperplanes that separate the training data have a margin,</p>
-            <p>\( \rho > \frac{2}{W_0} \)</p>
+            <p style="text-align: center;">\( \rho > \frac{2}{W_0} \)</p>
             <p>The basic pseudocode for maximizing the functional is described as:</p>
             <p>Initialize \( \Lambda^* \) to an empty vector</p>
             <p>Initialize \( W_0 \) to a large constant</p>
             <p>Divide training data into portions with a small number of training vectors</p>
             <p>For each portion of training data:</p>
-            <p>Solve quadratic problem to determine hyperplane</p>
-            <p>Let \( \Lambda_i \) be the vector that maximizes the functional</p>
-            <p>For all coordinates of \( \Lambda_i \):</p>
-            <p>If \( \Lambda_i = 0 \):</p>
-            <p>Remove non-support training vectors corresponding to \( \Lambda_i \)</p>
-            <p>Create a new set of training data with support vectors \( T_i \)</p>
-            <p>Add vectors that do not satisfy \( y_i (w \cdot x_i + b) \geq 1 \) to \( T_i \)</p>
-            <p>Construct new functional and maximize to find \( W_i(\Lambda) \) \( \Lambda_{i+1} \)</p>
-            <p>If \( W_i(\Lambda) > W_0 \)</p>
-            <p>\( \Lambda^* = \Lambda_{i+1} \)</p>
+            <p>    Solve quadratic problem to determine hyperplane</p>
+            <p>    Let \( \Lambda_i \) be the vector that maximizes the functional</p>
+            <p>    For all coordinates of \( \Lambda_i \):</p>
+            <p>        If \( \Lambda_i = 0 \):</p>
+            <p>            Remove non-support training vectors corresponding to \( \Lambda_i \)</p>
+            <p>        Create a new set of training data with support vectors \( T_i \)</p>
+            <p>        Add vectors that do not satisfy \( y_i (w \cdot x_i + b) \geq 1 \) to \( T_i \)</p>
+            <p>        Construct new functional and maximize to find \( W_i(\Lambda) \) \( \Lambda_{i+1} \)</p>
+            <p>        If \( W_i(\Lambda) > W_0 \)</p>
+            <p>            \( \Lambda^* = \Lambda_{i+1} \)</p>
 
             <h3>The Soft Margin Hyperplane</h3>
             <p>Similar to what I did with Lagrangian multipliers, I’m going to review slack variables before diving into this section. If you’re proficient in this technique, feel free to skim.</p>
@@ -181,44 +181,44 @@
             <p>In convex optimization, constraints generally involve inequalities, such as \( g(x) \leq 0 \). We can then introduce a slack variable to rewrite the constraint as \( \xi \geq 0, g(x) + \xi = 0 \). This can be particularly useful in the interior-point method, where all constraints need to be strictly feasible, that is all inequalities need to be held as marginal equalities.</p>
             <p>We’ve already used slack variables in our formulation of the KKT conditions, particularly in that of primal feasibility and complementary slackness.</p>
             <p>Recall that the margin was derived to be \( \rho(w) = \frac{2}{\|w\|} \). In turn, maximizing the margin entails minimizing the weights. To make this optimization problem quadratic, we aim to,</p>
-            <p>\( \min_{w, b} \frac{1}{2} \|w\|^2 \)</p>
+            <p style="text-align: center;">\( \min_{w, b} \frac{1}{2} \|w\|^2 \)</p>
             <p>Now it’s time to incorporate the slack variables to allow a margin of separation error. Let there be a regularization parameter \( C \) that controls the trade-off between maximizing the margin and minimizing the classification error.</p>
             <p>In the case when training data cannot be separated without errors, we aim to minimize the functional given a regularization parameter,</p>
-            <p>\( \Phi(\xi) = C \sum_{i=1}^l \xi_i^0 \)</p>
+            <p style="text-align: center;">\( \Phi(\xi) = C \sum_{i=1}^l \xi_i^0 \)</p>
             <p>Which in turn yields the minimal subset of training errors. To ensure optimization feasibility and proper penalization of slack variables, we must add a monotonic convex function \( F(u) \) in minimizing our functional.</p>
             <p>Recall that a monotonic convex function has two properties:</p>
             <ol>
                 <li>Convexity: Any line segment connecting two points on the function lies above or on that function, that is,</li>
-                <p>\( F(\lambda x + (1 - \lambda) y) \leq \lambda F(x) + (1 - \lambda) F(y) \quad \forall x, y \in \mathbb{R}^n, \lambda \in [0, 1] \)</p>
+                <p style="text-align: center;">\( F(\lambda x + (1 - \lambda) y) \leq \lambda F(x) + (1 - \lambda) F(y) \quad \forall x, y \in \mathbb{R}^n, \lambda \in [0, 1] \)</p>
                 <li>Monotonicity: The function either increases or decreases as the input increases, but not both. In other words,</li>
-                <p>\( x \leq y \Rightarrow F(x) \leq F(y) \quad \text{or} \quad x \leq y \Rightarrow F(x) \geq F(y) \quad \forall x, y \in \mathbb{R}^n \)</p>
+                <p style="text-align: center;">\( x \leq y \Rightarrow F(x) \leq F(y) \quad \text{or} \quad x \leq y \Rightarrow F(x) \geq F(y) \quad \forall x, y \in \mathbb{R}^n \)</p>
             </ol>
             <p>The authors choose the case of \( F(u) = u^2 \) for mathematical simplicity. Thus, the full quadratic optimization problem can be posed as,</p>
-            <p>\( \min_{w, b, \xi} \frac{1}{2} \|w\|^2 + C \sum_{i=1}^l \xi_i^0 \)</p>
+            <p style="text-align: center;">\( \min_{w, b, \xi} \frac{1}{2} \|w\|^2 + C \sum_{i=1}^l \xi_i^0 \)</p>
             <p>Subject to,</p>
-            <p>\( y_i (w \cdot x_i + b) \geq 1 - \xi_i \quad \forall i \in [1, l], \quad \xi_i \geq 0 \quad \forall i \in [1, l] \)</p>
+            <p style="text-align: center;">\( y_i (w \cdot x_i + b) \geq 1 - \xi_i \quad \forall i \in [1, l], \quad \xi_i \geq 0 \quad \forall i \in [1, l] \)</p>
             <p>Thus, the dual form of the Support Vector Machine (SVM) objective function has been established. Let’s go back to the original maximization problem, where,</p>
-            <p>\( \max_{\Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda \right) \)</p>
+            <p style="text-align: center;">\( \max_{\Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda \right) \)</p>
             <p>Let the smallest admissible value of the functional be \( \delta \)</p>
-            <p>\( \delta = \alpha_{\text{max}} = \max (\alpha_1, ..., \alpha_l) \)</p>
+            <p style="text-align: center;">\( \delta = \alpha_{\text{max}} = \max (\alpha_1, ..., \alpha_l) \)</p>
             <p>We want to add a term to our maximization problem that regularizes the influence of Lagrange multipliers and accounts for the soft margin by controlling the misclassification error. The authors in turn add a term to the primal problem. The full primal maximization becomes:</p>
-            <p>\( \max_{\Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda + \frac{\delta^2}{C} \right) = \max_{\Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda + \frac{\alpha_{\text{max}}^2}{C} \right) \)</p>
+            <p style="text-align: center;">\( \max_{\Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda + \frac{\delta^2}{C} \right) = \max_{\Lambda} \left( \Lambda^T 1 - \frac{1}{2} \Lambda^T D \Lambda + \frac{\alpha_{\text{max}}^2}{C} \right) \)</p>
             <p>Subject to,</p>
-            <p>\( \Lambda^T Y = 0, \quad \delta \geq 0, \quad 0 \leq \Lambda \leq \delta 1 \)</p>
+            <p style="text-align: center;">\( \Lambda^T Y = 0, \quad \delta \geq 0, \quad 0 \leq \Lambda \leq \delta 1 \)</p>
             <p>The first constraint ensures that the contribution of both classes to the decision boundary is unbiased. The second constraint ensures that the upper bound on the Lagrange multipliers is non-negative for decision boundary contribution. The last constraint ensures that each Lagrange multiplier lies in a specified range, which in turn implies \( \delta \leq C \)</p>
             <p>The authors mention the insight that the problem of “constructing the soft margin classifier is unique and exists for any dataset” (CV95).</p>
 
             <h3>Convolution of the Dot-Product in Feature Space</h3>
             <p>The authors explain that the hyperplane should be constructed in the feature space rather than the input space, and so we should transform the input vector \( x \) into a feature vector using a vector function \( \phi \). That is,</p>
-            <p>\( \phi: \mathbb{R}^n \to \mathbb{R}^N \)</p>
+            <p style="text-align: center;">\( \phi: \mathbb{R}^n \to \mathbb{R}^N \)</p>
             <p>Which yields the transformed vectors,</p>
-            <p>\( \phi(x_i) = (\phi_1(x_i), \phi_2(x_i), ..., \phi_N(x_i)), \quad i \in [1, l] \)</p>
+            <p style="text-align: center;">\( \phi(x_i) = (\phi_1(x_i), \phi_2(x_i), ..., \phi_N(x_i)), \quad i \in [1, l] \)</p>
             <p>With hyperplanes:</p>
-            <p>\( f(x) = w \cdot \phi(x) + b </p>
+            <p style="text-align: center;">\( f(x) = w \cdot \phi(x) + b \)</p>
             <p>Similar to that of the input vector hyperplane analysis, the weight vectors can be written as a linear combination of support vectors,</p>
-            <p>\( w = \sum_{i=1}^l y_i \alpha_i \phi(x_i) \)</p>
+            <p style="text-align: center;">\( w = \sum_{i=1}^l y_i \alpha_i \phi(x_i) \)</p>
             <p>We can then expand the classification function,</p>
-            <p>\( f(x) = \sum_{i=1}^l y_i \alpha_i \phi(x_i) \cdot \phi(x) + b \)</p>
+            <p style="text-align: center;">\( f(x) = \sum_{i=1}^l y_i \alpha_i \phi(x_i) \cdot \phi(x) + b \)</p>
             <p>While brief, the authors mention that the construction of support-vector networks comes from the general forms of the dot-product in a Hilbert Space. At its core, this is one of the most important realizations in machine learning and is referred to as the Kernel Trick.</p>
             <p>Similar to what I did with Lagrange Multipliers and Slack Variables, I’d like to expand a bit on what Hilbert Spaces really are. For those who are proficient, feel free to skim.</p>
             <p>Aside: Hilbert Spaces</p>
@@ -226,42 +226,42 @@
             <p>We can think of the inner product on a vector space \( V \langle \cdot, \cdot \rangle \) as a function that measures similarity between two vectors. The inner product must hold the following properties:</p>
             <ol>
                 <li>Linearity in the First Argument: The inner product must respect addition and scalar multiplication when applied to the first vector. In other words,</li>
-                <p>\( \langle \alpha u + v, w \rangle = \alpha \langle u, w \rangle + \langle v, w \rangle \)</p>
+                <p style="text-align: center;">\( \langle \alpha u + v, w \rangle = \alpha \langle u, w \rangle + \langle v, w \rangle \)</p>
                 <li>Conjugate Symmetry: The inner product of two vectors is the same if you swap the vectors, but you need to take the complex conjugate if you are working with complex numbers. That is,</li>
-                <p>\( \langle u, v \rangle = \langle v, u \rangle \)</p>
+                <p style="text-align: center;">\( \langle u, v \rangle = \langle v, u \rangle \)</p>
                 <li>Positive Definiteness: The inner product of a vector with itself is always a non-negative number and only zero if the vector itself is the zero vector (no length). So,</li>
-                <p>\( \langle u, v \rangle \geq 0, \langle u, u \rangle = 0 \text{ iff } u = 0 \)</p>
+                <p style="text-align: center;">\( \langle u, v \rangle \geq 0, \langle u, u \rangle = 0 \text{ iff } u = 0 \)</p>
             </ol>
             <p>Let’s discuss completeness now. In a Hilbert space, the length (or norm) of a vector is given by the square root of the inner product of the vector with itself, thereby measuring how big the vector is,</p>
-            <p>\( \|x\| = \sqrt{\langle x, x \rangle} \)</p>
+            <p style="text-align: center;">\( \|x\| = \sqrt{\langle x, x \rangle} \)</p>
             <p>Okay, so big deal? Well let’s consider a Cauchy sequence, of which is a sequence of vectors that get closer and closer to each other as you go further in the sequence. We define a Hilbert space to be complete if every Cauchy sequence of vectors converges to a limit that is also in the Hilbert space.</p>
             <p>Formally, a sequence is a Cauchy sequence if,</p>
-            <p>\( \forall \epsilon > 0, \exists N \in \mathbb{Z} \text{ s.t. } \forall m, n > N, \|x_m - x_n\| < \epsilon \)</p>
+            <p style="text-align: center;">\( \forall \epsilon > 0, \exists N \in \mathbb{Z} \text{ s.t. } \forall m, n > N, \|x_m - x_n\| < \epsilon \)</p>
             <p>Such a sequence converges if,</p>
-            <p>\( \lim_{n \to \infty} \|x_n - x\| = 0 \)</p>
+            <p style="text-align: center;">\( \lim_{n \to \infty} \|x_n - x\| = 0 \)</p>
             <p>We can now describe the Kernel function as the inner product of a Hilbert space,</p>
-            <p>\( K(u, v) = \phi(u) \cdot \phi(v) = \langle \phi(u), \phi(v) \rangle \)</p>
+            <p style="text-align: center;">\( K(u, v) = \phi(u) \cdot \phi(v) = \langle \phi(u), \phi(v) \rangle \)</p>
             <p>Such a Kernel function can be expanded using the eigendecomposition due to the property of conjugate symmetry (as revealed through Hilbert-Schmidt Theory).</p>
-            <p>\( K(u, v) = \sum_{i=1}^\infty \lambda_i \phi_i(u) \cdot \phi_i(v) \)</p>
+            <p style="text-align: center;">\( K(u, v) = \sum_{i=1}^\infty \lambda_i \phi_i(u) \cdot \phi_i(v) \)</p>
             <p>Resultantly, if you integrate the product of the kernel and the eigenfunction over \( u \), you get the eigenfunction multiplied by the eigenvalue \( \phi_i(v) \lambda_i \).</p>
-            <p>\( \int K(u, v) \phi_i(u) du = \lambda_i \phi_i(v) \)</p>
+            <p style="text-align: center;">\( \int K(u, v) \phi_i(u) du = \lambda_i \phi_i(v) \)</p>
             <p>The authors note that such eigenvalues must be positive semi-definite. If the kernel matrix has negative eigenvalues, it cannot be guaranteed to represent a valid inner product. Negative eigenvalues can also lead to non-convex optimization, leading to difficulties finding global extrema.</p>
             <p>Mercer’s Theorem gives us a rule to check if our kernel behaves properly in our higher-dimensional space and is positive semi-definite. If you can plug any reasonable function into the kernel and get a positive result when you integrate over all possible values of vector \( u \) and vector \( v \). It says,</p>
-            <p>\( \int \int K(u, v) g(u) g(v) dudv > 0 \)</p>
+            <p style="text-align: center;">\( \int \int K(u, v) g(u) g(v) dudv > 0 \)</p>
             <p>Such that,</p>
-            <p>\( \int g^2(u) du < \infty \)</p>
+            <p style="text-align: center;">\( \int g^2(u) du < \infty \)</p>
             <p>The authors provide a kernel that measures the similarity based on the distance between \( u \) and \( v \) with a parameter \( \sigma \), which controls the spread of the kernel. The following kernel can be seen as convolution because it integrates the information from the dot product (distance) and smooths it using the exponential function.</p>
-            <p>\( K(u, v) = \exp \left( -\frac{|u - v|}{\sigma} \right) \)</p>
+            <p style="text-align: center;">\( K(u, v) = \exp \left( -\frac{|u - v|}{\sigma} \right) \)</p>
             <p>Since a kernel can be given by any function satisfying Mercer’s Theorem, the authors choose to construct a polynomial classifier of degree \( d \),</p>
-            <p>\( K(u, v) = (u \cdot v + 1)^d \)</p>
+            <p style="text-align: center;">\( K(u, v) = (u \cdot v + 1)^d \)</p>
             <p>Resultantly, decision surface can be rewritten in terms of the kernel as,</p>
-            <p>\( f(x) = \sum_{i=1}^\infty y_i \alpha_i K(u, v) \)</p>
+            <p style="text-align: center;">\( f(x) = \sum_{i=1}^\infty y_i \alpha_i K(u, v) \)</p>
             <p>And the training sample interactions can be rewritten in a higher space using the kernel trick,</p>
-            <p>\( D_{ij} = y_i y_j K(u, v) \)</p>
+            <p style="text-align: center;">\( D_{ij} = y_i y_j K(u, v) \)</p>
             <p>The authors also note that Radial Basis Function machines of the form,</p>
-            <p>\( f(x) = \text{sign} \left( \sum_{i=1}^n \alpha_i \exp \left( -\frac{|x - x_i|^2}{\sigma^2} \right) \right) \)</p>
+            <p style="text-align: center;">\( f(x) = \text{sign} \left( \sum_{i=1}^n \alpha_i \exp \left( -\frac{|x - x_i|^2}{\sigma^2} \right) \)</p>
             <p>Can then be implemented using the kernel trick,</p>
-            <p>\( K(u, v) = \exp \left( -\frac{|x - x_i|^2}{\sigma^2} \right) \)</p>
+            <p style="text-align: center;">\( K(u, v) = \exp \left( -\frac{|x - x_i|^2}{\sigma^2} \right) \)</p>
 
             <h3>Experimental Analysis</h3>
             <p>The authors were able to achieve state-of-the-art performance (at the time) on the NIST Postal Service digit recognition dataset. They construct polynomials of degree 4 with a very small amount of support vectors (~165). They extend the idea of optimal hyperplanes to that which uses soft margin and show the efficiency of the kernel trick.</p>
@@ -275,3 +275,4 @@
     </footer>
 </body>
 </html>
+
