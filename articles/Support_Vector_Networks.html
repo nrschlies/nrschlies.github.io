@@ -47,21 +47,21 @@
 
             <h3>Introduction</h3>
             <p>They reference Fisher’s discriminant recognition for a quadratic decision function. Here, \( N(m_1, \Sigma_1) \) and \( N(m_2, \Sigma_2) \) are two normally distributed populations with means \( m_1 \) and \( m_2 \) and covariances \( \Sigma_1 \) and \( \Sigma_2 \). Let’s plot these distributions about two centers, -1 and +1 in MATLAB:</p>
-            <img src="../files/img/figures/a01/a02-f01.jpg" alt="Normal Distributions about Two Centers" class="figure">
+            <img src="../files/img/figures/a02/a02-f01.jpg" alt="Normal Distributions about Two Centers" class="figure">
             <p>Cortes and Vapnik reference that the Bayesian solution to this decision can be described using a quadratic decision function:</p>
-             <img src="../files/img/figures/a01/a01-f02.jpg" alt="Quadratic Decision Surface" class="figure">
+             <img src="../files/img/figures/a02/a02-f02.jpg" alt="Quadratic Decision Surface" class="figure">
             <p>\( F_{sq}(x) = \text{sign} \left( \frac{1}{2} (x - m_1)^T \Sigma_1^{-1} (x - m_1) - \frac{1}{2} (x - m_2)^T \Sigma_2^{-1} (x - m_2) + \ln \frac{|\Sigma_2|}{|\Sigma_1|} \right) \)</p>
             <p>In the context of Gaussian distributions, the Mahalanobis distance is shown as the exponent of the PDF of a normal distribution \( p(x) \)</p>
             <p>\( P(x) = \frac{1}{(2\pi)^{k/2} |\Sigma|^{1/2}} \exp \left( -\frac{1}{2} (x - m)^T \Sigma^{-1} (x - m) \right) \)</p>
             <p>The first term, \( \frac{1}{2} (x - m_1)^T \Sigma_1^{-1} (x - m_1) \), represents the Mahalanobis distance of the point \( x \) from the mean \( m_1 \) given covariance matrix \( \Sigma_1 \).</p>
             <p>The second term, \( -\frac{1}{2} (x - m_2)^T \Sigma_2^{-1} (x - m_2) \), represents the negative Mahalanobis distance of the point \( x \) from the mean \( m_2 \), given covariance matrix \( \Sigma_2 \).</p>
             <p>The last term, \( \ln \frac{|\Sigma_2|}{|\Sigma_1|} \), adjusts for the difference in spreads of the two distributions.</p>
-            <img src="../files/img/figures/a01/a01-f03.jpg" alt="Before and After Figure of Spread Adjustment" class="figure">
+            <img src="../files/img/figures/a02/a02-f03.jpg" alt="Before and After Figure of Spread Adjustment" class="figure">
             <p>The authors then consider the case when \( \Sigma_1 = \Sigma_2 \), which degenerates to a linear decision function:</p>
             <p>\( F_{lin}(x) = \text{sign} \left( (m_1 - m_2)^T \Sigma^{-1} x - \frac{1}{2} (m_1^T \Sigma^{-1} m_1 - m_2^T \Sigma^{-1} m_2) \right) \)</p>
             <p>Projection onto Discriminant Axis: The first term, \( (m_1 - m_2)^T \Sigma^{-1} x \), projects the data point \( x \) onto a direction that maximizes the separation between two classes.</p>
             <p>Decision Threshold: The second term, \( -\frac{1}{2} (m_1^T \Sigma^{-1} m_1 - m_2^T \Sigma^{-1} m_2) \), adjusts the boundary to consider the means given a common covariance.</p>
-            <img src="../files/img/figures/a01/a01-f04.jpg" alt="Linear Decision Surface" class="figure">
+            <img src="../files/img/figures/a02/a02-f04.jpg" alt="Linear Decision Surface" class="figure">
             <p>Due to the computational complexity of the quadratic algorithm, Fisher advises to use the linear decision function such that:</p>
             <p>\( \Sigma = \tau \Sigma_1 + (1 - \tau) \Sigma_2, \quad \tau \in [0, 1] \)</p>
             <p>The authors then mention Rosenblatt’s Perceptron, where each neuron implements a separating hyperplane. A perceptron is a type of neural network consisting of an input layer and an output neuron. Each input is connected to the output neuron by a weight, and then the perceptron computes a weighted sum and activation to decide the output. Mathematically, this is just,</p>
@@ -90,7 +90,7 @@
             <p>Of which they define linear separability as,</p>
             <p>\( w \cdot x_i + b \geq 1 \quad \text{if} \quad y_i = 1 \)</p>
             <p>\( w \cdot x_i + b \leq -1 \quad \text{if} \quad y_i = -1 \)</p>
-            <img src="../files/img/figures/a01/a01-f05.jpg" alt="Error/Complexity Tradeoff" class="figure">
+            <img src="../files/img/figures/a02/a02-f05.jpg" alt="Error/Complexity Tradeoff" class="figure">
             <p>Combining these inequalities yields,</p>
             <p>\( y_i (w \cdot x_i + b) \geq 1, \quad i = 1, ..., l \)</p>
             <p>As mentioned, the distance between the projections of the training vectors of the two classes should be maximized,</p>
