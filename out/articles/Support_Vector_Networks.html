@@ -163,16 +163,16 @@
             <p>Initialize \( W_0 \) to a large constant</p>
             <p>Divide training data into portions with a small number of training vectors</p>
             <p>For each portion of training data:</p>
-            <p>    Solve quadratic problem to determine hyperplane</p>
-            <p>    Let \( \Lambda_i \) be the vector that maximizes the functional</p>
-            <p>    For all coordinates of \( \Lambda_i \):</p>
-            <p>        If \( \Lambda_i = 0 \):</p>
-            <p>            Remove non-support training vectors corresponding to \( \Lambda_i \)</p>
-            <p>        Create a new set of training data with support vectors \( T_i \)</p>
-            <p>        Add vectors that do not satisfy \( y_i (w \cdot x_i + b) \geq 1 \) to \( T_i \)</p>
-            <p>        Construct new functional and maximize to find \( W_i(\Lambda) \) \( \Lambda_{i+1} \)</p>
-            <p>        If \( W_i(\Lambda) > W_0 \)</p>
-            <p>            \( \Lambda^* = \Lambda_{i+1} \)</p>
+            <p>&emsp Solve quadratic problem to determine hyperplane</p>
+            <p>&emsp Let \( \Lambda_i \) be the vector that maximizes the functional</p>
+            <p>&emsp For all coordinates of \( \Lambda_i \):</p>
+            <p>&emsp &emsp If \( \Lambda_i = 0 \):</p>
+            <p>&emsp &emsp &emsp Remove non-support training vectors corresponding to \( \Lambda_i \)</p>
+            <p>&emsp &emsp Create a new set of training data with support vectors \( T_i \)</p>
+            <p>&emsp &emsp Add vectors that do not satisfy \( y_i (w \cdot x_i + b) \geq 1 \) to \( T_i \)</p>
+            <p>&emsp &emsp </p>Construct new functional and maximize to find \( W_i(\Lambda) \) \( \Lambda_{i+1} \)</p>
+            <p>&emsp &emsp If \( W_i(\Lambda) > W_0 \)</p>
+            <p>&emsp &emsp &emsp \( \Lambda^* = \Lambda_{i+1} \)</p>
 
             <h3>The Soft Margin Hyperplane</h3>
             <p>Similar to what I did with Lagrangian multipliers, I’m going to review slack variables before diving into this section. If you’re proficient in this technique, feel free to skim.</p>
@@ -259,7 +259,7 @@
             <p>And the training sample interactions can be rewritten in a higher space using the kernel trick,</p>
             <p style="text-align: center;">\( D_{ij} = y_i y_j K(u, v) \)</p>
             <p>The authors also note that Radial Basis Function machines of the form,</p>
-            <p style="text-align: center;">\( f(x) = \text{sign} \left( \sum_{i=1}^n \alpha_i \exp \left( -\frac{|x - x_i|^2}{\sigma^2} \right) \)</p>
+            <p style="text-align: center;">\( f(x) = \text{sign} \left( \sum_{i=1}^n \alpha_i \exp \left( -\frac{|x - x_i|^2}{\sigma^2} \right) \right) \)</p>
             <p>Can then be implemented using the kernel trick,</p>
             <p style="text-align: center;">\( K(u, v) = \exp \left( -\frac{|x - x_i|^2}{\sigma^2} \right) \)</p>
 
