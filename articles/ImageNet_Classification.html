@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Attention: ImageNet Classification</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+        <!-- <a href="../contact.html">Contact Me</a> TODO: Fix firebase -->
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+
+    <main>
+        <article>
+            <h2>ImageNet Classification</h2>
+            <h3>Annotated by: <strong>Noah Schliesman</strong></h3>
+            <p>Published on: <time datetime="2012-01-01">January 1, 2012</time> by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton</p>
+            <object data="../files/ImageNet_Classification.pdf" type="application/pdf" width="100%" height="500">
+                <p>Please download the annotated PDF to view it: <a href="../files/ImageNet_Classification.pdf">Download PDF</a>.</p>
+            </object>
+
+            <h3>Abstract</h3>
+            <p>“Our beauty lies in this extended capacity for convolution”</p>
+            <p>~Thomas Pynchon</p>
+            <p>Here, with aid from the paper, I discuss Convolutional Neural Networks (CNNs), the Fast Fourier Transform (FFT), Zero-padding, the Discrete Fourier Transform (DFT), the Cooley-Tukey Algorithm, the ImageNet dataset, Nearest Neighbor Interpolation, Bilinear Interpolation, Bicubic Interpolation, Rectified Linear Units (ReLUs), Cross Validation, Local Response Normalization, Overlapping Pooling, Image Patching, Principal Component Analysis (PCA), and Dropout.</p>
+            <p>The authors achieve top-1 and top-5 error rates of 37.5% and 17.0% on the ImageNet LSVRC-2010 contest of 1000 classes using a convolutional neural network with five convolutional layers, 60 million parameters, and 650,000 neurons. Some convolutional layers are followed by max-pooling layers and three fully-connected layers, ending with a 1000-way softmax. They use non-saturating neurons and fully utilize the GPU for convolution. They also introduce dropout as a form of regularization to reduce overfitting (KSH12).</p>
+
+            <h3>Introduction</h3>
+            <p>They begin by emphasizing the importance of larger datasets, more powerful models, and better regularization techniques. Since the capacity of CNNs are controlled by varying their depth and breadth, they can form meaningful dependencies of pixel statistics and locality, thereby requiring fewer connections and parameters than feedforward networks. By depth and breadth, the authors mean increasing the number of layers and filters per layer (suitable for larger and more complex datasets).</p>
+            <p>They mention that the improvement in GPU power and optimizations in 2D convolution can facilitate training very strong deep CNNs without overfitting.</p>
+            <p>Recall that convolution in Convolutional Neural Networks (CNNs) involves sliding a filter (kernel) over the image and performing elementwise multiplications and summations to produce feature maps. Due to the parallel processing capabilities of GPUs and optimizations in the Fast Fourier Transform.</p>
+            
+            <p>Let \(I\) be an input image of size \(P \times Q\), \(K\) be the convolution kernel of dimensions \(M \times N\) and the coordinates of the output feature map be denoted \(x\) and \(y\). 2D convolution is described as,</p>
+            <p>\[I * K(x, y) = \sum_{i=0}^{M-1} \sum_{j=0}^{N-1} I(x+i, y+j) \cdot K(i, j)\]</p>
+            <p>The Fourier transformation diagonalizes the convolution operation, thereby turning it into a simple multiplication problem in the frequency domain. This makes computing convolution significantly simpler, leading to motivations for an efficient Fast Fourier Transform (FFT) algorithm.</p>
+            <p>We aim to compute the FFT of both the image and kernel. To do so, scholars often first apply zero-padding to the image and kernel to avoid circular convolution artifacts and preserve image size.</p>
+            <p>Without padding, the convolution operation outputs an image that is smaller than that of the original image. These convolutional layers can result in the potential loss of boundary information, which is crucial as we add more layers. Zero-padding ensures the spatial dimensions of the output feature maps remain the same as the input.</p>
+            <p>We zero pad the image and kernel to a size of \((M + P - 1) \times (N + Q - 1)\).</p>
+
+            <h3>Aside: Image Resizing Algorithms</h3>
+            <p>To resize an image, we require interpolation to estimate the pixel values at new positions. We often use nearest neighbor, bilinear interpolation, or bicubic interpolation.</p>
+            <p>In nearest neighbor interpolation for image downsampling, we reduce the size of an image by selecting the nearest pixel’s value without considering any other pixel values. To determine the color of each pixel in the downsampled image, you find the closest corresponding pixel in the original image and use its value.</p>
+            <p>Let the original image be \(I_{H \times W}\) and let the downsampled image be \(I'_{H' \times W'}\). Each pixel in \((i', j')\) the original image is is found as,</p>
+            <p>\(i = \text{floor}\left(\frac{i' \cdot H}{H'}\right)\)</p>
+            <p>\(j = \text{floor}\left(\frac{j' \cdot W}{W'}\right)\)</p>
+            <p>This is a very lossy way of compression and can lose many of the fine details, despite being \(O(1)\) per pixel. Thus, a better resizing algorithm is needed.</p>
+            <p>In bilinear interpolation, we locate the four closest pixels in the original image that form a square over the target pixel. We calculate how far the target pixel is from each of the four surrounding pixels as the weights. We then average the colors of the four surrounding colors based on those weights to consider the values of multiple neighboring pixels.</p>
+            <p>We can then calculate our corresponding position in the original image as,</p>
+            <p>\(x = \frac{i' \cdot (H - 1)}{H' - 1}\)</p>
+            <p>\(y = \frac{j' \cdot (W - 1)}{W' - 1}\)</p>
+            <p>After determining the four nearest integer coordinates \((x_0, y_0), (x_1, y_0), (x_0, y_1), (x_1, y_1)\), we can compute the horizontal and vertical distances as,</p>
+            <p>\(d_x = x - x_0\)</p>
+            <p>\(d_y = y - y_0\)</p>
+            <p>And in turn interpolate the color value as,</p>
+            <p>\(I'(i', j') = (1 - d_x)(1 - d_y)I(x_0, y_0) + d_x(1 - d_y)I(x_1, y_0) + (1 - d_x)d_yI(x_0, y_1) + d_xd_yI(x_1, y_1)\)</p>
+            <p>While bilinear interpolation runs at only \(O(4)\) per pixel, it still is somewhat lossy. Bicubic interpolation considers a larger neighborhood of pixels. Instead of finding the 2x2 grid about the pixel, it entails considering the 4x4 grid.</p>
+            <p>Given the sixteen nearest integer coordinates, we define the cubic convolution kernel as,</p>
+            <p>\(f(t) = \begin{cases} 
+                0 & \text{otherwise} \\
+                \alpha t|^3 - 5\alpha t|^2 + 8\alpha t| - 4\alpha & 1 < |t| < 2 \\
+                (\alpha + 2) t|^3 - (\alpha + 3) t|^2 + 1 & |t| \leq 1 \\
+                \end{cases}\)</p>
+            <p>With \(\alpha\) as a constant (typically around -0.5).</p>
+            <p>The authors computed the mean value of each pixel across all images in the training set (i.e. averaging the value of each pixel position \((x, y)\) in all images. If the images are in RGB format, this is done separately for each color channel (Red, Green, Blue). To calculate these means,</p>
+            <p>\(\mu_R(x, y) = \frac{1}{N} \sum_{i=1}^{N} I_i'(x, y, R)\)</p>
+            <p>\(\mu_G(x, y) = \frac{1}{N} \sum_{i=1}^{N} I_i'(x, y, G)\)</p>
+            <p>\(\mu_B(x, y) = \frac{1}{N} \sum_{i=1}^{N} I_i'(x, y, B)\)</p>
+            <p>Then, they subtract the computed mean value from each corresponding pixel in the image. This is done for every pixel position in every image in the dataset. This process shifts the data distribution to center around zero.</p>
+            <p>\(I_i''(x, y, R) = I_i'(x, y, R) - \mu_R(x, y)\)</p>
+            <p>\(I_i''(x, y, G) = I_i'(x, y, G) - \mu_G(x, y)\)</p>
+            <p>\(I_i''(x, y, B) = I_i'(x, y, B) - \mu_B(x, y)\)</p>
+
+            <h3>The Architecture</h3>
+            <p>Prior to the paper’s inception, the primary activation functions used were the hyperbolic tangent \(f(x) = \tanh(x)\) and the sigmoid \(f(x) = \frac{1}{1 + e^{-x}}\). In their case, using Rectified Linear Units (ReLUs) greatly improved CNN performance. Such an activation problem mitigates the problem of the vanishing gradients and results in naturally sparse units.</p>
+            <img src="../files/img/figures/a03/a03-f01.jpg" alt="Choice of Activation Function" class="figure">
+            <p>They also mention local average pooling as a useful technique of reducing the size of data while preserving important information. Local average pooling involves sliding a window over the input feature map and computing the average value within each window to produce a downsampled output.</p>
+            <p>The network’s kernels are split equally across the GPUs. To minimize latency and bandwidth issues associated with inter-GPU communication, data transfer is restricted to specific layers. Layer 3 kernels receive inputs from the entirety of layer 2 (both GPUs). Layer 4 kernels receive inputs from layer 3 kernels on the same GPU.</p>
+            <p>They also mention the importance of cross-validation. In K-fold Cross-Validation, scientists divide the data into folds, train the model on some parts and test it on the remaining part, repeat, and average the results.</p>
+            <p>Patterns of connectivity refer to the interactions from neurons in different layers. Dense Layers entail that every neuron in one layer is connected to the other. Convolutional Layers mean that neurons are connected to local regions in the input, thereby reducing the number of parameters. Sparsely Connected Layers cause only a subset of layer neurons to be connected to the next layer. Skip Connections allow connections to skip one or more layers, facilitating gradient flow and mitigating the vanishing gradient problem.</p>
+            <p>In biology, lateral inhibition mutes a neuron’s response to stimulus amid the excitation of a neighboring neuron. We can see this in the Hermann grid illusion:</p>
+            <img src="../files/img/figures/a03/a03-f02.jpg" alt="Hermann Grid" class="figure">
+            <p>Let the output of a neuron at position \((x, y)\) using kernel \(i\) be denoted as \(a_{x,y,i}\). The number of kernels in the layer is expressed as \(N\), whereas \(n\) is the number of adjacent kernel maps. In local response normalization (LRN), we have three hyperparameters:</p>
+            <ul>
+                <li>\(k\): baseline constant (typically ~2)</li>
+                <li>\(\alpha\): impact of activities (typically ~10^{-4})</li>
+                <li>\(\beta\): The scaling factor of normalization</li>
+            </ul>
+            <p>The authors express the activity after normalization \(b_{x,y,i}\) as,</p>
+            <p>\[b_{x,y,i} = \frac{a_{x,y,i}}{k + \alpha \sum_{j=\text{max}(0,i-n/2)}^{\text{min}(N-1,i+n/2)} a_{x,y,j}^2}^\beta\]</p>
+            <p>The authors shift to a discussion of overlapping pooling. Traditionally, each pool (group of neurons) does not share neurons with neighboring groups. When we consider using a stride (spacing between pools) \(s\) that is smaller than the pool size \(z\), overlapping regions lead to redundant summarization of features, enhancing the model’s ability to generalize by preserving more contextual information.</p>
+            <p>After reviewing the CNN architecture, they describe the first convolutional layer as having 96 kernels of size \(11 \times 11 \times 3\) with a stride of 4. The second convolutional layer filters using 256 kernels of size \(5 \times 5 \times 48\). The third convolutional layer has 384 kernels of size \(3 \times 3 \times 256\). The fourth convolutional layer has 384 kernels of size \(3 \times 3 \times 192\), and the fifth convolutional layer has 256 kernels of size \(3 \times 3 \times 192\). Additionally, dense layers have 4096 layers each.</p>
+
+            <h3>Reduce Overfitting</h3>
+            <p>Due to the 60 million parameters and 1000 classes of ILSVRC, the authors emphasize methods of reducing overfitting.</p>
+            <p>One method of reducing overfitting involves cropping the images from \(256 \times 256\) to \(224 \times 224\), flipping them about \(y = 0\), and adding them as varied examples. This increases training examples by a factor of 2048.</p>
+            <p>Given an image \(I\) of size \(256 \times 256\), we can extract patches \(P_i\) of size \(224 \times 224\) from the 4 corners and center. For each patch \(i = 1, 2, 3, 4, 5\), create a horizontally flipped version \(P_i'\). Thus, in total we have \(P = \{P_1, P_2, P_3, P_4, P_5, P_1', P_2', P_3', P_4', P_5'\}\). The final prediction \(F(I)\) for the entire image is the average of the softmax outputs, thereby reducing the variance of the prediction. If \(f(P)\) denotes the neural network’s softmax output for a patch, then,</p>
+            <p>\[F(I) = \frac{1}{10} \sum_{i=1}^{5} \left(f(P_i) + f(P_i')\right)\]</p>
+            <p>The authors also enhance the training images by changing the brightness and colors using Principal Component Analysis (PCA) on the pixel values of all training images. For each training image, they add a small, random variation to the colors based on PCA results, which in turn helps the model understand that objects can look different under various lighting conditions and still be the same object.</p>
+            <p>After gathering RGB values from all training images, treat each value as a vector \([R, G, B]\). Calculate the mean RGB value across all pixels in the training set and subtract this mean from each RGB vector to center the data around the origin. Form the data matrix \(X\), where each row represents an RGB vector of a pixel from the training set. If \(n\) is the number of pixels, calculate the covariance matrix \(C\) of the data matrix \(X\),</p>
+            <p>\[C = \frac{1}{n-1} X^TX\]</p>
+            <p>From here, perform eigenvalue decomposition on the covariance matrix \(C\) to determine the eigenvectors \(p_i\), which represent the directions of maximum RGB variance, and the eigenvalues \(\lambda_i\), which indicate the amount of variance captured by each principal component. For a matrix of principal components (eigenvectors) \(P\) and diagonal matrix of eigenvalues \(\Lambda\),</p>
+            <p>\[C = P \Lambda P^T\]</p>
+            <p>For each image, add multiples of the principal components proportional to the eigenvalues scaled by random variables \(\alpha_i\) drawn from a Gaussian distribution (in this case, mean of 0 and standard deviation of 0.1). The adjusted RGB values are then,</p>
+            <p>\[I_{xy}^R, I_{xy}^G, I_{xy}^B = \left(I_{xy}^R, I_{xy}^G, I_{xy}^B\right)^T + \left(p_1, p_2, p_3\right) \left(\alpha_1 \lambda_1, \alpha_2 \lambda_2, \alpha_3 \lambda_3\right)^T\]</p>
+            <p>Dropout can improve network performance and reduce errors by randomly turning off neurons (setting their output to zero) during training. Each time we train the network, we use a slightly different set of neurons. At testing time, they use all the neurons but reduce their output to half to balance things out. Mathematically, during training, the output of each neuron is,</p>
+            <p>\[h_i' = h_i \cdot \text{mask}_i\]</p>
+            <p>Dropout makes the model more robust to overfitting by ensuring that the network learns redundant representation while acting as a form of regularization by adding noise to the training process.</p>
+
+            <h3>Details of Learning</h3>
+            <p>The authors trained using stochastic gradient descent (SGD), a batch size of 128, a momentum of 0.9, and weight decay of 0.0005. Thus, the update rule was described as:</p>
+            <p>\[v_{i+1} := 0.9 \cdot v_i - 0.0005 \cdot \epsilon \cdot w_i - \epsilon \cdot \langle \frac{\partial L}{\partial w} | w_i \rangle_D\]</p>
+            <p>\[w_{i+1} := w_i + v_{i+1}\]</p>
+            <p>Here, \(i\) is the index of iteration, \(v\) is the momentum, \(\epsilon\) is the learning rate, and \(\langle \frac{\partial L}{\partial w} | w_i \rangle_D\) is the average over the \(i\)th batch of the derivative of the objective with respect to the weights.</p>
+            <p>The authors chose to initialize the weights in each layer from a zero-mean Gaussian distribution with a standard deviation of 0.01. Neuron biases in the second, fourth, fifth, and dense layers were initialized to 1. They used an equal learning rate, which was divided by 10 when the validation error stopped improving. The process took five to six days on the 1.2 million images.</p>
+
+            <h3>Results</h3>
+            <p>The results here were incredible for when this paper was released. Note that top-1 accuracy refers to the model’s highest confidence prediction, whereas top-5 accuracy refers to the model's top 5 highest confidence predictions. The top-1 accuracy achieved 37.5% (compared to the previous state-of-the-art 45.7%) and the top-5 accuracy achieved 17.0% (the state-of-the-art was 25.7%). These numbers improved slightly using an ensemble of CNNs.</p>
+            <p>The authors also note that the kernels on GPU 1 are independent of color, whereas the kernels on GPU 2 are dependent on color. An important thing to note is that “this kind of specialization occurs during every run”. The specialization of GPU regions clearly is impacting the importance of this paper.</p>
+            <p>They also note that computing similarity by using Euclidean distance between vectors is inefficient but could be made efficient by training an auto-encoder to compress these vectors.</p>
+
+            <h3>Discussion</h3>
+            <p>These are mind-blowingly cool results. The authors mention potentially using unsupervised pre-training as a future discussion, which are foundational to transformer architectures, particularly in that of natural language processing.</p>
+            <p>For code, please reach out:</p>
+            <button class="contact-btn">Contact Me</button>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
