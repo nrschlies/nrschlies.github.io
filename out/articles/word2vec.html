@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Attention: Word2Vec</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+        <!-- <a href="../contact.html">Contact Me</a> TODO: Fix firebase -->
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+
+    <main>
+        <article>
+            <h2>Word2Vec</h2>
+            <h3>Annotated by: <strong>Noah Schliesman</strong></h3>
+            <object data="../files/Word2Vec.pdf" type="application/pdf" width="100%" height="500">
+                <p>Please download the annotated PDF to view it: <a href="../files/Word2Vec.pdf">Download PDF</a>.</p>
+            </object>
+
+            <h3>Abstract</h3>
+            <p>With help from this paper, I explain N-grams, Maximum Likelihood Estimation (MLE), Latent Semantic Analysis (LSA), Term Frequency-Inverse Document Frequency (TF-IDF), Singular Value Decomposition (SVD), Dimensionality Reduction, Latent Dirichlet Allocation (LDA), Variational Inference, Kullback-Leibler (KL) Divergence, Evidence Lower Bound (ELBO), Gibbs Sampling, Huffman Encoding, DistBelief, AdaGrad, Continuous Bag-of-Words (CBOW), Continuous Skip-gram, Negative Sampling, Cosine Distance, Microsoft Sentence Completion Challenge, and Spearman’s Rank Correlation.</p>
+
+            <p>The authors propose two methods for computing vector representations of words: continuous bag-of-words, and continuous skip-gram. The quality of such representations are measured in a word similarity task.</p>
+
+            <h3>Introduction</h3>
+            <p>The notion of words as atomic units provide no similarity between them and is often used for its simplicity. Considering words as atomic units means that each word in a corpus is treated as a single token in the vocabulary, without any internal structure.</p>
+            <p>An N-gram is a sequence of ‘N’ letters, syllables, words, or other segmentation from a given text. We call a one word sequence (N=1) a unigram, a two word sequence (N=2) a bigram, a three word sequence (N=3) a trigram, and so forth. Thus, N-grams are used to capture the context of words in a text.</p>
+            <p>Formally, given a sequence of words \(w_1, w_2, ..., w_T\), an N-gram model estimates the probability of a word \(w_t\) based on the preceding \(N-1\) words:</p>
+            <p class="center">\(P(w_t | w_{t-(N-1)}, ..., w_{t-1})\)</p>
+
+            <h3>Aside: Maximum Likelihood Estimation (MLE)</h3>
+            <p>Maximum Likelihood Estimation (MLE) is a tool for estimating the parameters of a statistical model (i.e. line of best fit). The main idea is to find the values for the parameters that make the observed data most likely to have happened.</p>
+            <p>Suppose we have a dataset \(X = {x_1, x_2, ..., x_n}\) and a parametric model with parameter \(\theta\). The likelihood function is the probability of observing the data given the parameter \(\theta\), \(L(\theta; X) = P(X|\theta) = \prod_{i=1}^{n} P(x_i|\theta)\).</p>
+            <p>When we try to estimate probabilities from data, we often multiply many probabilities which result in very small numbers. Taking the log of a product of numbers turns it into a sum of logs, which is much easier to handle. Thus, the log-likelihood function for the parameter \(\theta\) is, \(l(\theta; X) = logL(\theta; X) = \sum_{i=1}^{n} logP(x_i|\theta)\).</p>
+            <p>Maximum Likelihood Estimation seeks to find the parameter value \(\theta\) that maximizes the log-likelihood function, \(\theta = \arg \max_{\theta} l(\theta; X)\). To find such a maximum, we take the derivative of the log-likelihood function with respect to \(\theta\) and set it to zero, \(\frac{\partial l(\theta; X)}{\partial \theta} = 0\). From here, we can just solve for our parameter \(\theta\).</p>
+            <p>MLE helps us find the probability of N-grams by looking at how often they appear in a large set of text data. By counting occurrences of the N-gram in the corpus and comparing to the number of times the prefix (N-1 words) appears. In other words,</p>
+            <p class="center">\(P(w_t | w_{t-(N-1)}, ..., w_{t-1}) = \frac{Count(w_t, w_{t-(N-1)}, ..., w_{t-1})}{Count(w_{t-(N-1)}, ..., w_{t-1})}\)</p>
+            <p>The authors explain that N-grams are limited by scalability and its oversimplified nature. They mention that neural models outperform N-grams.</p>
+            <p>The authors aim to efficiently convert words to vectors that can provide a meaningful measure of similarity between word representations. They refer to some previous works on the matter, specifically that of "A Neural Probabilistic Language Model" by Bengio et. al. in 2003.</p>
+
+            <h3>Model Architecture</h3>
+            <p>They mention Latent Semantic Analysis (LSA) and Latent Dirichlet Allocation (LDA) of which distributed representations preserve linear regularities better than LSA and are less computationally expensive than LDA.</p>
+            <h3>Aside: Latent Semantic Analysis (LSA) vs. Latent Dirichlet Allocation (LDA)</h3>
+            <p>Latent Semantic Analysis (LSA) is a technique that helps you look at the patterns of words that appear together in data. Given a corpus of text, we first build a term-document matrix \(X\), where \(X_{ij}\) indicates the frequency of term \(i\) in document \(j\). This results in a very large and sparse matrix.</p>
+            <p>Often we measure frequency using Term Frequency-Inverse Document Frequency (TF-IDF). TF-IDF combines a measure of frequency per document and frequency in all documents to give a score about how important a word is in a document. The term frequency (TF) measures the frequency of a term \(t\) within a document \(d\). The inverse document frequency (IDF) determines the rarity of a term across the corpus. Let \(D\) be the total number of documents and let \(d \in D : t \in d\) be the number of documents containing term \(t\). We take the log to weaken the effect of high document frequencies:</p>
+            <p class="center">\(IDF(t, D) = \log \frac{D}{1 + |d \in D : t \in d|}\)</p>
+            <p>Thus, the TF-IDF score combines term frequency and inverse document frequency to ensure terms that are frequent in a document but rare in the corpus receive higher scores:</p>
+            <p class="center">\(TF‒IDF(t, d, D) = TF(t, d) \cdot IDF(t, D) = \frac{f_{t,d}}{\sum_{t' \in d} f_{t',d}} \cdot \log \frac{D}{1 + |d \in D : t \in d|}\)</p>
+            <p>There are many other variations of TF-IDF and to this day it still remains as an active area of research. For example, the smooth TF-IDF is described as:</p>
+            <p class="center">\(Smooth TF‒IDF(t, d, D) = TF(t, d) \cdot IDF(t, D) = \frac{f_{t,d}}{\sum_{t' \in d} f_{t',d}} \cdot \log \left(1 + \frac{D}{1 + |d \in D : t \in d|}\right)\)</p>
+            <p>Now that we have a way of measuring frequency within our term-document matrix, we perform singular value decomposition (SVD) to our matrix. Let \(U\) be a matrix representing the term eigenvectors, \(\Sigma\) be a diagonal matrix of singular values, and \(V^T\) be the matrix of document eigenvectors:</p>
+            <p class="center">\(X = U \Sigma V^T\)</p>
+
+            <h3>Let's examine the linear algebra behind SVD</h3>
+            <p>For a matrix \(X\), SVD breaks it into three smaller matrices:</p>
+            <ul>
+                <li>\(U\) holds the directions of the original data points (axes)</li>
+                <li>\(\Sigma\) is a diagonal matrix with singular values (axis stretch factors)</li>
+                <li>\(V^T\) holds the directions of the transformed data points</li>
+            </ul>
+            <p>Suppose we have matrix \(X\) of dimensions \(m \times n\). We can start by calculating \(X^T X\), an \(n \times n\) symmetric matrix. When we compute the eigenvalues and eigenvectors of \(X^T X\), normalize them into matrix \(V\), and take the transpose, we obtain the directions of the transformed data points \(V^T\) (in this case the document eigenvectors).</p>
+            <p>The singular value matrix \(\Sigma\) is simply the square roots of the eigenvalues.</p>
+            <p>Lastly, the directions of the original data points (term eigenvectors) can be calculated as:</p>
+            <p class="center">\(U = X V \Sigma^{-1}\)</p>
+            <p>Next, we perform dimensionality reduction by retaining the top \(k\) singular values and corresponding vectors:</p>
+            <p class="center">\(A_k = U_k \Sigma_k V_k^T\)</p>
+            <p>The reduced matrices represent terms and documents in a new semantic space where we can capture synonymy (different words / similar meanings) and polysemy (same word / different meanings).</p>
+
+            <h3>Let's illustrate this process of LSA using a simple example</h3>
+            <p>Consider the following documents:</p>
+            <ul>
+                <li>Document #1: “I love playing football”</li>
+                <li>Document #2: “Football is a great sport”</li>
+                <li>Document #3: “I love watching movies”</li>
+            </ul>
+            <p>First, we tokenize the documents and compute the term frequencies (TF):</p>
+            <img src="../files/img/figures/a04/a04-f01.jpg" alt="TF Table" class="figure">
+            <p>Next, we compute the inverse document frequencies (IDF) for each term:</p>
+            <img src="../files/img/figures/a04/a04-f02.jpg" alt="IDF Table" class="figure">
+            <p>The term document matrix \(X\) is then computed as:</p>
+            <img src="../files/img/figures/a04/a04-f03.jpg" alt="TD Matrix" class="figure">
+            <p>Now, we need to perform SVD. First, we find the Gram matrix \(X^T X\) to be:</p>
+            <img src="../files/img/figures/a04/a04-f04.jpg" alt="Gram Matrix" class="figure">
+            <p>Note that here, our eigenvalues are \(\lambda_1 = 0.010275\), \(\lambda_2 = 0.026304\), and \(\lambda_3 = 0.02055\). We can normalize the eigenvectors to somewhat trivially obtain \(V^T\):</p>
+            <img src="../files/img/figures/a04/a04-f05.jpg" alt="Normalized Eigenvectors" class="figure">
+            <p>Thus, the singular values \(\sigma_i\) are just \(\sigma_1 = \sqrt{0.010275} \approx 0.1014\), \(\sigma_2 = \sqrt{0.026304} \approx 0.1622\), and \(\sigma_3 = \sqrt{0.02055} \approx 0.1434\). So \(\Sigma\) is:</p>
+            <img src="../files/img/figures/a04/a04-f06.jpg" alt="Singular Value Matrix" class="figure">
+            <p>Now, we compute \(U = X V \Sigma^{-1}\).</p>
+            <img src="../files/img/figures/a04/a04-f07.jpg" alt="Sigma Matrix" class="figure">
+            <p>We can check our work by ensuring \(X = U \Sigma V^T\):</p>
+            <img src="../files/img/figures/a04/a04-f08.jpg" alt="Computational Check" class="figure">
+            <p>They match! It’s now time to move on to perform dimensionality reduction by retaining the top \(k\) singular values and corresponding vectors. Due to the sparsity of term 1, we can remove it.</p>
+            <img src="../files/img/figures/a04/a04-f09.jpg" alt="Dimensionality Reduction" class="figure">
+            <p>Okay, so that was a pretty interesting illustration of LSA, but let’s continue with Latent Dirichlet Allocation (LDA). Given a corpus of documents, LDA assumes that each document is a mixture of topics. For each document, LDA figures out the distribution of topics, and for each topic, LDA figures out the distribution of words.</p>
+
+            <h3>Latent Dirichlet Allocation (LDA)</h3>
+            <p>LDA assumes the distribution of topics is based on a Dirichlet distribution. LDA uses two parameters as Dirichlet priors on per-document topic distributions and per-topic word distributions.</p>
+            <p>In Bayesian analysis, a Dirichlet prior is a way to set initial beliefs about probabilities before seeing any data. For \(\alpha = {\alpha_1, \alpha_2, ..., \alpha_k}\), each \(\alpha_i\) represents the prior strength of belief in category \(i\). If \(\alpha_i = 1\), it means you have no prior preference for the category (uniform distribution). If \(\alpha_i > 1\), you believe category \(i\) is more likely. Resultantly, if \(\alpha_i < 1\), you believe category \(i\) is less likely. When new data is observed, a Dirichlet prior can be updated to form a posterior distribution.</p>
+            <p>Given a parameter vector \(p = {p_1, p_2, ..., p_k}\) with \(\sum_{i=1}^{k} p_i = 1\), and a multivariate Beta function that helps us normalize the Dirichlet distribution, we can define the distribution as:</p>
+            <p class="center">\(Dir(p; \alpha) = \frac{1}{B(\alpha)} \prod_{i=1}^{k} p_i^{\alpha_i - 1}\)</p>
+            <p>We can define such a multivariate Beta function such that for \(\alpha_i > 0\):</p>
+            <p class="center">\(B(\alpha) = \prod_{i=1}^{k} \Gamma(\alpha_i) / \Gamma \left( \sum_{i=1}^{k} \alpha_i \right)\)</p>
+            <p>Where the Gamma function \(\Gamma\) is defined as:</p>
+            <p class="center">\(\Gamma(\alpha) = \int_0^{\infty} t^{\alpha-1} e^{-t} dt\)</p>
+            <p>Such a Beta normalization function ensures that the Dirichlet distribution integrates to 1:</p>
+            <p class="center">\(\int_{S_k} Dir(p; \alpha) dp = 1\)</p>
+            <p>Thus, our Dirichlet distribution can be expanded as:</p>
+            <p class="center">\(Dir(p; \alpha) = \frac{\Gamma \left( \sum_{i=1}^{k} \alpha_i \right)}{\prod_{i=1}^{k} \Gamma(\alpha_i)} \prod_{i=1}^{k} p_i^{\alpha_i - 1}\)</p>
+            <p>In LDA, \(\alpha\) is the Dirichlet prior on the per-document topic distributions and \(\beta\) is the Dirichlet prior on the per-topic word distributions. For each document \(d\) in corpus \(D\), draw a topic distribution \(\theta_d \sim Dir(\alpha)\), and for each word \(w\) in document \(d\):</p>
+            <ul>
+                <li>Draw a topic indicator variable from a multinomial distribution based on the topic distribution \(\theta_d\). \(z_{dw} \sim Multinomial(\theta_d)\).</li>
+                <li>Draw a word from a distribution of words specific to the topic \(z_{dw}\), where \(w_{dw} \sim p(w_{dw} | z_{dw}, \beta)\) is typically a multinomial distribution parameterized by \(\beta\).</li>
+            </ul>
+
+            <h3>Variational Inference and Kullback-Leibler (KL) Divergence</h3>
+            <p>Variational Inference is a method used to estimate complex probability distributions by approximating such an intractable posterior distribution to that of a simpler distribution by optimizing the parameters of this distribution. Kullback-Leibler (KL) Divergence is a measure of how one probability distribution diverges from a second probability distribution.</p>
+            <p>Given a variational distribution \(q(\theta, z)\), the log marginal likelihood with variational distribution is denoted as:</p>
+            <p class="center">\(\log p(w | \alpha, \beta) = \log \int q(\theta, z) \frac{p(\theta, z, w | \alpha, \beta)}{q(\theta, z)} d\theta dz\)</p>
+            <p>From here, we can define the Evidence Lower Bound (ELBO) as the expected log joint probability of the data and the latent variables under the variational distribution \(q(\theta, z)\) and the negative entropy of that variational distribution \(q(\theta, z)\) to encourage \(q\) to spread out. We can then apply gradient-based optimization to maximize the ELBO until we have successfully reached approximation:</p>
+            <p class="center">\(ELBO(q) = E_{q(\theta, z)} [\log p(w, \theta, z | \alpha, \beta)] - E_{q(\theta, z)} [\log q(\theta, z)]\)</p>
+
+            <h3>Gibbs Sampling</h3>
+            <p>Gibbs sampling involves iteratively sampling each variable from its conditional distribution given the current value of other variables. First, we randomly assign each word \(w_{dn}\) in each document \(d\) to one of the K topics. For each word in each document, we compute the conditional distribution of the topic assignment given the current topic assignments of all other words. Let:</p>
+            <ul>
+                <li>\(n_{dk}^{-dn}\) be the count of words assigned to topic \(k\) in document \(d\),</li>
+                <li>\(n_{kw_{dn}}^{-dn}\) be the count of times word \(w_{dn}\) is assigned to topic \(k\) across all documents,</li>
+                <li>\(n_{d}^{-dn}\) be the total number of words in document \(d\),</li>
+                <li>\(n_{k}^{-dn}\) be the total number of words assigned to topic \(k\).</li>
+            </ul>
+            <p>With the current word excluded, the conditional distribution for Gibbs sampling is determined (when combined with a large number of iterations) as:</p>
+            <p class="center">\(P(z_{dn} = k | z_{-dn}, w, \alpha, \beta) \propto \frac{n_{dk}^{-dn} + \alpha_k}{n_{d}^{-dn} + \sum_{k'} \alpha_{k'}} \cdot \frac{n_{kw_{dn}}^{-dn} + \beta_{w_{dn}}}{n_{k}^{-dn} + \sum_{w'} \beta_{w'}}\)</p>
+            <p>This analysis is a bit of a tangent beyond the content of the paper itself, but I hope you can understand the motivation for a novel word to vector parametrization method. As you can tell, both LSA and LDA have disadvantages computationally and conceptually. The authors instead decide to maximize model accuracy while minimizing computational complexity using a neural network-based model.</p>
+            <p>Let \(E\) be the number of training epochs (typically 3–50), \(T\) be the number of words in the training set (typically < 10^9), and \(Q\) be the computational complexity per training example. Neural models are trained using stochastic gradient descent (SGD) and backpropagation. In a standard feedforward neural net language model (NNLM), let:</p>
+            <ul>
+                <li>\(N\) be the number of previous words using one-hot encoding (assigning an index to each word),</li>
+                <li>\(V\) be the size of the vocabulary,</li>
+                <li>\(D\) be the dimensionality of the projection layer,</li>
+                <li>\(H\) be the hidden layer size (typically 500–1000).</li>
+            </ul>
+            <p>The projection layer complexity can be described as \(N \cdot D\) (typically 500–2000). Similarly, the hidden layer complexity can be described as \(N \cdot D \cdot H\). Lastly, the output layer complexity can be described as \(H \cdot V\). Here, they use a Huffman binary tree to represent the vocabulary as \(\log_2(V)\). That is, the computational complexity per training example is:</p>
+            <p class="center">\(Q = N \cdot D + N \cdot D \cdot H + H \cdot V\)</p>
+            <p>Huffman encoding leverages the frequency of words, giving common words shorter codes and less common words longer codes. The process begins by calculating the frequency of each word in the vocabulary. From here, it constructs a binary tree called a Huffman tree, where each leaf node represents a word, and the path from the root to the leaf node represents the binary code for that word. We often use a min-heap, a binary tree where the value of each node is less than or equal to its children. When inserting a new node into the heap, place it at the next available position and then “heapify up”. This process entails iteratively comparing the inserted node with its parent and swapping if the node is smaller until the heap is a min-heap.</p>
+            <p>Thus, the bottleneck for the neural net language model (NNLM) is generally at the hidden layer complexity \(N \cdot D \cdot H\).</p>
+
+            <h3>Recurrent Neural Net Language Model (RNNLM)</h3>
+            <p>Another approach to neural word-to-vector parametrization is through the recurrent neural net language model (RNNLM). This model has a better short-term memory and therefore can represent more complex patterns. Again, the computational complexity per training example is:</p>
+            <p class="center">\(Q = H \cdot H + H \cdot V\)</p>
+            <p>Again, the complexity of the vocabulary is reduced via Huffman encoding, resulting in the hidden layer \(H \cdot H\) dominating the complexity. The authors leverage the parallelization of DistBelief, of which workers perform forwards and backwards passes, independently computing gradients. The framework also consists of parameter servers, where parameters are stored in dedicated nodes. This asynchronous gradient workflow optimizes the efficiency of models with millions (and sometimes billions) of parameters.</p>
+            <p>They also mention the usage of AdaGrad, an algorithm to dynamically adjust the learning rate for each parameter. Parameters that frequently have large gradients get smaller learning rates and smaller gradients lead to larger learning rates. Let \(\theta\) be the parameters of the model, \(\eta\) be the learning rate, \(g_t\) be the gradient at time \(t\) such that \(G_t = \sum_{i=1}^{t} g_i^2\), and \(\epsilon\) is a small constant to prevent division by zero. The update rule is then:</p>
+            <p class="center">\(\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{G_t + \epsilon}} g_t\)</p>
+
+            <h3>New Log-Linear Models</h3>
+            <p>The authors note their previous approach, where continuous word vectors are learned using a simple model and then a N-gram NNLM is trained on top of these representations.</p>
+            <p>The first proposed architecture, continuous bag-of-words (CBOW), is based on the feedforward NNLM, removing the hidden layer and sharing the projection layer for all words. CBOW comes from the idea that the order of words in history does not influence the projection. Again, the crucial idea here is that the weight matrix between the input and projection layer is shared for all word positions.</p>
+            <p>CBOW predicts a target word based on the context words surrounding it. By taking a fixed-size window of words surrounding the target word, CBOW converts these words into vectors and averages them into a single context vector to predict the target word.</p>
+            <p>CBOW consists of an input layer, a hidden projection layer, and an output layer. The input to the model is a set of context words, and the output is the probability distribution over the vocabulary as the target word. For each target word \(w_t\), the context words \(w_{t-k}, ..., w_{t-1}, w_{t+1}, ..., w_{t+k}\) are defined by a window size \(k\). Each context word is represented as a one-hot encoded vector, which are in turn projected into a continuous vector space using a shared weight matrix \(W\). These embeddings are then averaged to produce a single context vector \(v_c\):</p>
+            <p class="center">\(v_c = \frac{1}{2k} \sum_{i=1}^{2k} W \cdot one‒hot(w_{t-k+i})\)</p>
+            <p>The context vector \(v_c\) is then used to predict the target word \(w_t\). Let there be another shared weight matrix \(W'\) which is used to convert the averaged context vector back into a probability distribution over the vocabulary to predict the target word. The target word is then computed as:</p>
+            <p class="center">\(w_t = \arg \max_w P(w | context) = \arg \max_w \frac{\exp(v_c \cdot W_w')}{\sum_{j=1}^{V} \exp(v_c \cdot W_j')}\)</p>
+            <p>We can then train these weight matrices using stochastic gradient descent (SGD) and backpropagation, with a negative log-likelihood of the target word as choice of loss function:</p>
+            <p class="center">\(L = - \log P(w_t | context)\)</p>
+            <p>The complexity per training example of CBOW is then:</p>
+            <p class="center">\(Q = N \cdot D + D \cdot \log_2(V)\)</p>
+            <p>As you can imagine, the context window limits this model's ability to capture long-range dependencies. The averaging of context word vectors also acts as a form of lossy compression on the context, which makes meaningful embedding more difficult.</p>
+
+            <h3>Continuous Skip-gram</h3>
+            <p>The second proposed architecture, known as Continuous Skip-gram, tries to maximize classification based on predicting words within a certain range before and after the current word based on another word. Given a target word, continuous skip-gram produces context words within a specific window size around the target word. The model then learns to generate word embeddings that capture the contextual relationships between words during training.</p>
+            <p>The Skip-gram model consists again of an input layer, a hidden projection layer, and an output layer. The input is a one-hot encoded vector of the target word, and the output is the probability distribution over the vocabulary for each context word position.</p>
+            <p>Let:</p>
+            <ul>
+                <li>\(v_{w_t}\) be the embedding vector of the target word \(w_t\),</li>
+                <li>\(v_{w_{t+j}}\) be the embedding vector of the context word \(w_{t+j}\).</li>
+            </ul>
+            <p>The probability \(P(w_{t+j} | w_t; \theta)\) of a context word given the target word is calculated via softmax:</p>
+            <p class="center">\(P(w_{t+j} | w_t; \theta) = \frac{\exp(v_{w_{t+j}}^T \cdot v_{w_t})}{\sum_{k=1}^{V} \exp(v_{l}^T v_{w_t})}\)</p>
+            <p>The goal of skip-gram is to maximize the probability of context words given a target word. Let \(T\) denote the number of words in a corpus, \(c\) be the context window size. The maximization objective can be written as:</p>
+            <p class="center">\(\max_{\theta} \frac{1}{T} \sum_{t=1}^{T} \sum_{-c \le j \le c | j \ne 0} \log P(w_{t+j} | w_t; \theta) = \max_{\theta} \frac{1}{T} \sum_{t=1}^{T} \sum_{-c \le j \le c | j \ne 0} \log \frac{\exp(v_{w_{t+j}}^T \cdot v_{w_t})}{\sum_{k=1}^{V} \exp(v_{l}^T v_{w_t})}\)</p>
+            <p>To make computation more efficient for larger vocabularies, skip-gram can use negative sampling, which maximizes the probability of the context word given the target word and minimizes it for negative samples. Let:</p>
+            <ul>
+                <li>\(\sigma(x) = \frac{1}{1 + \exp(-x)}\) be the sigmoid function,</li>
+                <li>\(K\) be the number of samples,</li>
+                <li>\(w_n\) be the negative samples drawn from a noise distribution \(P_n(w)\).</li>
+            </ul>
+            <p>The modified objective formula can then be written as:</p>
+            <p class="center">\(\max_{\theta} \frac{1}{T} \sum_{t=1}^{T} \sum_{-c \le j \le c | j \ne 0} \left[ \log \sigma(v_{w_{t+j}}^T \cdot v_{w_t}) + \sum_{n=1}^{K} \mathbb{E}_{w_n \sim P_n(w)} [\log \sigma(-v_{l}^T v_{w_t})] \right]\)</p>
+            <p>In traditional Skip-gram, the complexity per training example is denoted for a maximum distance of words \(C\) as:</p>
+            <p class="center">\(Q = C \cdot D + D \cdot \log_2(V)\)</p>
+            <p>Succinctly, “the CBOW architecture predicts the current word based on the context, and the Skip-gram predicts surrounding words given the current word” (MCCD12).</p>
+
+            <h3>Results</h3>
+            <p>Previous methods use a table to measure word similarity, but the authors note that there are many different types of similarity for a vocabulary. The authors note that cosine distance can measure the similarity of word-to-vector embeddings. Given two word-vector embeddings \(A\) and \(B\), we can utilize cosine distance to obtain cosine similarity. A value of 1 indicates that the vectors are pointing in the same direction (i.e. words are similar), a value of 0 indicates that the vectors are orthogonal (i.e. words are unrelated), and a value of -1 indicates that the vectors are pointing in the opposite direction (i.e. words are dissimilar). It is measured as:</p>
+            <p class="center">\(cos(\theta) = \frac{A \cdot B}{\|A\| \|B\|} = \frac{\sum_{i=1}^{n} A_i B_i}{\sqrt{\sum_{i=1}^{n} A_i^2} \sqrt{\sum_{i=1}^{n} B_i^2}}\)</p>
+            <p>Thus, computations are possible like:</p>
+            <p class="center">\(X = vector("biggest) - vector("big") + vector("small") \approx vector("smallest")</p>
+            <p>The test set the authors used contained five types of semantic questions: common capital city, all capital cities, currency, city-in-state, and man-woman (8869 questions). They also used nine types of syntactic questions: adjective to adverb, opposite, comparative, superlative, present participle, nationality adjective, past tense, plural nouns, plural verbs (10675 questions). They note the lack of accuracy due to morphology not being integrated into the model.</p>
+            <p>They used a Google News corpus for training the word vectors containing about 6B tokens, with a vocabulary size restricted to the 1 million most frequent words. They expect more data and higher dimensional word vectors will improve the model. They note that after some point, adding dimensions or adding more training data provides diminishing improvements (they must be added together).</p>
+            <p>They used three training epochs with stochastic gradient descent (SGD), backpropagation, and a learning rate of 0.025 [decreased linearly to approach zero at the last training epoch].</p>
+            <p>To compare models, they use the same training data and same dimensionality of 640 of the word vectors. They later provide examples beyond the 30k vocabulary. They compare the RNNLM, the NNLM, CBOW, and Skip-gram on these tasks.</p>
+            <p>On syntactic questions, CBOW outperforms the NNLM vectors which in turn outperform the RNN. However, Skip-gram performs much better on semantic tasks than the other models. They then compare to state of the art models and significantly outperform them (from 24.6% to 53.3% in total accuracy with Skip-Gram).</p>
+            <p>The authors note the need for mini-batch asynchronous gradient descent using AdaGrad with 50 to 100 model replicas during the training.</p>
+            <p>They also mention the Microsoft Sentence Completion Challenge, which consists of 1040 sentences where one word is missing and the goal is to select the most coherent word given five reasonable choices. The authors explored Skip-gram on this task when weighted in an ensemble with RNNLMs, achieving a new state of the art of 58.9% accuracy.</p>
+
+            <h3>Examples of the Learned Relationships</h3>
+            <p>Relationships can be defined by subtracting two word vectors and adding to another word. The example provided is:</p>
+            <p class="center">\(Paris - France + Italy = Rome\)</p>
+            <p>Again, they mention that larger dimensionality datasets will perform significantly better, but vector operations on word parametrizations hold a lot of promise.</p>
+
+            <h3>Conclusion</h3>
+            <p>The authors managed to train high-quality word vectors using very simple model architectures. Due to the low computational complexity, it is easier to compute very accurate high dimensional word vectors from a much larger data set. The authors are able to outperform the previous state of the art SemEval-2012 Task 2, leveraging a 50% increase in Spearman’s rank correlation.</p>
+            <p>Spearman’s rank correlation coefficient, often denoted as \(\rho\) or \(r_s\), is a non-parametric measure of the strength and direction of the association between two variables, measuring how well they can be described by a monotonic function. First, convert the data \(X, Y\) into ranks \(R(X), R(Y)\) and calculate the difference for each observation \(i\):</p>
+            <p class="center">\(d_i = R(X_i) - R(Y_i)\)</p>
+            <p>From here, Spearman’s rank correlation coefficient is:</p>
+            <p class="center">\(\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}\)</p>
+            <p>Alternatively, we can use the Pearson correlation formula to compute Spearman’s rank correlation:</p>
+            <p class="center">\(r_s = \frac{cov(R(X), R(Y))}{\sigma_{R(X)} \sigma_{R(Y)}}\)</p>
+            <p>Note that \(\rho \in [-1, 1]\), where \(\rho = 1\) indicates a perfect positive monotonic relationship (i.e. positive correlation), \(\rho = 0\) indicates no monotonic relationship (i.e. no correlation), and \(\rho = -1\) indicates a perfect negative monotonic relationship (i.e. negative correlation).</p>
+            <p>The authors expect that the quality of word vectors will largely contribute to NLP applications.</p>
+
+            <h3>Follow-up Work</h3>
+            <p>The authors mention that after this paper they created a multi-threaded C++ code, of which the training speed is significantly higher.</p>
+
+            <p>For code, please reach out:</p>
+            <button class="contact-btn">Contact Me</button>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
