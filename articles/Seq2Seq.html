@@ -7,7 +7,8 @@
     <title>Seq2Seq Analysis</title>
     <link rel="stylesheet" href="../styles.css">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async 
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../js/script.js" defer></script>
     <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
@@ -32,7 +33,8 @@
     </div>
 
     <aside>
-        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" 
+onKeyDown="handleKeyPress(event)">
             &#9776;
         </button>
     </aside>
@@ -46,83 +48,232 @@
             </object>
 
             <h3>Abstract</h3>
-            <p>“The advantage of a bad memory is that one enjoys several times the same good things for the first time.”</p>
+            <p>“The advantage of a bad memory is that one enjoys several times the same good 
+things for the first time.”</p>
             <p>~Friedrich Nietzsche</p>
-            <p>With the help of this paper by Ilya Sutskever, Oriol Vinyals, and Quoc Le, I discuss Connectionist Sequence Classification (CSC), monotonic alignment, Recurrent Neural Networks (RNNs), Long Short-Term Memory (LSTM), and WMT’14. By using a multilayered Long Short-Term Memory (LSTM) to map the input sequence into a vector of fixed dimensionality, and then another deep LSTM to decode the target sequence from the vector, the authors achieved state-of-the-art results on translation at the time, with a BLEU score of 34.8. The LSTM learned sensible phrase and sentence representations that introduced many short-term dependencies (particularly, by reversing the order of the words in all source sentences).</p>
+            <p>With the help of this paper by Ilya Sutskever, Oriol Vinyals, and Quoc Le, I discuss 
+Connectionist Sequence Classification (CSC), monotonic alignment, Recurrent Neural Networks 
+(RNNs), Long Short-Term Memory (LSTM), and WMT’14. By using a multilayered Long 
+Short-Term Memory (LSTM) to map the input sequence into a vector of fixed dimensionality, and 
+then another deep LSTM to decode the target sequence from the vector, the authors achieved 
+state-of-the-art results on translation at the time, with a BLEU score of 34.8. The LSTM learned 
+sensible phrase and sentence representations that introduced many short-term dependencies 
+(particularly, by reversing the order of the words in all source sentences).<sup>[1]</sup></p>
 
             <h3>Introduction</h3>
-            <p>Due to advancements in Deep Neural Network (DNN) parallel computation, supervised backpropagation has been successful in tasks such as sorting N-bit numbers. Such extraction of the output sequence from vector networks is largely limited by sequential problems such as speech recognition, machine translation, and question answering, where sequence lengths are often not known prior.</p>
-            <p>This paper leverages the LSTM architecture to read the input sequence to obtain a large fixed-dimensional vector representation and then to use another LSTM to extract the output sequence from that representation. We will explore the LSTM architecture in depth later in this analysis.</p>
-            <p>In other words, the first LSTM acts as an encoder, transforming the variable-length input sequence into a fixed-size vector (capturing sequence features). The second LSTM functions as a decoder, generating the output sequence given the encoder’s inputs.</p>
-            <p>Previous methods include mapping the entire input sequence to a vector as well as the revolutionary attention mechanism produced by Graves and Bahdanau et al. Another approach is the Connectionist Sequence Classification (CSC). CSC entails processing an input sequence through LSTM cells to obtain a final hidden state, which is then mapped to the output class probabilities using a dense layer and softmax (or other similar classification) activation function. CSC assumes monotonic alignment, which means that the sequence of inputs is processed such that their order is preserved when generating the output. This is a fair assumption for many sequential tasks, but non-monotonic tasks like reordering, non-isomorphic machine translation, parsing, summarization, question answering, and countless other examples suffer from this assumption. This is one of the driving motives for the encoder-decoder LSTM model posed by the authors.</p>
-            <p>They achieve a BLEU score of 34.81 with an ensemble of 5 deep LSTMs (with 380M parameters each) using a simple left-to-right beam search decoder and a vocabulary of 80k words. We will later go into the mathematics and architecture of such a decoder.</p>
-            <p>Another key realization is that the short-term dependencies introduced by reversing the order of words in the source sentence makes optimization simpler and helps with the performance on long sentences.</p>
+            <p>Due to advancements in Deep Neural Network (DNN) parallel computation, 
+supervised backpropagation has been successful in tasks such as sorting N-bit numbers. Such 
+extraction of the output sequence from vector networks is largely limited by sequential problems 
+such as speech recognition, machine translation, and question answering, where sequence 
+lengths are often not known prior.</p>
+            <p>This paper leverages the LSTM architecture to read the input sequence to obtain a 
+large fixed-dimensional vector representation and then to use another LSTM to extract the 
+output sequence from that representation. We will explore the LSTM architecture in depth later 
+in this analysis.</p>
+            <p>In other words, the first LSTM acts as an encoder, transforming the variable-length 
+input sequence into a fixed-size vector (capturing sequence features). The second LSTM 
+functions as a decoder, generating the output sequence given the encoder’s inputs.</p>
+            <p>Previous methods include mapping the entire input sequence to a vector as well as 
+the revolutionary attention mechanism produced by Graves and Bahdanau et al.<sup>[2]</sup> Another 
+approach is the Connectionist Sequence Classification (CSC). CSC entails processing an input 
+sequence through LSTM cells to obtain a final hidden state, which is then mapped to the output 
+class probabilities using a dense layer and softmax (or other similar classification) activation 
+function. CSC assumes monotonic alignment, which means that the sequence of inputs is 
+processed such that their order is preserved when generating the output. This is a fair 
+assumption for many sequential tasks, but non-monotonic tasks like reordering, non-isomorphic 
+machine translation, parsing, summarization, question answering, and countless other 
+examples suffer from this assumption. This is one of the driving motives for the 
+encoder-decoder LSTM model posed by the authors.</p>
+            <p>They achieve a BLEU score of 34.81 with an ensemble of 5 deep LSTMs (with 380M 
+parameters each) using a simple left-to-right beam search decoder and a vocabulary of 80k 
+words. We will later go into the mathematics and architecture of such a decoder.</p>
+
+
+
+            <p>Another key realization is that the short-term dependencies introduced by reversing 
+the order of words in the source sentence makes optimization simpler and helps with the 
+performance on long sentences.</p>
 
             <h3>The Model</h3>
-            <p>If you haven’t already, check out my primer on RNNs, GRUs, and LSTMs. There’s a lot of similar notes on there, so feel free to skim through repeated concepts and formulas.</p>
+            <p>If you haven’t already, check out my primer on RNNs, GRUs, and LSTMs. There’s a 
+lot of similar notes on there, so feel free to skim through repeated concepts and formulas.</p>
    
-            <p>For the sake of completeness, I’m going to start again from scratch (assuming you have the basics of deep neural networks and gradient descent).</p>
-            <p>The Recurrent Neural Network (RNN) generalizes feedforward neural nets to sequences. Generally, we have a sequence of inputs \(x_1, x_2, ..., x_T\) and desired sequence of outputs \(y_1, y_2, ..., y_T\). At each time step \(t\), our RNN maintains a hidden state \(h_t\) to help us remember information from previous time steps. The hidden state \(h_t\) is updated based on the current input \(x_t\) and the previous hidden state \(h_{t-1}\). Let \(W_{hx}\) be the input to hidden state weight matrix, \(W_{hh}\) be the previous hidden state to hidden state weight matrix, \(W_{yh}\) be the hidden state to output weight matrix, and \(\sigma(z) = \text{sigmoid}(z) = \frac{1}{1 + \exp(-z)}\) be the nonlinearity inducing squashing function.</p>
+            <p>For the sake of completeness, I’m going to start again from scratch (assuming you 
+have the basics of deep neural networks and gradient descent).</p>
+            <p>The Recurrent Neural Network (RNN) generalizes feedforward neural nets to 
+sequences. Generally, we have a sequence of inputs \(x_1, x_2, ..., x_T\) and desired sequence 
+of outputs \(y_1, y_2, ..., y_T\)<sup>[3]</sup>. At each time step \(t\), our RNN maintains a hidden state \(h_t\) 
+to help us remember information from previous time steps. The hidden state \(h_t\) is updated 
+based on the current input \(x_t\) and the previous hidden state \(h_{t-1}\). Let \(W_{hx}\) be the 
+input to hidden state weight matrix, \(W_{hh}\) be the previous hidden state to hidden state 
+weight matrix, \(W_{yh}\) be the hidden state to output weight matrix, and \(\sigma(z) = 
+\text{sigmoid}(z) = \frac{1}{1 + \exp(-z)}\) be the nonlinearity inducing squashing function.</p>
             <p>The RNN hidden state is then updated as:</p>
             <p class="center">\(h_t = \sigma(W_{hx} x_t + W_{hh} h_{t-1})\)</p>
-            <p>The output \(y_t\) is simply computed from its weight matrix \(W_{yh}\) and the hidden state \(h_t\):</p>
+            <p>The output \(y_t\) is simply computed from its weight matrix \(W_{yh}\) and the 
+hidden state \(h_t\):</p>
             <p class="center">\(y_t = W_{yh} h_t\)</p>
-            <p>Already, we can see a clear problem: as sequences get longer, the influence of earlier tokens diminishes during backpropagation. The gradients diminish exponentially as \(k\) grows.</p>
-            <p>The LSTM aims to estimate the probability of outputs given an input sequence by first obtaining the fixed-dimensional representation of the input sequence, given by the last hidden state of the LSTM.</p>
-            <p>The Long Short-Term Memory (LSTM) unit is an extension of the RNNs, consisting of a cell state and a hidden state. There are two states in the LSTM:</p>
+            <p>Already, we can see a clear problem: as sequences get longer, the influence of 
+earlier tokens diminishes during backpropagation. The gradients diminish exponentially as \(k\) 
+grows.</p>
+            <p>The LSTM aims to estimate the probability of outputs given an input sequence by 
+first obtaining the fixed-dimensional representation of the input sequence, given by the last 
+hidden state of the LSTM.</p>
+            <p>The Long Short-Term Memory (LSTM) unit is an extension of the RNNs, consisting 
+of a cell state and a hidden state.<sup>[4]</sup> There are two states in the LSTM:</p>
             <ol>
-                <li>Cell State \(C_t\) - this is the LSTM’s memory unit, of which information can be read, written, and erased via the three gates. The cell state can carry information across many time steps for long-term dependencies.</li>
-                <li>Hidden State \(h_t\) - the output of the LSTM unit, and the input to the next time step in sequence. The hidden state is updated based on the cell state.</li>
+                <li>Cell State \(C_t\) - this is the LSTM’s memory unit, of which information can be 
+read, written, and erased via the three gates. The cell state can carry information across many 
+time steps for long-term dependencies.</li>
+                <li>Hidden State \(h_t\) - the output of the LSTM unit, and the input to the next time 
+step in sequence. The hidden state is updated based on the cell state.</li>
             </ol>
             <p>There are also three gates in an LSTM:</p>
             <ol>
-                <li>Forget Gate \(f_t\) - decides what information to discard from the cell state. It controls the extent to which the previous cell state should be carried forward to the current cell state. By selectively forgetting parts of the previous cell state, the LSTM can focus on relevant information. This can prevent overfitting, improve memory management, and learn longer dependencies.</li>
-                <li>Input Gate \(i_t\) - decides which values from the input should go in the cell state. The input gate does so through a candidate cell state, which contains the potential new values to be added to the cell state.</li>
-                <li>Output Gate \(o_t\) - decides which part of the cell state should go in the hidden state. This helps in maintaining relevant information and enables hierarchical feature extraction.</li>
+                <li>Forget Gate \(f_t\) - decides what information to discard from the cell state. It 
+controls the extent to which the previous cell state should be carried forward to the current cell 
+state. By selectively forgetting parts of the previous cell state, the LSTM can focus on relevant 
+
+
+
+information. This can prevent overfitting, improve memory management, and learn longer 
+dependencies.</li>
+                <li>Input Gate \(i_t\) - decides which values from the input should go in the cell state. 
+The input gate does so through a candidate cell state, which contains the potential new values 
+to be added to the cell state.</li>
+                <li>Output Gate \(o_t\) - decides which part of the cell state should go in the hidden 
+state. This helps in maintaining relevant information and enables hierarchical feature 
+extraction.</li>
             </ol>
-            <p>To introduce the mathematical foundation for LSTMs, let the learnable parameters:</p>
-            <p>\(W_f\) be the forget gate weight matrix, \(b_f\) be the forget gate bias term, \(W_i\) be the input gate weight matrix, \(b_i\) be the input gate bias term, \(W_o\) be the output gate weight matrix, \(b_o\) be the output gate bias term, \(W_c\) be the candidate cell state weight matrix, and \(b_c\) be the candidate cell state bias term.</p>
+            <p>To introduce the mathematical foundation for LSTMs, let the learnable 
+parameters:</p>
+            <p>\(W_f\) be the forget gate weight matrix, \(b_f\) be the forget gate bias term, \(W_i\) 
+be the input gate weight matrix, \(b_i\) be the input gate bias term, \(W_o\) be the output gate 
+weight matrix, \(b_o\) be the output gate bias term, \(W_c\) be the candidate cell state weight 
+matrix, and \(b_c\) be the candidate cell state bias term.</p>
             <p>The forget gate \(f_t\) can then be described as:</p>
             <p class="center">\(f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)\)</p>
             <p>The input gate \(i_t\) is similarly written as:</p>
             <p class="center">\(i_t = \sigma(W_i \cdot [h_{t-1}, x_t] + b_i)\)</p>
-            <p>The candidate cell state \(C_t\) is similarly written (except using \(\tanh\) as the activation) as:</p>
+            <p>The candidate cell state \(C_t\) is similarly written (except using \(\tanh\) as the 
+activation) as:</p>
             <p class="center">\(C_t = \tanh(W_c \cdot [h_{t-1}, x_t] + b_c)\)</p>
-            <p>The cell state \(C_t\) can be represented as a function of the forget gate \(f_t\), previous cell state \(C_{t-1}\), the input gate \(i_t\), and the candidate cell state \(C_t\):</p>
+            <p>The cell state \(C_t\) can be represented as a function of the forget gate \(f_t\), 
+previous cell state \(C_{t-1}\), the input gate \(i_t\), and the candidate cell state \(C_t\):</p>
             <p class="center">\(C_t = f_t \cdot C_{t-1} + i_t \cdot C_t\)</p>
             <p>The output gate \(o_t\) is expressed similarly to that of the other two gates:</p>
             <p class="center">\(o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o)\)</p>
-            <p>Finally, the hidden state \(h_t\) is calculated using the output gate \(o_t\) and cell state \(C_t\):</p>
+            <p>Finally, the hidden state \(h_t\) is calculated using the output gate \(o_t\) and cell 
+state \(C_t\):</p>
             <p class="center">\(h_t = o_t \cdot \tanh(C_t)\)</p>
-            <p>Note that the gates use a sigmoid activation, which outputs values between 0 and 1, whereas the cell and hidden states use a \(\tanh\) activation, which outputs values between -1 and 1. Intuitively, this makes sense, as the gates should restrict the flow of information and the states should bound such information.</p>
-            <p>The authors pose the following question: given an input sequence \(x_1, x_2, ..., x_T\), how can we estimate the conditional probability of an output sequence \(y_1, y_2, ..., y_{T'}\) that can potentially be different in length? As we just saw, the LSTM can process an input sequence into a fixed-dimensional representation \(v\), as shown by the last hidden state of the LSTM. Using this representation, the conditional probability \(p(y_t | v, y_1, y_2, ..., y_{t-1})\) can be computed using a softmax over all vocabulary words for each time step \(t\) in the output sequence.</p>
-            <p>The overall probability of the output sequence given the input sequence is the product of the probabilities in each word in the sentence. Using the chain rule of probability, the authors obtain:</p>
-            <p class="center">\(p(y_1, ..., y_{T'} | x_1, ..., x_T) = \prod_{t=1}^{T'} p(y_t | v, y_1, y_2, ..., y_{t-1})\)</p>
-            <p>Because the neural network is trained on data to directly model this conditional probability, we don’t need other methods like joint probability expansion. Another note is that the authors use an “&lt;EOS&gt;” symbol to denote the end-of-sentence.</p>
-            <p>The authors chose to use two different LSTMs: one for the input sequence and another for the output sequence. The encoder LSTM processes the input sequence and encodes it into a fixed-dimensional context vector \(v\). The decoder is another LSTM that generates the output sequence given the context vector. This separation is largely motivated by the idea that one LSTM should understand the input language and the other should generate the output language.</p>
-            <p>While this increases the number of parameters non-trivially, recent advances in parallelized hardware make it feasible. Additionally, using separate encoder and decoder LSTMs incites training on multiple language pairs, avoiding the need for separate models and redundancy.</p>
-            <p>The authors also chose to use an LSTM with four layers due to the complexity required for translation and other natural language processing tasks. They also chose to reverse the order of the input sentence to improve generalization. Reversing the input means that when the LSTM starts generating the output, gradients are more reasonable and long-term dependencies are improved.</p>
+            <p>Note that the gates use a sigmoid activation, which outputs values between 0 and 1, 
+whereas the cell and hidden states use a \(\tanh\) activation, which outputs values between -1 
+and 1. Intuitively, this makes sense, as the gates should restrict the flow of information and the 
+states should bound such information.</p>
+            <p>The authors pose the following question: given an input sequence \(x_1, x_2, ..., 
+x_T\), how can we estimate the conditional probability of an output sequence \(y_1, y_2, ..., 
+y_{T'}\) that can potentially be different in length? As we just saw, the LSTM can process an 
+input sequence into a fixed-dimensional representation \(v\), as shown by the last hidden state 
+of the LSTM. Using this representation, the conditional probability \(p(y_t | v, y_1, y_2, ..., 
+y_{t-1})\) can be computed using a softmax over all vocabulary words for each time step \(t\) in 
+the output sequence.</p>
+            <p>The overall probability of the output sequence given the input sequence is the 
+product of the probabilities in each word in the sentence. Using the chain rule of probability, the 
+authors obtain:</p>
+
+
+
+            <p class="center">\(p(y_1, ..., y_{T'} | x_1, ..., x_T) = \prod_{t=1}^{T'} p(y_t | v, y_1, y_2, 
+..., y_{t-1})\)</p>
+            <p>Because the neural network is trained on data to directly model this conditional 
+probability, we don’t need other methods like joint probability expansion. Another note is that the 
+authors use an “&lt;EOS&gt;” symbol to denote the end-of-sentence.</p>
+            <p>The authors chose to use two different LSTMs: one for the input sequence and 
+another for the output sequence. The encoder LSTM processes the input sequence and 
+encodes it into a fixed-dimensional context vector \(v\). The decoder is another LSTM that 
+generates the output sequence given the context vector. This separation is largely motivated by 
+the idea that one LSTM should understand the input language and the other should generate 
+the output language.</p>
+            <p>While this increases the number of parameters non-trivially, recent advances in 
+parallelized hardware make it feasible. Additionally, using separate encoder and decoder 
+LSTMs incites training on multiple language pairs, avoiding the need for separate models and 
+redundancy.</p>
+            <p>The authors also chose to use an LSTM with four layers due to the complexity 
+required for translation and other natural language processing tasks. They also chose to reverse 
+the order of the input sentence to improve generalization. Reversing the input means that when 
+the LSTM starts generating the output, gradients are more reasonable and long-term 
+dependencies are improved.</p>
 
             <h3>Experiments</h3>
-            <p>They used direct neural machine translation (NMT) to directly translate English sentences to French without using any reference Statistical Machine Translation (SMT) systems. They also rescored the n-best lists generated by an SMT baseline, likely re-ranking the top translations to improve quality. The WMT’14 English to French dataset comprises 12 million parallel sentences with 304M English words and 348M French words. The authors used a fixed vocabulary of the 160,000 most frequent English words and the 80,000 most frequent French words. They also handled out-of-vocabulary words with an “UNK” token.</p>
-            <p>The authors trained the deep LSTM on sentence pairs, maximizing the log probability of the correct translation given the source sentence. Let \(T, S\) be the training set of sentence pairs. The training objective is then:</p>
+            <p>They used direct neural machine translation (NMT) to directly translate English 
+sentences to French without using any reference Statistical Machine Translation (SMT) 
+systems. They also rescored the n-best lists generated by an SMT baseline, likely re-ranking the 
+top translations to improve quality. The WMT’14 English to French dataset comprises 12 million 
+parallel sentences with 304M English words and 348M French words. The authors used a fixed 
+vocabulary of the 160,000 most frequent English words and the 80,000 most frequent French 
+words. They also handled out-of-vocabulary words with an “UNK” token.</p>
+            <p>The authors trained the deep LSTM on sentence pairs, maximizing the log 
+probability of the correct translation given the source sentence. Let \(T, S\) be the training set of 
+sentence pairs. The training objective is then:</p>
             <p class="center">\(L = \frac{1}{|S|} \sum_{(T, S) \in S} \log p(T | S)\)</p>
-            <p>As with most common neural optimization, we can either minimize the negative log likelihood \(-\log p(T | S)\) or (as shown above) maximize the log probability \(\log p(T | S)\). We do this using gradient descent, of which we calculate the gradients of the loss function with respect to the model parameters and update based on an optimization algorithm like SGD or Adam. Thus, the most likely translation is given as:</p>
+            <p>As with most common neural optimization, we can either minimize the negative log 
+likelihood \(-\log p(T | S)\) or (as shown above) maximize the log probability \(\log p(T | S)\). We 
+do this using gradient descent, of which we calculate the gradients of the loss function with 
+respect to the model parameters and update based on an optimization algorithm like SGD or 
+Adam. Thus, the most likely translation is given as:</p>
             <p class="center">\(T = \arg \max_T p(T | S)\)</p>
-            <p>If we’re translating a sentence step-by-step, it is advantageous to keep track of the \(B\) best sequences at each step. Thus, we begin with our initial hidden state \(h_0\) from the LSTM and an initial sequence. After decoding step \(t\), each partial sequence in the beam is expanded by appending each word from the vocabulary to the sequence. We then prune everything but the \(B\) best sequences.</p>
-            <p>As mentioned, the authors significantly improve model performance by reversing the source sentences. Reversing the input sequence brings corresponding words closer temporally, reducing the LSTM’s memory burden and improving backpropagation by minimizing the distance between related words in the source and target.</p>
-            <p>The authors use a deep LSTM with 4 layers of 1000 cells each. They used 1000 dimensional word embeddings, an input vocabulary of 160,000, and an output vocabulary of 80,000. The deep LSTM uses 8000 real numbers to represent a sentence. Thus, the LSTM has 384M parameters, of which 64M are recurrent (32M encoder, 32M decoder). LSTM parameters were initialized with a uniform distribution between -0.08 and 0.08. They used SGD with momentum, and a learning rate of 0.7 that was halved every epoch after 5 epochs, for a total of 7.5 epochs. They used batches of 128 sequences and divided the gradients by 128 for normalization. Thus if \(\nabla L_i\) represents the gradient of the loss for sequence \(i\), the gradient is determined as \(\frac{1}{128} \sum_{i=1}^{128} \nabla L_i\).</p>
-            <p>If this gradient exceeded 5, they normalized by multiplying by 5 and dividing by that gradient using gradient clipping. Mathematically:</p>
-            <p class="center">\(\nabla L = \frac{5 \cdot \frac{1}{128} \sum_{i=1}^{128} \nabla L_i}{\left\| \frac{1}{128} \sum_{i=1}^{128} \nabla L_i \right\|_2}\)</p>
-            <p>They also ensured that all sentences in a mini-batch were roughly the same length.</p>
-            <p>The C++ GPU implementation only processed at 1,700 words per second, so the authors parallelized the model using an 8-GPU machine. Each layer of the LSTM was executed on a different GPU and communicated its activations to the next GPU (layer) after computation. The remaining 4 GPUs were used to parallelize the softmax, so each GPU was responsible for multiplying a \(1000 \times 20000\) matrix, achieving 6,300 words per second. Training took about 10 days.</p>
-            <p>The best results were achieved with an ensemble of LSTMs that differ in their random initializations. They achieved state-of-the-art with a BLEU score of 34.81 and with an ensemble model, 36.5. They also use PCA to gain meaningful visualization of the hidden layer.</p>
+            <p>If we’re translating a sentence step-by-step, it is advantageous to keep track of the 
+\(B\) best sequences at each step. Thus, we begin with our initial hidden state \(h_0\) from the 
+LSTM and an initial sequence. After decoding step \(t\), each partial sequence in the beam is 
+expanded by appending each word from the vocabulary to the sequence. We then prune 
+everything but the \(B\) best sequences.</p>
+
+
+
+            <p>As mentioned, the authors significantly improve model performance by reversing the 
+source sentences. Reversing the input sequence brings corresponding words closer temporally, 
+reducing the LSTM’s memory burden and improving backpropagation by minimizing the 
+distance between related words in the source and target.</p>
+            <p>The authors use a deep LSTM with 4 layers of 1000 cells each. They used 1000 
+dimensional word embeddings, an input vocabulary of 160,000, and an output vocabulary of 
+80,000. The deep LSTM uses 8000 real numbers to represent a sentence. Thus, the LSTM has 
+384M parameters, of which 64M are recurrent (32M encoder, 32M decoder). LSTM parameters 
+were initialized with a uniform distribution between -0.08 and 0.08. They used SGD with 
+momentum, and a learning rate of 0.7 that was halved every epoch after 5 epochs, for a total of 
+7.5 epochs. They used batches of 128 sequences and divided the gradients by 128 for 
+normalization. Thus if \(\nabla L_i\) represents the gradient of the loss for sequence \(i\), the 
+gradient is determined as \(\frac{1}{128} \sum_{i=1}^{128} \nabla L_i\).</p>
+            <p>If this gradient exceeded 5, they normalized by multiplying by 5 and dividing by that 
+gradient using gradient clipping. Mathematically:</p>
+            <p class="center">\(\nabla L = \frac{5 \cdot \frac{1}{128} \sum_{i=1}^{128} \nabla 
+L_i}{\left\| \frac{1}{128} \sum_{i=1}^{128} \nabla L_i \right\|_2}\)</p>
+            <p>They also ensured that all sentences in a mini-batch were roughly the same 
+length.</p>
+            <p>The C++ GPU implementation only processed at 1,700 words per second, so the 
+authors parallelized the model using an 8-GPU machine. Each layer of the LSTM was executed 
+on a different GPU and communicated its activations to the next GPU (layer) after computation. 
+The remaining 4 GPUs were used to parallelize the softmax, so each GPU was responsible for 
+multiplying a \(1000 \times 20000\) matrix, achieving 6,300 words per second. Training took 
+about 10 days.</p>
+            <p>The best results were achieved with an ensemble of LSTMs that differ in their 
+random initializations. They achieved state-of-the-art with a BLEU score of 34.81 and with an 
+ensemble model, 36.5. They also use PCA to gain meaningful visualization of the hidden 
+layer.</p>
 
             <h3>Conclusion</h3>
-            <p>The authors successfully showed that a deep LSTM can outperform MT state-of-the-art models and can correctly translate very long sentences.</p>
+            <p>The authors successfully showed that a deep LSTM can outperform MT 
+state-of-the-art models and can correctly translate very long sentences.</p>
 
             <p>For code, please reach out:</p>
             <button class="contact-btn">Contact Me</button>
+
+            <h3>Citations</h3>
+            <ol>
+                <li>[1] Sutskever, I., Vinyals, O., & Le, Q. V. (2014). Sequence to sequence learning with neural networks. Advances in Neural Information Processing Systems, 3104-3112. Retrieved from http://arxiv.org/abs/1409.3215.</li>
+                <li>[2] Bahdanau, D., Cho, K., & Bengio, Y. (2014). Neural machine translation by jointly learning to align and translate. arXiv preprint arXiv:1409.0473. Retrieved from http://arxiv.org/abs/1409.0473.</li>
+                <li>[3] LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436-444. https://doi.org/10.1038/nature14539.</li>
+                <li>[4] Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. Neural Computation, 9(8), 1735-1780. https://doi.org/10.1162/neco.1997.9.8.1735.</li>
+            </ol>
         </article>
     </main>
 
@@ -132,3 +283,4 @@
 </body>
 
 </html>
+
