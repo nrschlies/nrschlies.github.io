@@ -60,7 +60,7 @@
 
             <h3>The Model</h3>
             <p>If you haven’t already, check out my primer on RNNs, GRUs, and LSTMs. There’s a lot of similar notes on there, so feel free to skim through repeated concepts and formulas.</p>
-            <button class="contact-btn">Link to Primer</button>
+   
             <p>For the sake of completeness, I’m going to start again from scratch (assuming you have the basics of deep neural networks and gradient descent).</p>
             <p>The Recurrent Neural Network (RNN) generalizes feedforward neural nets to sequences. Generally, we have a sequence of inputs \(x_1, x_2, ..., x_T\) and desired sequence of outputs \(y_1, y_2, ..., y_T\). At each time step \(t\), our RNN maintains a hidden state \(h_t\) to help us remember information from previous time steps. The hidden state \(h_t\) is updated based on the current input \(x_t\) and the previous hidden state \(h_{t-1}\). Let \(W_{hx}\) be the input to hidden state weight matrix, \(W_{hh}\) be the previous hidden state to hidden state weight matrix, \(W_{yh}\) be the hidden state to output weight matrix, and \(\sigma(z) = \text{sigmoid}(z) = \frac{1}{1 + \exp(-z)}\) be the nonlinearity inducing squashing function.</p>
             <p>The RNN hidden state is then updated as:</p>
