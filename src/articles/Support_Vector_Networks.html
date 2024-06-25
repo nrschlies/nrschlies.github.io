@@ -39,7 +39,7 @@
             <p>“We rise by lifting others”</p>
             <p>~Robert Ingersoil</p>
             <p>We discuss Quadratic and Linear Decision Functions, Mahalanobis Distance, The Universal Approximation Theorem, Optimal Hyperplanes, Lagrangian Multipliers, Karush-Kuhn-Tucker (KKT) Conditions, Slack Variables, Hilbert Spaces, the Kernel Trick, and Mercer’s Theorem</p>
-            <p>A dataset can be non-linearly transformed into a higher-dimensional space and labeled using a hyperplane separation. This non-separable data can be classified using soft margins and polynomial kernels (CV95).</p>
+            <p>A dataset can be non-linearly transformed into a higher-dimensional space and labeled using a hyperplane separation. This non-separable data can be classified using soft margins and polynomial kernels (CV95).<sup>[1]</sup></p>
             <p>Soft margins entail the introduction of slack variables for each data point to measure the magnitude of misclassification. We aim to maximize the margin’s width while minimizing misclassification to attain the optimal tradeoff between generalization and error. Let \( w \) be the weight vector, \( b \) be the bias term, and \( C \) be the regularization parameter for this tradeoff. A soft margin should be constructed such that,</p>
             <p style="text-align: center;">\( \min \frac{1}{2} \|w\|^2 + C \sum_{i=1}^{n} \xi_i \)</p>
             <p>A polynomial kernel is a function that enables the algorithm to perform non-linear classification by mapping input vectors into a higher-dimensional space where linear separation is possible. The polynomial kernel is expressed as,</p>
@@ -105,7 +105,7 @@
             <p style="text-align: center;">\( w_0 = \sum_{i=1}^l \alpha_i^0 y_i x_i \)</p>
             <p>I’ll review the concept of Lagrangian Multipliers here, so feel free to skim to the authors formulation of \( D_{ij} \) if you’re well versed on the subject.</p>
             <p>Aside: Lagrangian Multipliers</p>
-            <p>Suppose we want to find the maximum or minimum of a function \( f(x, y) \) subject to the constraint \( g(x, y) = 0 \). We can introduce a new variable called the Lagrange multiplier (often denoted by \( \lambda \) or in this case \( \alpha_0 \)) and construct a new function called the Lagrangian \( \mathcal{L} \):</p>
+            <p>Suppose we want to find the maximum or minimum of a function \( f(x, y) \) subject to the constraint \( g(x, y) = 0 \). We can introduce a new variable called the Lagrange multiplier (often denoted by \( \lambda \) or in this case \( \alpha_0 \)) and construct a new function called the Lagrangian \( \mathcal{L} \):<sup>[2]</sup></p>
             <p style="text-align: center;">\( \mathcal{L}(x, y, \alpha_0) = f(x, y) + \alpha_0 g(x, y) \)</p>
             <p>After forming our Lagrangian, we take the partials with respect to each variable:</p>
             <p style="text-align: center;">\( \frac{\partial \mathcal{L}}{\partial x} = \frac{\partial f}{\partial x} + \alpha_0 \frac{\partial g}{\partial x} = 0 \)</p>
@@ -123,7 +123,7 @@
             <p>Via algebraic simplification, we obtain the optimal \( (x, y) = (\frac{1}{2}, -\frac{1}{2}) \cup (-\frac{1}{2}, \frac{1}{2}) \)</p>
             <p>Let’s consider a slightly more involved problem. Suppose we want to minimize a function \( f(x) \) subject to both equality constraints \( g_i(x) = 0 \) and inequality constraints \( h_j(x) \leq 0 \). Instead of just one Lagrange multiplier, we introduce two sets of multipliers, \( \alpha_i^0 \in \Lambda \) and \( \mu_j \in M \) (one for each constraint). Our Lagrangian becomes, \( \mathcal{L} \)</p>
             <p style="text-align: center;">\( \mathcal{L}(x, \alpha_i^0, \mu_j) = f(x) + \sum_{i=1}^m \alpha_i^0 g_i(x) + \sum_{j=1}^p \mu_j h_j(x) \)</p>
-            <p>The Karush-Kuhn-Tucker (KKT) conditions are a set of equations and inequalities that define an optimal Lagrangian solution. There are four conditions:</p>
+            <p>The Karush-Kuhn-Tucker (KKT) conditions are a set of equations and inequalities that define an optimal Lagrangian solution. <sup>[3]</sup>There are four conditions:</p>
             <ol>
                 <li>Stationarity: The gradient of the Lagrangian with respect to its solution variable(s) must be zero,</li>
                 <p style="text-align: center;">\( \nabla_x \mathcal{L}(x, \alpha_0, \mu) = \nabla_x f(x) + \sum_{i=1}^m \alpha_i^0 \nabla_x g_i(x) + \sum_{j=1}^p \mu_j \nabla_x h_j(x) = 0 \)</p>
@@ -177,7 +177,7 @@
             <h3>The Soft Margin Hyperplane</h3>
             <p>Similar to what I did with Lagrangian multipliers, I’m going to review slack variables before diving into this section. If you’re proficient in this technique, feel free to skim.</p>
             <p>Aside: Slack Variables</p>
-            <p>Slack variables are used to measure the degree to which constraints are violated. They allow a model to tolerate errors in training data, which can be robust in the presence of noise.</p>
+            <p>Slack variables are used to measure the degree to which constraints are violated. <sup>[4]</sup>They allow a model to tolerate errors in training data, which can be robust in the presence of noise.</p>
             <p>In convex optimization, constraints generally involve inequalities, such as \( g(x) \leq 0 \). We can then introduce a slack variable to rewrite the constraint as \( \xi \geq 0, g(x) + \xi = 0 \). This can be particularly useful in the interior-point method, where all constraints need to be strictly feasible, that is all inequalities need to be held as marginal equalities.</p>
             <p>We’ve already used slack variables in our formulation of the KKT conditions, particularly in that of primal feasibility and complementary slackness.</p>
             <p>Recall that the margin was derived to be \( \rho(w) = \frac{2}{\|w\|} \). In turn, maximizing the margin entails minimizing the weights. To make this optimization problem quadratic, we aim to,</p>
@@ -186,7 +186,7 @@
             <p>In the case when training data cannot be separated without errors, we aim to minimize the functional given a regularization parameter,</p>
             <p style="text-align: center;">\( \Phi(\xi) = C \sum_{i=1}^l \xi_i^0 \)</p>
             <p>Which in turn yields the minimal subset of training errors. To ensure optimization feasibility and proper penalization of slack variables, we must add a monotonic convex function \( F(u) \) in minimizing our functional.</p>
-            <p>Recall that a monotonic convex function has two properties:</p>
+            <p>Recall that a monotonic convex function has two properties:<sup>[5]</sup></p>
             <ol>
                 <li>Convexity: Any line segment connecting two points on the function lies above or on that function, that is,</li>
                 <p style="text-align: center;">\( F(\lambda x + (1 - \lambda) y) \leq \lambda F(x) + (1 - \lambda) F(y) \quad \forall x, y \in \mathbb{R}^n, \lambda \in [0, 1] \)</p>
@@ -222,7 +222,7 @@
             <p>While brief, the authors mention that the construction of support-vector networks comes from the general forms of the dot-product in a Hilbert Space. At its core, this is one of the most important realizations in machine learning and is referred to as the Kernel Trick.</p>
             <p>Similar to what I did with Lagrange Multipliers and Slack Variables, I’d like to expand a bit on what Hilbert Spaces really are. For those who are proficient, feel free to skim.</p>
             <p>Aside: Hilbert Spaces</p>
-            <p>At their core, Hilbert spaces are defined as a complete inner product space.</p>
+            <p>At their core, Hilbert spaces are defined as a complete inner product space.<sup>[6]</sup></p>
             <p>We can think of the inner product on a vector space \( V \langle \cdot, \cdot \rangle \) as a function that measures similarity between two vectors. The inner product must hold the following properties:</p>
             <ol>
                 <li>Linearity in the First Argument: The inner product must respect addition and scalar multiplication when applied to the first vector. In other words,</li>
@@ -246,7 +246,7 @@
             <p>Resultantly, if you integrate the product of the kernel and the eigenfunction over \( u \), you get the eigenfunction multiplied by the eigenvalue \( \phi_i(v) \lambda_i \).</p>
             <p style="text-align: center;">\( \int K(u, v) \phi_i(u) du = \lambda_i \phi_i(v) \)</p>
             <p>The authors note that such eigenvalues must be positive semi-definite. If the kernel matrix has negative eigenvalues, it cannot be guaranteed to represent a valid inner product. Negative eigenvalues can also lead to non-convex optimization, leading to difficulties finding global extrema.</p>
-            <p>Mercer’s Theorem gives us a rule to check if our kernel behaves properly in our higher-dimensional space and is positive semi-definite. If you can plug any reasonable function into the kernel and get a positive result when you integrate over all possible values of vector \( u \) and vector \( v \). It says,</p>
+            <p>Mercer’s Theorem gives us a rule to check if our kernel behaves properly in our higher-dimensional space and is positive semi-definite. <sup>[7]</sup>If you can plug any reasonable function into the kernel and get a positive result when you integrate over all possible values of vector \( u \) and vector \( v \). It says,</p>
             <p style="text-align: center;">\( \int \int K(u, v) g(u) g(v) dudv > 0 \)</p>
             <p>Such that,</p>
             <p style="text-align: center;">\( \int g^2(u) du < \infty \)</p>
@@ -267,6 +267,16 @@
             <p>The authors were able to achieve state-of-the-art performance (at the time) on the NIST Postal Service digit recognition dataset. They construct polynomials of degree 4 with a very small amount of support vectors (~165). They extend the idea of optimal hyperplanes to that which uses soft margin and show the efficiency of the kernel trick.</p>
             <p>For MATLAB code, please reach out:</p>
             <button class="contact-btn">Contact Me</button>
+            <h3>Citations</h3>
+            <ul>
+                <li>[1] Vapnik, V. N., & Cortes, C. (1995). Support-vector networks. Machine Learning, 20(3), 273-297. https://doi.org/10.1007/BF00994018</li>
+                <li>[2] Gavin, H. P., & Scruggs, J. T. (2020). Constrained Optimization Using Lagrange Multipliers. Department of Civil and Environmental Engineering, Duke University. Retrieved from https://people.duke.edu/~mbrubake/teaching/C11/Handouts/LagrangeMultipliers.pdf</li>
+                <li>[3] Israel, R. B. (n.d.). The Karush-Kuhn-Tucker Conditions. Department of Mathematics, University of British Columbia. Retrieved from https://www.math.ubc.ca/~israel/m340/kkt.pdf.</li>
+                <li>[4] Shen, X., Diamond, S., Gu, Y., & Boyd, S. (2016). Disciplined Convex-Concave Programming. Retrieved from arXiv:1604.02639.</li>
+                <li>[5] Bendat, J., & Sherman, S. (1955). Monotone and Convex Operator Functions. Transactions of the American Mathematical Society, 79(1), 58-71. Retrieved from https://www.ams.org/journals/tran/1955-079-01/S0002-9947-1955-0073645-4/S0002-9947-1955-0073645-4.pdf.</li>
+                <li>[6] Adler, B. (2021). Hilbert Spaces and the Riesz Representation Theorem. University of Chicago. Retrieved from https://math.uchicago.edu/~may/REU2021/REUPapers/Adler.pdf.</li>
+                <li>[7] Ghojogh, B., Ghodsi, A., Karray, F., & Crowley, M. (2021). Reproducing Kernel Hilbert Space, Mercer’s Theorem, Eigenfunctions, Nyström Method, and Use of Kernels in Machine Learning: Tutorial and Survey. University of Waterloo. Retrieved from https://arxiv.org/pdf/2106.08443.pdf.</li>
+            </ul>              
         </article>
     </main>
 
