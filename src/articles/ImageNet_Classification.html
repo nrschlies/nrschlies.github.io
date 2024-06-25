@@ -50,22 +50,31 @@
             <p>“Our beauty lies in this extended capacity for convolution”</p>
             <p>~Thomas Pynchon</p>
             <p>Here, with aid from the paper, I discuss Convolutional Neural Networks (CNNs), the Fast Fourier Transform (FFT), Zero-padding, the Discrete Fourier Transform (DFT), the Cooley-Tukey Algorithm, the ImageNet dataset, Nearest Neighbor Interpolation, Bilinear Interpolation, Bicubic Interpolation, Rectified Linear Units (ReLUs), Cross Validation, Local Response Normalization, Overlapping Pooling, Image Patching, Principal Component Analysis (PCA), and Dropout.</p>
-            <p>The authors achieve top-1 and top-5 error rates of 37.5% and 17.0% on the ImageNet LSVRC-2010 contest of 1000 classes using a convolutional neural network with five convolutional layers, 60 million parameters, and 650,000 neurons. Some convolutional layers are followed by max-pooling layers and three fully-connected layers, ending with a 1000-way softmax. They use non-saturating neurons and fully utilize the GPU for convolution. They also introduce dropout as a form of regularization to reduce overfitting (KSH12).</p>
+            <p>The authors achieve top-1 and top-5 error rates of 37.5% and 17.0% on the ImageNet LSVRC-2010 contest of 1000 classes using a convolutional neural network with five convolutional layers, 60 million parameters, and 650,000 neurons. Some convolutional layers are followed by max-pooling layers and three fully-connected layers, ending with a 1000-way softmax. They use non-saturating neurons and fully utilize the GPU for convolution. They also introduce dropout as a form of regularization to reduce overfitting (KSH12).<sup>[1]</sup><</p>
 
             <h3>Introduction</h3>
             <p>They begin by emphasizing the importance of larger datasets, more powerful models, and better regularization techniques. Since the capacity of CNNs are controlled by varying their depth and breadth, they can form meaningful dependencies of pixel statistics and locality, thereby requiring fewer connections and parameters than feedforward networks. By depth and breadth, the authors mean increasing the number of layers and filters per layer (suitable for larger and more complex datasets).</p>
             <p>They mention that the improvement in GPU power and optimizations in 2D convolution can facilitate training very strong deep CNNs without overfitting.</p>
             <p>Recall that convolution in Convolutional Neural Networks (CNNs) involves sliding a filter (kernel) over the image and performing elementwise multiplications and summations to produce feature maps. Due to the parallel processing capabilities of GPUs and optimizations in the Fast Fourier Transform.</p>
             
-            <p class="center">Let \(I\) be an input image of size \(P \times Q\), \(K\) be the convolution kernel of dimensions \(M \times N\) and the coordinates of the output feature map be denoted \(x\) and \(y\). 2D convolution is described as,</p>
+            <p class="center">Let \(I\) be an input image of size \(P \times Q\), \(K\) be the convolution kernel of dimensions \(M \times N\) and the coordinates of the output feature map be denoted \(x\) and \(y\). <sup>[2]</sup><2D convolution is described as,</p>
             <p class="center">\[I * K(x, y) = \sum_{i=0}^{M-1} \sum_{j=0}^{N-1} I(x+i, y+j) \cdot K(i, j)\]</p>
             <p class="center">The Fourier transformation diagonalizes the convolution operation, thereby turning it into a simple multiplication problem in the frequency domain. This makes computing convolution significantly simpler, leading to motivations for an efficient Fast Fourier Transform (FFT) algorithm.</p>
             <p>We aim to compute the FFT of both the image and kernel. To do so, scholars often first apply zero-padding to the image and kernel to avoid circular convolution artifacts and preserve image size.</p>
             <p>Without padding, the convolution operation outputs an image that is smaller than that of the original image. These convolutional layers can result in the potential loss of boundary information, which is crucial as we add more layers. Zero-padding ensures the spatial dimensions of the output feature maps remain the same as the input.</p>
             <p>We zero pad the image and kernel to a size of \((M + P - 1) \times (N + Q - 1)\).</p>
 
+            <p>The 2D Discrete Fourier Transform (DFT) of an image \(I\) with frequency domain coordinates \(u\) and \(v\) can be described as,<sup>[3]</sup><</p>
+            <p class="center">\[F(u,v) = \sum_{i=0}^{P-1} \sum_{j=0}^{Q-1} I(x,y) e^{-i 2\pi (ux/P + vy/Q)}\]</p>
+            <p>Similarly, the inverse 2D DFT is given by,</p>
+            <p class="center">\[I(x,y) = \frac{1}{PQ} \sum_{i=0}^{P-1} \sum_{j=0}^{Q-1} F(u,v) e^{-i 2\pi (ux/P + vy/Q)}\]</p>
+            <p>Due to the direct computation of two nested summations, the computational complexity of the DFT is \(O(M^2 N^2)\).</p>
+            <p>To reduce this complexity, we can apply the Cooley-Tukey Algorithm, which works by recursively breaking down the DFT into smaller DFTs. The algorithm divides the sequence (or in this case matrix) into even and odd indexed parts, computes the DFT of the even-indexed part and the odd-indexed part, and uses the results of the smaller DFTs to construct the DFT of the original sequence.</p>
+            <p>Due to this divide and conquer approach, the computational complexity of the Cooley-Tukey FFT is reduced to \(O(MN \log M + \log N)\). When we consider an image of size \(1024 \times 1024\), this is the difference between \(10^{12}\) and \(10^7\) operations.</p>
+            <p>GPUs consist of many smaller cores that can execute thousands of threads simultaneously. The cuFFT library from NVIDIA’s CUDA efficiently leverages these threads using the Cooley-Tukey algorithm (which is built for parallelization). The author’s network takes only five to six days on two GTX 580 3GB GPUs.</p>
+
             <h3>Aside: Image Resizing Algorithms</h3>
-            <p>To resize an image, we require interpolation to estimate the pixel values at new positions. We often use nearest neighbor, bilinear interpolation, or bicubic interpolation.</p>
+            <p>To resize an image, we require interpolation to estimate the pixel values at new positions. We often use nearest neighbor, bilinear interpolation, or bicubic interpolation.<sup>[4]</sup><</p>
             <p>In nearest neighbor interpolation for image downsampling, we reduce the size of an image by selecting the nearest pixel’s value without considering any other pixel values. To determine the color of each pixel in the downsampled image, you find the closest corresponding pixel in the original image and use its value.</p>
             <p class="center">Let the original image be \(I_{H \times W}\) and let the downsampled image be \(I'_{H' \times W'}\). Each pixel in \((i', j')\) the original image is is found as,</p>
             <p class="center">\(i = \text{floor}\left(\frac{i' \cdot H}{H'}\right)\)</p>
@@ -147,6 +156,13 @@
             <p>These are mind-blowingly cool results. The authors mention potentially using unsupervised pre-training as a future discussion, which are foundational to transformer architectures, particularly in that of natural language processing.</p>
             <p>For code, please reach out:</p>
             <button class="contact-btn">Contact Me</button>
+            <h3>Citations</h3>
+            <ul>
+                <li>[1] Krizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). ImageNet Classification with Deep Convolutional Neural Networks. Advances in Neural Information Processing Systems, 25, 1097-1105. Retrieved from https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf.</li>
+                <li>[2] Dumoulin, V., & Visin, F. (2018). A guide to convolution arithmetic for deep learning. Retrieved from https://arxiv.org/pdf/1603.07285.pdf.</li>
+                <li>[3] Delgutte, B., & Greenberg, J. (1999). The Discrete Fourier Transform. HST582J/6.555J/16.456J Biomedical Signal and Image Processing, Spring 2005. Retrieved from MIT OpenCourseWare.</li>
+                <li>[4] Diana Earshia, V., & Sumathi, M. (2019). A Comprehensive Study of 1D and 2D Image Interpolation Techniques. In A. Kumar & S. Mozar (Eds.), ICCCE 2018. Lecture Notes in Electrical Engineering, vol 500. Springer, Singapore. https://doi.org/10.1007/978-981-13-0212-1_40.</li>
+            </ul>
         </article>
     </main>
 
