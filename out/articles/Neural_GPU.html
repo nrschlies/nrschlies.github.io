@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural GPUs Learn Algorithms</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+        <!-- <a href="../contact.html">Contact Me</a> TODO: Fix firebase -->
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+
+    <main>
+        <article>
+            <h2>Neural GPUs Learn Algorithms</h2>
+            <h3>Annotated by: <strong>Noah Schliesman</strong></h3>
+            <object data="../files/Neural GPUs Learn Algorithms.pdf" type="application/pdf" width="100%" height="500">
+                <p>Please download the annotated PDF to view it: <a href="../files/Neural_GPU.pdf">Download PDF</a>.</p>
+            </object>
+
+            <h3>Abstract</h3>
+            <p>Neural Turing Machines (NTMs) are not parallel and are difficult to train due to their large unfolding depth.<sup>[1]</sup> The Neural GPU solves this issue with parallelization of a convolutional GRU (CGRU).</p>
+
+            <h3>Neural Turing Machines (NTMs)</h3>
+            <p>Recall that RNNs maintain a hidden state that gets updated at each time step based on the current input and previous hidden state, often with a sigmoid activation. Given learnable parameters \( W_h \), \( W_x \), and \( b \), the hidden state is updated as:<sup>[2]</sup></p>
+            <p class="center">\( h_t = \sigma(W_h h_{t-1} + W_x x_t + b) \)</p>
+
+            <p>NTMs incorporate an external memory bank into RNNs using a controller that interacts with such memory and differentiable read and write operations.<sup>[3]</sup> The controller is typically an RNN or feedforward NN and generates commands for reading/writing to the external memory. This controller hidden state is:</p>
+            <p class="center">\( h_t = RNN(x_t, h_{t-1}; \theta) \)</p>
+            <p>The memory matrix is a differentiable matrix and is updated at each time step based on the write operations and is used for the read operations:</p>
+            <p class="center">\( M_t \in \mathbb{R}^{N \times M} \)</p>
+
+            <h3>Write Operation</h3>
+            <p>The write operation involves two main steps, an erase vector and an add vector. The erase vector specifies which parts of the memory should be erased (i.e., set to zero). The write weight vector \( w_t^{\text{write}} \) and write bias \( b_k^{\text{write}} \) are learnable parameters used to determine which memory locations should be updated during the write operation. To produce the key vector \( k_t^{\text{write}} \), we simply take the linear combination of our parameters with respect to the controller hidden state:</p>
+            <p class="center">\( k_t^{\text{write}} = W_k^{\text{write}} h_t + b_k^{\text{write}} \)</p>
+
+            <h3>Memory Update</h3>
+            <p>Typically, cosine similarity is used to compare the key vector and each memory location:</p>
+            <p class="center">\( \text{sim}(k_t^{\text{write}}, M_{t-1}[i]) = \frac{k_t^{\text{write}} \cdot M_{t-1}[i]}{\|k_t^{\text{write}}\| \|M_{t-1}[i]\|} \)</p>
+            <p>Let \( \beta_t \) be a sharpness parameter that controls how focused or diffuse the attention/weighting over memory locations will be. It scales the similarity scores and controls the degree to which the model focuses on similar memory locations. Thus, the weight vector can be described as:</p>
+            <p class="center">\( w_t^{\text{write}} = \text{Softmax}(\beta_t \cdot \text{sim}(k_t^{\text{write}}, M_{t-1}[i])) \)</p>
+            <p>Using the controller's hidden state \( h_t \), the erase weight matrix \( W_e \) and erase bias term \( b_e \), we can use the sigmoid function to bound the elements of the erase vector between 0 and 1:</p>
+            <p class="center">\( e_t = \sigma(W_e h_t + b_e) \)</p>
+            <p>The erase operation uses the write weight vector and the erase vector to selectively remove information from the memory matrix. When \( \odot \) denotes element-wise multiplication, the updated memory matrix after erasure is:</p>
+            <p class="center">\( M_t^{\text{erase}} = M_{t-1} \odot (1 - w_t^{\text{write}} e_t) \)</p>
+            <p>After erasure, the add operation uses the write weight vector and the add vector to insert new information into the memory matrix. The add vector is computed similarly to that of the erase vector, except with unique parameters and \( \tanh \) as the activation function to bound elements between -1 and 1:</p>
+            <p class="center">\( a_t = \tanh(W_a h_t + b_a) \)</p>
+            <p>The final memory matrix after adding information is specified as:</p>
+            <p class="center">\( M_t = M_t^{\text{erase}} + w_t^{\text{write}} a_t^T \)</p>
+            <p>Which can be expanded as:</p>
+            <p class="center">\( M_t = M_{t-1} \odot (1 - \sigma(W_e h_t + b_e)) \cdot \text{Softmax}(\beta_t \cdot \text{sim}(k_t^{\text{write}}, M_{t-1}[i])) + \tanh(W_a h_t + b_a)^T \cdot \text{Softmax}(\beta_t \cdot \text{sim}(k_t^{\text{write}}, M_{t-1}[i])) \)</p>
+
+            <h3>Location-based Addressing</h3>
+            <p>Heads can also use location-based addressing, which involves shifting the weightings from previous time steps to focus on specific memory locations. Let \( w_{t-1} \) be the weight vector from the previous time step and let \( s_t \) be the shift vector generated by the controller. Given a shift weight matrix \( W_s \) and bias vector \( b_s \), the shift vector is again determined by the hidden state of the controller:</p>
+            <p class="center">\( s_t = \text{softmax}(W_s h_t + b_s) \)</p>
+            <p>In turn, the new weight vector is computed by convolving \( w_{t-1} \) with \( s_t \):</p>
+            <p class="center">\( w_t^{\text{write}}[i] = \sum_{j=0}^{N-1} w_{t-1}[j] s_t[i - j \mod N] \)</p>
+
+            <h3>Neural GPU</h3>
+            <p>The Neural GPU takes inspiration largely from that of the convolutional GRU. Before we dive into convolution, let’s examine the mathematical formulation for a Gated Recurrent Unit (GRU). The GRU involves an update gate, reset gate, candidate hidden state, and final hidden state.<sup>[4]</sup> This architecture allows the GRU to maintain long-term dependencies, resolving many of the vanishing gradient issues of traditional RNNs.</p>
+
+            <h3>GRU Components</h3>
+            <p>The update gate determines the extent to which the previous hidden state is updated with the new candidate hidden state. Let \( x_t \) be the input at time step \( t \), and \( W_z \), \( U_z \) be the update gate weight matrices, \( b_z \) be the update gate bias, and \( \sigma \) be the sigmoid activation function:</p>
+            <p class="center">\( z_t = \sigma(W_z x_t + U_z h_{t-1} + b_z) \)</p>
+            <p>The reset gate determines how much of the previous hidden state should be forgotten. Let \( W_r \), \( U_r \) be reset gate weight matrices, and \( b_r \) be the reset gate bias:</p>
+            <p class="center">\( r_t = \sigma(W_r x_t + U_r h_{t-1} + b_r) \)</p>
+            <p>The candidate hidden state represents the new hidden state information to potentially be added to the final hidden state. Let \( W_h \), \( U_h \) be candidate hidden state weight matrices, and \( b_h \) be the candidate hidden state bias, and \( \tanh \) be the hyperbolic tangent activation function:</p>
+            <p class="center">\( h_t = \tanh(W_h x_t + U_h (r_t \odot h_{t-1}) + b_h) \)</p>
+            <p>The final hidden state is a linear interpolation between the previous hidden state and the candidate hidden state controlled by the update gate:</p>
+            <p class="center">\( h_t = (1 - z_t) \odot h_{t-1} + z_t \odot h_t \)</p>
+
+            <h3>Convolutional GRU</h3>
+            <p>The convolutional GRU is very similar to the traditional GRU, with the update and reset gates using convolution of their weight matrices (kernel bank \( U \)) about the previous hidden layer instead of multiplication:</p>
+            <p class="center">\( \text{CGRU}(s) = \sigma(U' \ast s + B') \odot s + (1 - \sigma(U' \ast s + B')) \odot \tanh(U \ast (\sigma(U'' \ast s + B'') \odot s) + B) \)</p>
+            <p>One thing to note is that the convolutional GRU omits the linear combination of all weight matrices and inputs are removed due to the shape of the kernel bank. Let’s rewrite this formula in terms of our original notation:</p>
+            <p class="center">\( \text{CGRU}(s) = \sigma(U_z \ast h_{t-1} + b_z) \odot h_{t-1} + (1 - \sigma(U_z \ast h_{t-1} + b_z)) \odot \tanh(U_h \ast (\sigma(U_r \ast h_{t-1} + b_r) \odot h_{t-1}) + b_h) \)</p>
+
+            <h3>Stride Learning</h3>
+            <p>In Convolutional Neural Networks (CNNs), stride refers to the number of pixels by which the kernel moves across the feature map during the convolution operation. Larger stride values generally result in smaller output feature maps but can also reduce the number of convolution operations. Recent advances include an approach that allows strides to be learned via backpropagation by performing cropping in the Fourier domain for better performance and efficiency.<sup>[5]</sup></p>
+
+            <h3>Training Techniques</h3>
+            <p>The authors used a grid search over 729 instances, which is an approach to hyperparameter optimization that involves specifying a finite set of values for each hyperparameter, thereby exploring the space. Such hyperparameters included the relaxation pull factor, curriculum progress threshold, gradient noise scale, and dropout.</p>
+            <p>They also attribute their success to curriculum learning, where they train larger numbers only after crossing a curriculum threshold (90%) on smaller digit numbers. This concept was largely inspired by education, where students graduate onto more difficult tasks after learning easier ones.</p>
+            <p>The authors used gradient noise drawn from a normal distribution with zero mean and a variance inversely proportional to the training step number. They multiply this by the gradient noise scale and apply it to a fraction of non-correct outputs. Gradient noise can help in escaping saddle points and local minima, thereby promoting improved generalization.</p>
+            <p>Another key technique was the use of a gate cutoff, in which the gates in a CGRU have a hard threshold on the top and bottom of the sigmoid function. Mathematically, this is:</p>
+            <p class="center">\( \sigma'(z) = \max(0, \min(1, 1.2 \sigma(z) - 0.1)) \)</p>
+            <p>This ensures smoother gradient flow and more stable training by maintaining intermediate gate activations and penalizing extreme gate activations.</p>
+            <p>The authors also note that a small dropout rate (6%-13.5%) can be beneficial in generalization. Recall that dropout helps by randomly zeroing connections at each time step. The idea here is that the network now includes some redundancy in its internal representation.</p>
+
+            <h3>Parameter Relation Technique</h3>
+            <p>The authors note the usage of a parameter relation technique for shared parameters. To unify parameters, they add a term to the cost function representing the distance of each parameter from the average of that parameter. This cost function is multiplied by a scalar known as the relaxation pull, which measures how separate/unified the parameter sets are. They gradually increase the relaxation pull during training.</p>
+
+            <h3>Conclusion</h3>
+            <p>The authors note that decimal input and binary representation degrades performance. They also note that only a few models in the grid search generalize well. Another insight is that “the width of the Neural GPU increases the amount of information carried in its hidden state without increasing the number of parameters.”</p>
+            <p>The neural network learns a non-trivial superlinear-time algorithm without errors. They note the necessity for sharing relations and other techniques for reducing generalization.</p>
+
+            <h3>Citations</h3>
+            <ul>
+                <li>[1] Kaiser, Ł., & Sutskever, I. (2016). Neural GPUs learn algorithms. In Proceedings of the International Conference on Learning Representations (ICLR) 2016. Retrieved from <a href="http://arxiv.org/abs/1511.08228">http://arxiv.org/abs/1511.08228</a></li>
+                <li>[2] LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436-444. <a href="https://doi.org/10.1038/nature14539">https://doi.org/10.1038/nature14539</a></li>
+                <li>[3] Graves, A., Wayne, G., & Danihelka, I. (2014). Neural Turing Machines. arXiv preprint arXiv:1410.5401. Retrieved from <a href="http://arxiv.org/abs/1410.5401">http://arxiv.org/abs/1410.5401</a></li>
+                <li>[4] Cho, K., Van Merriënboer, B., Bahdanau, D., & Bengio, Y. (2014). On the properties of neural machine translation: Encoder-decoder approaches. arXiv preprint arXiv:1409.1259.</li>
+                <li>[5] Riad, R., Teboul, O., Grangier, D., & Zeghidour, N. (2022). Learning Strides in Convolutional Neural Networks. Proceedings of the International Conference on Learning Representations (ICLR). Retrieved from <a href="https://arxiv.org/abs/2202.01653">https://arxiv.org/abs/2202.01653</a></li>
+            </ul>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
