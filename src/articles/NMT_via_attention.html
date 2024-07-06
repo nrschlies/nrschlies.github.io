@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Machine Translation by Jointly Learning to Align and Translate</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+
+    <main>
+        <article>
+            <h2>Neural Machine Translation by Jointly Learning to Align and Translate</h2>
+            <h3>Annotated by: <strong>Noah Schliesman</strong></h3>
+            <object data="../files/Neural_Machine_Translation.pdf" type="application/pdf" width="100%" height="500">
+                <p>Please download the annotated PDF to view it: <a href="../files/Neural_Machine_Translation.pdf">Download PDF</a>.</p>
+            </object>
+
+            <h3>Abstract</h3>
+            <p>Prior to this paper’s inception, encoder-decoder models encode a source sentence into a fixed-length vector from which the decoder generates a translation. Rather, Dzmitry Bahdanau, KyungHyun Cho, and Yoshua Bengio propose a soft-search attention mechanism for parts of a source sentence that are relevant to predicting a target work. Such a system produces state-of-the-art English-to-French translation and forms the basis for the modern attention networks prevalent in research.<sup>[1]</sup></p>
+
+            <h3>Introduction</h3>
+            <p>Neural machine translation has typically consisted of using neural sub-components that are trained separately, most of which belong to encoder-decoder architectures. Such models are jointly trained to maximize the probability of a correct translation given a source sentence.</p>
+            <p>As mentioned in the previous work of Cho and Bahdanau<sup>[2]</sup>, using a target fixed-length vector for encoding cripples performance as the length of the input sentence increases. Soft-search attention entails searching for a set of positions in the source sentence where the most relevant information is concentrated, of which the decoder predicts a target word based on the context vectors associated with these attention positions.</p>
+            <p>Rather than using a target fixed-length encoding context vector, the encoder generates a sequence of vectors, and chooses a subset of these vectors while decoding the translation. This idea of alignment allows the model to focus on meaningful relationships in the syntax of a source sentence. This technique produces significantly improved performance in machine translation.</p>
+
+            <h3>Background: Neural Machine Translation</h3>
+            <p>Neural Machine Translation (NMT) involves maximizing the conditional probability of a correct translation given a source sentence, i.e.,</p>
+            <p class="center">arg max p(y|x)</p>
+            <p>Encoder-decoder architectures assist such a task by learning this conditional distribution, especially using Recurrent Neural Networks (RNN) or Long Short Term Memory (LSTM) units to encode/decode.</p>
+            <p>Let f(z) and q(z) be nonlinear functions and let X = {x1, ..., xTx} be a sequence of input vectors. Generally, the hidden state is computed as,</p>
+            <p class="center">ht = f(xt, ht-1)</p>
+            <p>Notably, the context vector is comprised from the hidden states in a nonlinear function,</p>
+            <p class="center">c = q({h1, ..., hTx})</p>
+            <p>In turn, the decoder defines a probability over the translation via joint probability decomposition. For previously predicted words {y1, ..., yt'-1}, the probability of the translation is,</p>
+            <p class="center">p(y) = ∏t=1Tp(yt | {y1, ..., yt'-1}, c)</p>
+            <p>With an RNN, each conditional probability is modeled as a nonlinear function that considers the previously predicted words, the hidden state, and the context vector,</p>
+            <p class="center">p(y) = ∏t=1Tg(yt-1, st, c)</p>
+            <p>Thus, traditional methods encode and decode about a context vector based on the hidden states of a neural network.</p>
+
+            <h3>Learning to Align and Translate</h3>
+            <p>Before diving into bidirectional RNNs and attention, let’s review bidirectional RNNs. If you haven’t already, check out my primer on RNNs, GRUs, and LSTMs. I also discuss some of these topics in my analysis of Sequence to Sequence Learning with Neural Networks by Ilya Sutskever, Oriol Vinyals, and Quoc V. Le, so feel free to check that out. I also have a primer out on Attention and Transformer Architectures, but such a field has evolved from the additive attention discussed below.</p>
+            <p>Rather than using an LSTM, the authors choose to use a gated recurrent unit (GRU) as their choice of nonlinear function (i.e., f(z) ≡ Gated Recurrent Unit). The paper itself refers to this unit as a gated hidden unit, but for the sake of coherence about research I will refer to the more popular GRU. Let’s recall an extended formulation for a GRU in the computation of a bidirectional recurrent neural network (BiRNN).</p>
+            <p>The GRU and its corresponding BiRNN involves an update gate, reset gate, candidate hidden state, and final hidden state.<sup>[2]</sup> This architecture in turn allows the GRU to maintain long-term dependencies, resolving many of the vanishing gradient issues of traditional RNNs. Here we examine the forward states of a BiRNN encoder which utilizes GRU architecture.</p>
+            <p>Given a word embedding matrix E, we can precompute our embedded input such that,</p>
+            <p class="center">xt = Ewt</p>
+            <p>For some one-hot encoded vector wt. The forward hidden states are computed from the beginning of the sequence, up to token t.</p>
+            <p>The update gate determines the extent to which the previous hidden state is updated with the new candidate hidden state. Let xt be the input at time step t and Wz, Uz be update gate weight matrices, bz be the update gate bias, and σ be the sigmoid activation function:</p>
+            <p class="center">zt = σ(Wz xt + Uz ht-1 + bz)</p>
+            <p>The reset gate determines how much of the previous hidden state should be forgotten. Let Wr, Ur be reset gate weight matrices, and br be the reset gate bias:</p>
+            <p class="center">rt = σ(Wr xt + Ur ht-1 + br)</p>
+            <p>The candidate hidden state represents the new hidden state information to potentially be added to the final hidden state. Let Wh, Uh be candidate hidden state weight matrices, and bh be the candidate hidden state bias, and tanh be the hyperbolic tangent activation function:</p>
+            <p class="center">ht = tanh(Wh xt + Uh (rt ⊙ ht-1) + bh)</p>
+            <p>The final hidden state is a linear interpolation between the previous hidden state and the candidate hidden state controlled by the update gate:</p>
+            <p class="center">ht = (1 - zt) ⊙ ht-1 + zt ⊙ ht</p>
+            <p>When expanded, we obtain,</p>
+            <p class="center">ht = (1 - σ(Wz xt + Uz ht-1 + bz)) ⊙ ht-1 + σ(Wz xt + Uz ht-1 + bz) ⊙ tanh(Wh xt + Uh (σ(Wr xt + Ur ht-1 + br) ⊙ ht-1) + bh)</p>
+            <p>Quite similarly, the backwards states are computed from the tokenized embedding at t to the last token. We concatenate the forward states and backward states to attain the annotation for each token, hi. When we do this for all tokens, we obtain H which in turn is simply an annotation matrix. While this increases the complexity of the encoder twofold, it in turn allows meaningful dependencies to be made in both directions for each token at time t.</p>
+            <p>Each annotation represents the relationship between tokens in the input sentence. These annotations are learned at the same time as the decoder, which can utilize the annotations to create a learnable attention mechanism. This creates a synchronous system that learns to create annotations (align) and decode meaning using an attention mechanism (translate).</p>
+            <p>Now that we’ve discussed how the GRU-based BiRNN computes an annotation matrix, let’s address this notion of attention. Let si-1 be the decoder’s previous state, va be a trainable alignment score vector, Wa be a trainable weight matrix to transform the decoder’s previous state si-1, Ua be a trainable weight matrix to transform the encoder’s annotation hj. The associated energy of an annotation hj is given by,</p>
+            <p class="center">eij = vaT tanh(Wa si-1 + Ua hj)</p>
+            <p>The associated probability is simply calculated using a softmax function of energies,</p>
+            <p class="center">αij = exp(eij) / ∑k=1Tx exp(eik)</p>
+            <p>Our context vector at token i is just the linear combination of the annotation and its associated probability αij,</p>
+            <p class="center">ci = ∑j=1Tx αij hj</p>
+            <p>We’re now ready to discuss the decoder. Let the previous embedded output be denoted as,</p>
+            <p class="center">ei-1 = E yi-1</p>
+            <p>The decoder works just as a unidirectional GRU would, with the context vector multiplied to each bias.</p>
+            <p>The update gate is,</p>
+            <p class="center">zi = σ(Wz ei-1 + Uz si-1 + bz ci)</p>
+            <p>The reset gate is described as,</p>
+            <p class="center">ri = σ(Wr ei-1 + Ur si-1 + br ci)</p>
+            <p>The candidate hidden state is,</p>
+            <p class="center">si = tanh(Wh ei-1 + Uh (ri ⊙ si-1) + bh ci)</p>
+            <p>Lastly, the final hidden state is given by,</p>
+            <p class="center">si = (1 - zi) ⊙ si-1 + zi ⊙ si</p>
+            <p>Which in turn expands to,</p>
+            <p class="center">si = (1 - σ(Wz ei-1 + Uz si-1 + bz ci)) ⊙ si-1 + σ(Wz ei-1 + Uz si-1 + bz ci) ⊙ tanh(Wh ei-1 + Uh (σ(Wr ei-1 + Ur si-1 + br ci) ⊙ si-1) + bh ci)</p>
+            <p>The authors note that the initial decoder hidden state is computed as,</p>
+            <p class="center">s0 = tanh(Ws, h1←)</p>
+            <p>The intermediate vector combines the decoder’s previous hidden state si-1, the previous embedded output ei-1, and the context vector ci with parametrizable weights U0, V0, and bias C0 to form a high-dimensional representation that captures the necessary context for the next prediction,</p>
+            <p class="center">ti = U0 si-1 + V0 ei-1 + C0 ci</p>
+            <p>The maxout operation is an activation function that selects the maximum value from pairs of elements in the intermediate vector ti. In other words, the maxout operation takes the maximum value from pairs of linear transformations of the inputs to enhance the representational capacity of the model by capturing complex patterns and in turn reduce the dimensionality of the intermediate vector. Mathematically, it is simply described as,</p>
+            <p class="center">ti = max{ti,2j-1, ti,2j} for j=1,...,lT</p>
+            <p>From here, we compute the logits (unnormalized probability) for the target word yi by taking the dot product of our activated intermediate vector ti and a weight matrix WO,</p>
+            <p class="center">zi = WO ti</p>
+            <p>We perform a softmax activation over these logits to obtain a probability distribution over the target vocabulary,</p>
+            <p class="center">p(yi|si, yi-1, ci) = exp(zi) / ∑k=1Tx exp(zik)</p>
+            <p>Just to briefly recap, we tokenized our sentence using an embedded matrix E, computed an annotation vector for each token using a bidirectionally concatenated GRU (BiRNN), computed the attention weights for each annotation vector using a learnable additive energy mechanism and then normalizing it eij, obtained the context vector for each token using these weights and the annotation vector, used a GRU decoder network using these context vectors to produce the decoder’s previous states si-1, performing a maxout on the intermediate vector determined from the decoder states ti, computing the logits for that activated intermediate vector zi, and performing a softmax on those logits to obtain a probability distribution over the target vocabulary.</p>
+
+            <h3>Experiment Settings</h3>
+            <p>The authors used the English-to-French translation task from the ACL WMT ‘14 dataset totaling 850M words. They reduced the size of the corpus to 348M words and note that it may be possible to use a much larger monolingual corpus to pretrain an encoder.</p>
+            <p>They tokenized with a vocabulary of 30k and an UNK token, without lowercasing or stemming. They compare their model, RNNsearch, with the RNN Encoder-Decoder (reliant on fixed-length context vectors) and note great improvement. They train using mini batch stochastic gradient descent (SGD) with Adadelta and an update direction after 80 sentences. Post training, they used a beam search to maximize the conditional probability.</p>
+
+            <h3>Results and Related Work</h3>
+            <p>This novel network outperforms conventional phrase-based translation (Moses) as shown via BLEU score (36.15 for RNNsearch, 35.63 for Moses, 26.71 for RNNenc-dec). They argue that this success is largely due to fixed-length context vectors leading to difficulty with long-term dependencies. Soft-alignment (attention) deals with source and target phrases of different lengths and in turn requires the computation of the annotation weight of every word in the source sentence for each word in the translation.</p>
+            <p>The authors note advancements using self-alignment in handwriting synthesis, with the note that their methodology allows the modes of the weights of the annotations to move in both directional (hence the reason for forward and backward concatenations). They note the computational inefficiency of such a method, especially when applied to larger input/output sources.</p>
+
+            <h3>Citations</h3>
+            <ul>
+                <li>[1] Bahdanau, D., Cho, K., & Bengio, Y. (2015). Neural machine translation by jointly learning to align and translate. International Conference on Learning Representations (ICLR) 2015. Retrieved from <a href="https://arxiv.org/abs/1409.0473">https://arxiv.org/abs/1409.0473</a></li>
+                <li>[2] Cho, K., van Merriënboer, B., Bahdanau, D., & Bengio, Y. (2014). On the properties of neural machine translation: Encoder–decoder approaches. Retrieved from arXiv:1409.1259.</li>
+            </ul>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
