@@ -48,7 +48,7 @@
 
             <h3>Model Architecture</h3>
             <p>The Transformer follows an encoder-decoder structure. Such architectures have been successful in the past, but again lack in parallelizability. I’ll provide the figure the authors gave, and explain each part of the network.</p>
-            <img src="../files/img/figures/a01/a05-f01.jpg" alt="Transformer Architecture" class="figure">
+            <img src="../files/img/figures/a05/a05-f01.jpg" alt="Transformer Architecture" class="figure">
 
             <p>Let’s begin with some intuition for the model. Consider a training corpus as analogous to a collection of books in a library. Similarly, our Transformer is like a new librarian with little knowledge about these books. When visitors ask a Query, the librarian doesn’t initially know what to search for. Similarly, the librarian likely won’t be able to find the Keys (or identifying features) of each book. Lastly, the librarian likely struggles to find the best Values (or relevant information) in each book. As the librarian is trained, it learns to pay attention to the right features:</p>
             <ol>
@@ -63,15 +63,15 @@
 
             <p>In Transformers, embeddings are learned as part of the training process. We can tokenize words using Byte Pair Encoding (BPE), which initializes corpus character vocabulary, counts pair frequencies, merges the most frequent pair, updates vocabulary, and repeats.<sup>[3]</sup> It’s a really elegant but simple method, but new approaches have been suggested. In 2020, Google Research published a paper on dynamic programming encoding for subword segmentation, which achieves superior BLEU scores by 0.55.<sup>[4]</sup> We now have a set of tokens (subwords), which can each be encoded into a learnable embedding matrix.</p>
 
-            <p>For each token index , the embedding matrix has a corresponding row ,</p>
+            <p>For each token index, the embedding matrix has a corresponding row,</p>
             <p>\[ e_i = E[t_i] \]</p>
-            <p>From here, we add a positional encoding term to each embedding row. Given a position and dimension index ,</p>
+            <p>From here, we add a positional encoding term to each embedding row. Given a position and dimension index,</p>
             <p>if is even,</p>
             <p>\[ PE_{i} = \sin(\frac{pos}{10000^{2i/d_{model}}}) \]</p>
             <p>if is odd,</p>
             <p>\[ PE_{i} = \cos(\frac{pos}{10000^{2i/d_{model}}}) \]</p>
             <p>Thus, we’ve shown the following marked in green,</p>
-            <img src="../files/img/figures/a05-f02.jpg" alt="Positional Encoding" class="figure">
+            <img src="../files/img/figures/a05/a05-f02.jpg" alt="Positional Encoding" class="figure">
 
             <p>From here, the encoder maps symbolic representations (tokens) into high-dimensional continuous encodings that capture the subtle similarities between tokens using self-attention. The decoder receives this high-dimensional encoded representation and, when combined with the partial output sequence generated so far, computes an attention score to output symbols (tokens) one at a time.</p>
 
@@ -90,22 +90,22 @@
 
             <p>Additive attention can be formalized as using a FFNN with a single hidden layer to compute attention weights within a corpus.<sup>[5]</sup> If you’re interested, I’ve written a piece on the architecture's inception, for a more detailed approach please check it out.</p>
 
-            <p>Given a query vector , key vector , and value vector , additive attention starts by concatenating the query and key vectors . If and are the learnable weight matrices and bias vectors respectively, this concatenated vector is passed through a FFNN with a hidden layer as,</p>
+            <p>Given a query vector, key vector, and value vector, additive attention starts by concatenating the query and key vectors . If and are the learnable weight matrices and bias vectors respectively, this concatenated vector is passed through a FFNN with a hidden layer as,</p>
             <p>\[ h_t = \tanh(W_a[Q; K] + b_a) \]</p>
 
-            <p>In turn, the hidden layer output is projected to a scalar with learnable weight vector and bias ,</p>
+            <p>In turn, the hidden layer output is projected to a scalar with learnable weight vector and bias,</p>
             <p>\[ e_i = v_a^T h_t + c \]</p>
 
             <p>This scalar is simply passed through a softmax to obtain the normalized attention weights,</p>
             <p>\[ \alpha_i = \frac{exp(e_i)}{\sum_j exp(e_j)} \]</p>
 
-            <p>The context vector is simply the weighted sum of attention weights and value vectors ,</p>
+            <p>The context vector is simply the weighted sum of attention weights and value vectors,</p>
             <p>\[ context_i = \sum_{j=1}^{m} \alpha_{ij} v_j \]</p>
 
-            <p>Dot-product attention computes attention weights by normalizing the dot product of the query and key vectors. For a set of query vectors and key vectors with dimensionality , the dot product is simply,</p>
+            <p>Dot-product attention computes attention weights by normalizing the dot product of the query and key vectors. For a set of query vectors and key vectors with dimensionality, the dot product is simply,</p>
             <p>\[ e_i = q_i^T k_i = \sum_{j=1}^{d} q_{ij} k_{ij} = (W_q z_i)^T (W_k z_i) = (QK^T)_{ij} \]</p>
 
-            <p>When the dimensionality of query and key vectors is large, the dot product can grow very large, diminishing training gradients and leading to peaky alignment scores. Optionally (and in the case of Transformers), we scale this alignment score by the square root of the dimensionality of the keys ,</p>
+            <p>When the dimensionality of query and key vectors is large, the dot product can grow very large, diminishing training gradients and leading to peaky alignment scores. Optionally (and in the case of Transformers), we scale this alignment score by the square root of the dimensionality of the keys,</p>
             <p>\[ e_i' = \frac{e_i}{\sqrt{d}} = \frac{q_i^T k_i}{\sqrt{d}} = \frac{(W_q z_i)^T (W_k z_i)}{\sqrt{d}} = \frac{(QK^T)_{ij}}{\sqrt{d}} \]</p>
 
             <p>Similarly to that of additive attention, we put the dot-product alignment into a softmax to obtain the attention weights,</p>
@@ -118,25 +118,21 @@
             <p>\[ MultiHead(Q, K, V) = Concat(context_0, context_1, ..., context_m)W_O \]</p>
 
             <p>With only three projection matrices per attention head, dot-product attention requires fewer and simpler operations and can famously be parallelized using multiple attention heads. Thus, the attention mechanism has been illustrated in red,</p>
-            <img src="../files/img/figures/a05-f03.jpg" alt="Multi-head Attention" class="figure">
+            <img src="../files/img/figures/a05/a05-f03.jpg" alt="Multi-head Attention" class="figure">
 
             <p>Around each sublayer, the authors employ a residual connection, which is a shortcut path that skips certain layers in a neural network and allows gradients to flow directly (i.e., mitigating the vanishing gradient problem). In other words, we add the input to a sublayer to the output of that sublayer as ,</p>
             <p>\[ Sublayer(x) = x + Sublayer(x) \]</p>
 
             <p>After each sublayer and residual connection addition, the authors invoke layer normalization. This process is motivated to mitigate changes in training input distribution and thereby stabilize the learning process.<sup>[6]</sup> Let,</p>
-            <p>be the input vector of size to a layer</p>
-            <p>\[ \{a_1, ..., a_i\} \in x \]</p>
-            <p>be the mean of the input</p>
-            <p>\[ \mu_x \]</p>
-            <p>be the standard deviation of the input</p>
-            <p>\[ \sigma_x \]</p>
-            <p>and be learnable parameters for scaling and shifting</p>
-            <p>\[ \gamma \, \beta \]</p>
+            <p>\[ \{a_1, ..., a_i\} \in x \] be the input vector of size to a layer</p>
+            <p>\[ \mu_x \] be the mean of the input</p>
+            <p>\[ \sigma_x \] be the standard deviation of the input</p>
+            <p>and \[ \gamma \, \beta \] be learnable parameters for scaling and shifting</p>
 
             <p>The mean is simply calculated over the summed inputs in a layer,</p>
             <p>\[ \mu = \frac{1}{H} \sum_{i=1}^{H} a_i \]</p>
 
-            <p>Similarly, the variance is also calculated over the summed inputs ,</p>
+            <p>Similarly, the variance is also calculated over the summed inputs,</p>
             <p>\[ \sigma^2 = \frac{1}{H} \sum_{i=1}^{H} (a_i - \mu)^2 \]</p>
 
             <p>The normalized inputs with zero mean and unit variance are then,</p>
@@ -147,11 +143,11 @@
 
             <p>Typically, we normalize the positionally-encoded embedding and the multi-head attention output context matrix separately and then add the two. If is an element of the normalized positionally-encoded embedding and is an element of the normalized context matrix,</p>
             <p>\[ EncFirst-Layer = z_i + Context_i \]</p>
-            <img src="../files/img/figures/ra05-f04.jpg" alt="Residual Connection and Normalization" class="figure">
+            <img src="../files/img/figures/a05/a05-f04.jpg" alt="Residual Connection and Normalization" class="figure">
 
             <p>We’re ready to talk about the FFNN stage of the encoder. The authors use a simple two-layer network with ReLU activations in between, modeled by,</p>
             <p>\[ FFN(EncFirst-Layer) = max(0, EncFirst-Layer \cdot W_1 + b_1)W_2 + b_2 \]</p>
-            <img src="../files/img/figures/a05-f05.jpg" alt="Feed-Forward Neural Network" class="figure">
+            <img src="../files/img/figures/a05/a05-f05.jpg" alt="Feed-Forward Neural Network" class="figure">
 
             <p>From here, we normalize the FFN and add it to the normalized pre-FFNN output ,</p>
             <p>\[ EncFirst-Layer = FFN(EncFirst-Layer) + EncFirst-Layer \]</p>
@@ -167,36 +163,36 @@
             <p>if is odd,</p>
             <p>\[ PE_{O_i} = \cos(\frac{pos}{10000^{2i/d_{model}}}) \]</p>
             <p>\[ z_O = e_O + PE_{O_i} \]</p>
-            <img src="../files/img/figures/a05-f06.jpg" alt="Positional Encoding of Output" class="figure">
+            <img src="../files/img/figures/a05/a05-f06.jpg" alt="Positional Encoding of Output" class="figure">
 
             <p>The positionally-encoded embedded output is fed into a multi-headed attention mechanism similar to that of the encoder, except this time it includes a masking matrix to ensure it only attends to the previously generated tokens. Let be a triangular matrix of length , constructed as,</p>
             <p>\[ M_{ij} = \begin{cases} -\infty & \text{if } i<j \\ 0 & \text{if } i\geq j \end{cases} \]</p>
 
             <p>We then add this mask to the alignment score,</p>
             <p>\[ e_i' = \frac{e_i}{\sqrt{d}} + M = \frac{q_i^T k_i}{\sqrt{d}} + M = \frac{(W_q z_i)^T (W_k z_i)}{\sqrt{d}} + M = \frac{(QK^T)_{ij}}{\sqrt{d}} + M \]</p>
-            <img src="../files/img/figures/a05-f07.jpg" alt="Masked Attention" class="figure">
+            <img src="../files/img/figures/a05/a05-f07.jpg" alt="Masked Attention" class="figure">
 
-            <p>After normalizing the positionally-encoded embedded output and adding to the normalized masked-attention output , we obtain,</p>
+            <p>After normalizing the positionally-encoded embedded output and adding to the normalized masked-attention output, we obtain,</p>
             <p>\[ DecFirst-Layer = z_O + Context_{O_i} \]</p>
 
             <p>From here, we can transform this output into a query using a parametrizable weight matrix,</p>
             <p>\[ q_i' = W_q' \cdot DecFirst-Layer \]</p>
 
-            <p>The new queries , values , and keys , are then put into another layer, following the format of multi-head self-attention, normalization and addition, feedforward neural network, and lastly normalization and addition to produce the decoder output .</p>
+            <p>The new queries, values, and keys are then put into another layer, following the format of multi-head self-attention, normalization and addition, feedforward neural network, and lastly normalization and addition to produce the decoder output.</p>
 
             <p>The output is passed through a linear layer to project it onto the space of possible output classes. Let and be learnable parameters for such a projection. Logits are produced by,</p>
             <p>\[ Z = H W_{out} + b_{out} \]</p>
 
-            <p>To convert the logits into probabilities , we simply apply softmax,</p>
+            <p>To convert the logits into probabilities, we simply apply softmax,</p>
             <p>\[ P = softmax(Z) = \frac{exp(Z_{ij})}{\sum_{k=1}^{C} exp(z_{ik})} \]</p>
 
-            <p>In many applications, we can just take the class with the highest probability from the output probabilities matrix ,</p>
+            <p>In many applications, we can just take the class with the highest probability from the output probabilities matrix,</p>
             <p>\[ output_i = arg max_j P_i(j) \]</p>
-            <img src="../files/img/figures/a05-f08.jpg" alt="Output Projection" class="figure">
+            <img src="../files/img/figures/a05/a05-f08.jpg" alt="Output Projection" class="figure">
 
             <h3>Why Self-Attention</h3>
             <p>The authors note that Transformers are largely motivated by computational complexity per layer, parallelizability, and path length between long-range dependencies. A side benefit includes the notion that self-attention can yield more interpretable models. I’ve provided the comparison table from the paper below,</p>
-            <img src="../files/img/figures/a05-f09.jpg" alt="Comparison Table" class="figure">
+            <img src="../files/img/figures/a05/a05-f09.jpg" alt="Comparison Table" class="figure">
 
             <h3>Training</h3>
             <p>A common loss function choice for Transformers is that of cross-entropy loss. Given a sentence, the model can be trained to minimize the distribution between outputted attention and the true attention distribution of the corpus. Given a true label and predicted probability for class of classes, the cross-entropy loss is described as,</p>
@@ -204,13 +200,13 @@
 
             <p>The authors trained on the standard WMT 2014 English-German dataset with 4.5M sentence pairs. Byte-pair encoding yielded about 37k tokens in the target vocabulary. They also trained on the WMT 2014 English-French dataset with 36M sentences, where BPE yielded 32k tokens. Each training batch contained sentence pairs with about 25k source and target tokens.</p>
 
-            <p>They used 8 NVIDIA P100 GPUs, with a step size of 300k at 0.4 seconds per step. For the optimizer, the authors used Adam with , , and , with a learning rate varied as,</p>
+            <p>They used 8 NVIDIA P100 GPUs, with a step size of 300k at 0.4 seconds per step. For the optimizer, the authors used Adam with a learning rate varied as,</p>
             <p>\[ lr_{ate} = d_{model}^{-0.5} \cdot min(step-num^{-0.5}, step-num \cdot warmup-steps^{-1.5}) \]</p>
-            <p>To the output of each sublayer (before addition and normalization), the authors apply dropout. They also apply dropout to the sums of the embeddings and positional encodings in both the encoder and decoder stacks with a rate of . They also employ regularization via label smoothing with . To prevent the model from being overconfident in its prediction, label smoothing modifies the target distribution to be a weighted average of the ground truth and a uniform distribution over all possible labels. The ground truth labels are adjusted based on the class size and the smoothing parameter ,</p>
+            <p>To the output of each sublayer (before addition and normalization), the authors apply dropout. They also apply dropout to the sums of the embeddings and positional encodings in both the encoder and decoder stacks with a rate of 0.1. They also employ regularization via label smoothing with an epsilon of 0.1. To prevent the model from being overconfident in its prediction, label smoothing modifies the target distribution to be a weighted average of the ground truth and a uniform distribution over all possible labels. The ground truth labels are adjusted based on the class size and the smoothing parameter,</p>
             <p>\[ y_{smooth} = \begin{cases} \frac{\epsilon}{C} & \text{if } i\neq c \\ 1-\epsilon+\frac{\epsilon}{C} & \text{if } i=c \end{cases} \]</p>
 
             <h3>Results & Conclusion</h3>
-            <p>Astonishingly, the authors outperform state-of-the-art by more than 2.0 BLEU, resulting in a new score of 28.4 BLEU at a fraction of the training cost. They averaged 20 checkpoints with a beam search of size 4 and length penalty . The transformer can be trained significantly faster than its recurrent and convolutional counterparts, and attention seems to be a highly effective mechanism of distribution approximation. They mention that future goals include generalizing to images, audio, and video (as well as making generation less sequential).</p>
+            <p>Astonishingly, the authors outperform state-of-the-art by more than 2.0 BLEU, resulting in a new score of 28.4 BLEU at a fraction of the training cost. They averaged 20 checkpoints with a beam search of size 4 and length penalty alpha = 0.6. The transformer can be trained significantly faster than its recurrent and convolutional counterparts, and attention seems to be a highly effective mechanism of distribution approximation. They mention that future goals include generalizing to images, audio, and video (as well as making generation less sequential).</p>
 
             <h3>Citations</h3>
             <ul>
