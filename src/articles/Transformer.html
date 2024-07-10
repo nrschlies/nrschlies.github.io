@@ -42,7 +42,7 @@
             <p>Recurrent Neural Networks (RNNs), Long Short Term Memory (LSTM) Units, and Gated Recurrent Units (GRUs) have been successful in sequence modeling problems such as language modeling and machine translation—particularly those following an encoder-decoder architecture. Such methods still struggle from memory constraints and a limitation of parallelization in sequential computation. While previously attention mechanisms have been used as part of a RNN, the authors propose a model that solely relies on an attention mechanism to draw global dependencies between input and output, leading to a stark improvement in parallelization.</p>
 
             <h3>Background</h3>
-            <p>Many efforts have been made to utilize the parallelization of Convolutional Neural Networks (CNNs) in computing hidden representations in parallel. Such methods fail to learn long-term dependencies between distant input/output positions. The computational complexity for processing a sequence in such architectures grows linearly with the sequence length, resulting in operations. The Transformer reduces this complexity to a fixed number of operations for any sequence length with a complexity of . This reduction requires the averaging of attention positions, which reduces the effective resolution. With multi-head attention, however, the model can attend to different parts of the sequence from multiple perspectives, effectively learning different aspects of the input representation.</p>
+            <p>Many efforts have been made to utilize the parallelization of Convolutional Neural Networks (CNNs) in computing hidden representations in parallel. Such methods fail to learn long-term dependencies between distant input/output positions. The computational complexity for processing a sequence in such architectures grows linearly with the sequence length, resulting in operations. The Transformer reduces this complexity to a fixed number of operations for any sequence length with a complexity of O(1). This reduction requires the averaging of attention positions, which reduces the effective resolution. With multi-head attention, however, the model can attend to different parts of the sequence from multiple perspectives, effectively learning different aspects of the input representation.</p>
 
             <p>Self-attention involves each word in a sentence looking at every other word to decide which ones are important for understanding the meaning. In other words, attention relates “different positions of a single sequence in order to compute a representation of the sequence”.<sup>[1]</sup> The Transformer solely relies on self-attention, which models human sentence comprehension by considering the significance of words and their syntactic and semantic relationships.</p>
 
@@ -111,23 +111,24 @@
             <p>Similarly to that of additive attention, we put the dot-product alignment into a softmax to obtain the attention weights,</p>
             <p>\[ \alpha_i = \frac{exp(e_i')}{\sum_k exp(e_k')} \]</p>
 
-            <p>Again, the context vector is computed as the weighted sum of attention weights and value vectors ,</p>
+            <p>Again, the context vector is computed as the weighted sum of attention weights and value vectors,</p>
             <p>\[ context_i = \sum_{j=1}^{m} \alpha_{ij} v_j = \sum_{j=1}^{m} \frac{exp(e_i')}{\sum_k exp(e_k')} v_j = \sum_{j=1}^{m} softmax(\frac{(QK^T)_{ij}}{\sqrt{d}}) V_j \]</p>
 
-            <p>For weight matrix , we combine each attention head that produces such that our output can be described as,</p>
+            <p>For an output weight matrix, we combine each attention head that produces such that our output can be described as,</p>
             <p>\[ MultiHead(Q, K, V) = Concat(context_0, context_1, ..., context_m)W_O \]</p>
 
             <p>With only three projection matrices per attention head, dot-product attention requires fewer and simpler operations and can famously be parallelized using multiple attention heads. Thus, the attention mechanism has been illustrated in red,</p>
             <img src="../files/img/figures/a05/a05-f03.jpg" alt="Multi-head Attention" class="figure">
 
-            <p>Around each sublayer, the authors employ a residual connection, which is a shortcut path that skips certain layers in a neural network and allows gradients to flow directly (i.e., mitigating the vanishing gradient problem). In other words, we add the input to a sublayer to the output of that sublayer as ,</p>
+            <p>Around each sublayer, the authors employ a residual connection, which is a shortcut path that skips certain layers in a neural network and allows gradients to flow directly (i.e., mitigating the vanishing gradient problem). In other words, we add the input to a sublayer to the output of that sublayer as,</p>
             <p>\[ Sublayer(x) = x + Sublayer(x) \]</p>
 
             <p>After each sublayer and residual connection addition, the authors invoke layer normalization. This process is motivated to mitigate changes in training input distribution and thereby stabilize the learning process.<sup>[6]</sup> Let,</p>
-            <p>\[ \{a_1, ..., a_i\} \in x \] be the input vector of size to a layer</p>
-            <p>\[ \mu_x \] be the mean of the input</p>
-            <p>\[ \sigma_x \] be the standard deviation of the input</p>
-            <p>and \[ \gamma \, \beta \] be learnable parameters for scaling and shifting</p>
+            <p>\( \{a_1, ..., a_i\} \in x \) be the input vector of size to a layer</p>
+            <p>\( \mu_x \) be the mean of the input</p>
+            <p>\( \sigma_x \) be the standard deviation of the input</p>
+            <p>and \( \gamma \, \beta \) be learnable parameters for scaling and shifting</p>
+
 
             <p>The mean is simply calculated over the summed inputs in a layer,</p>
             <p>\[ \mu = \frac{1}{H} \sum_{i=1}^{H} a_i \]</p>
@@ -142,19 +143,19 @@
             <p>\[ y_i = \gamma_i x_i + \beta_i \]</p>
 
             <p>Typically, we normalize the positionally-encoded embedding and the multi-head attention output context matrix separately and then add the two. If is an element of the normalized positionally-encoded embedding and is an element of the normalized context matrix,</p>
-            <p>\[ EncFirst-Layer = z_i + Context_i \]</p>
+            <p>\[ EncFirs-Layer = z_i + Context_i \]</p>
             <img src="../files/img/figures/a05/a05-f04.jpg" alt="Residual Connection and Normalization" class="figure">
 
             <p>We’re ready to talk about the FFNN stage of the encoder. The authors use a simple two-layer network with ReLU activations in between, modeled by,</p>
-            <p>\[ FFN(EncFirst-Layer) = max(0, EncFirst-Layer \cdot W_1 + b_1)W_2 + b_2 \]</p>
+            <p>\[ FFN(EncFirstLayer) = max(0, EncFirstLayer \cdot W_1 + b_1)W_2 + b_2 \]</p>
             <img src="../files/img/figures/a05/a05-f05.jpg" alt="Feed-Forward Neural Network" class="figure">
 
-            <p>From here, we normalize the FFN and add it to the normalized pre-FFNN output ,</p>
-            <p>\[ EncFirst-Layer = FFN(EncFirst-Layer) + EncFirst-Layer \]</p>
+            <p>From here, we normalize the FFN and add it to the normalized pre-FFNN output,</p>
+            <p>\[ EncFirstLayer = FFN(EncFirstLayer) + EncFirstLayer \]</p>
 
             <p>This normalized encoder output is in turn fed into another multi-head attention mechanism, where it interprets keys and values using parametrizable weight matrices,</p>
-            <p>\[ k_i' = W_k' \cdot Encoder-Output \]</p>
-            <p>\[ v_i' = W_v' \cdot Encoder-Output \]</p>
+            <p>\[ k_i' = W_k' \cdot EncoderOutput \]</p>
+            <p>\[ v_i' = W_v' \cdot EncoderOutput \]</p>
 
             <p>To obtain our decoder query, we’re going to have to backtrack a bit. Recall that the decoder is autoregressive, that is, it depends on the outputs. Similar to that of what we did with the inputs, we map each output token into an embedding and apply positional encoding ,</p>
             <p>\[ e_O = E_O[t_O] \]</p>
@@ -166,17 +167,17 @@
             <img src="../files/img/figures/a05/a05-f06.jpg" alt="Positional Encoding of Output" class="figure">
 
             <p>The positionally-encoded embedded output is fed into a multi-headed attention mechanism similar to that of the encoder, except this time it includes a masking matrix to ensure it only attends to the previously generated tokens. Let be a triangular matrix of length , constructed as,</p>
-            <p>\[ M_{ij} = \begin{cases} -\infty & \text{if } i<j \\ 0 & \text{if } i\geq j \end{cases} \]</p>
+            <p>\[ M_{ij} = \begin{cases} -\infty & \text{if given} \end{cases} \]</p>
 
             <p>We then add this mask to the alignment score,</p>
             <p>\[ e_i' = \frac{e_i}{\sqrt{d}} + M = \frac{q_i^T k_i}{\sqrt{d}} + M = \frac{(W_q z_i)^T (W_k z_i)}{\sqrt{d}} + M = \frac{(QK^T)_{ij}}{\sqrt{d}} + M \]</p>
             <img src="../files/img/figures/a05/a05-f07.jpg" alt="Masked Attention" class="figure">
 
             <p>After normalizing the positionally-encoded embedded output and adding to the normalized masked-attention output, we obtain,</p>
-            <p>\[ DecFirst-Layer = z_O + Context_{O_i} \]</p>
+            <p>\[ DecFirstLayer = z_O + Context_{O_i} \]</p>
 
             <p>From here, we can transform this output into a query using a parametrizable weight matrix,</p>
-            <p>\[ q_i' = W_q' \cdot DecFirst-Layer \]</p>
+            <p>\[ q_i' = W_q' \cdot DecFirstLayer \]</p>
 
             <p>The new queries, values, and keys are then put into another layer, following the format of multi-head self-attention, normalization and addition, feedforward neural network, and lastly normalization and addition to produce the decoder output.</p>
 
