@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+        <!-- <a href="../contact.html">Contact Me</a> TODO: Fix firebase -->
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+
+    <main>
+        <article>
+            <h2>The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain</h2>
+            <h3>Annotated by: <strong>Noah Schliesman</strong></h3>
+            <p>Published on: <time datetime="1958-01-01">1958</time> by Frank Rosenblatt at Cornell Aeronautical Laboratory</p>
+            <p><i>"Science is nothing but perception"</i> ~Plato</p>
+
+            <h3>Overview</h3>
+            <p>The inception of modern Neural Network theory is largely due to this paper, written by Frank Rosenblatt in 1958 at Cornell Aeronautical Laboratory. Rosenblatt takes a connectionist approach towards neural modeling, with the advent of a perceptron including a retina (input stimulus), projection area, association area, and responses (output). He examines the characteristics and performance of an uncompensated gain system, constant feed system, and parasitic gain system in the context of a sum-dominant or mean-dominant association. While this initial version of the perceptron is largely based on binomial distribution, Rosenblatt notes that a bivalent reinforcement learning system can generalize, especially in the context of a binary-coded response system.<sup>[1]</sup></p>
+
+            <h3>Introduction</h3>
+            <p>Rosenblatt begins by asking three foundational questions:
+                <ol>
+                    <li>How is information sensed?</li>
+                    <li>In what form is information remembered?</li>
+                    <li>How does memory influence behavior?</li>
+                </ol>
+            </p>
+            <p>The first of these questions is encompassed by the field of sensory physiology. Rosenblatt notes that there are two positions for the latter two questions. The coded representation hypothesis argues that sensory information is in the form of coded representation with a one-to-one mapping between stimulus and stored pattern. The other position is that of the connectionist representation, which entails that the central nervous system (CNS) acts as a switching network where retention takes the form of new connection. The perceptron takes the connectionist approach.</p>
+
+            <p>I’d like to take this notion of a perceptron beyond the simplified version of a summed neuron with an activation and rather through the lens of the original paper itself.</p>
+
+            <h3>The Organization of a Perceptron</h3>
+            <p>The figure below shows Rosenblatt’s original organization of a perceptron.</p>
+            <img src="../files/img/figures/perceptron/perceptron-organization.jpg" alt="Perceptron Organization" class="figure">
+            
+            <p>Stimuli strike the retina of sensory units (S-points), of which either respond on an all-or-nothing basis or with a frequency proportional to the stimulus intensity.</p>
+            <p>From the S-points, impulses are transmitted to what is called the origin points of the set of association cells (A-units). These origin points may either be excitatory or inhibitory, depending if the sum of the impulse intensities is greater than or equal to the threshold (Θ) of the A-unit.</p>
+            <p>A-units may or may not include a preliminary projection area (A<sub>I</sub>), which in turn is randomly connected to an association area (A<sub>II</sub>).</p>
+            <p>The responses (R<sub>n</sub>) are cells which generally have excitatory or inhibitory feedback connections to the cells in its source-set (A-cells that influence a particular response). The set of connections between A<sub>II</sub> and R<sub>n</sub> are bidirectional. In this original notion of a perceptron, the responses in a system are mutually exclusive (of which responses inhibit each other).</p>
+            <p>The impulses delivered by an A-unit can be measured by a value (amplitude, frequency, or probability) of completing the transmission. In turn, Rosenblatt designs a characteristic table for different gain systems for the perceptron.</p>
+            <p>
+                <ol>
+                    <li>Alpha System (α): Active cell gains an increment of value for every impulse.</li>
+                    <li>Beta System (β): Source-sets have a constant rate of gain proportional to their activity.</li>
+                    <li>Gamma System (γ): Active cells gain value at the expense of inactive cells.</li>
+                </ol>
+            </p>
+            <p>These characteristics are shown in the table below.</p>
+            <img src="../files/img/figures/perceptron/characteristics-table.jpg" alt="Characteristics Table" class="figure">
+            
+            <p>Rosenblatt organizes the paper into an analysis of the predominant phase, of which A-units respond to the stimulus but the responses are inactive, and that of the postdominant phase, where responses become active and inhibit activity in the complement of the source-set.</p>
+            
+            <h3>Analysis of the Predominant Phase</h3>
+            <p>The author notes that the threshold (Θ) is fixed for all perceptrons here. Let,
+                <ul>
+                    <li>P<sub>a</sub> be expected proportion of A-units activated by a stimulus.</li>
+                    <li>P<sub>c</sub> be the conditional probability that an A-unit which responds to one stimulus responds to another.</li>
+                    <li>e be the number of excitatory signals received.</li>
+                    <li>x be the total number of excitatory connections.</li>
+                    <li>i be the number of inhibitory signals received.</li>
+                    <li>y be the total number of inhibitory connections.</li>
+                    <li>P(e, i) be the joint probability that the A-unit will receive e excitatory inputs and i inhibitory inputs.</li>
+                    <li>R be the proportion of S-points activated.</li>
+                    <li>R<sub>e</sub> be the probability of an excitatory input being activated.</li>
+                    <li>R<sub>i</sub> be the probability of an inhibitory input being activated.</li>
+                </ul>
+            </p>
+
+            <p>Let’s begin this analysis with the derivation of the joint probability that the A-unit will receive e excitatory inputs and i inhibitory inputs. We can use a joint binomial distribution to model such a scenario.</p>
+            <p>We first want to consider the probability of having exactly e excitatory inputs out of x excitatory connections,
+                \[
+                P(e) = \binom{x}{e} R_e^e (1 - R_e)^{x-e}
+                \]
+            </p>
+            <p>Similarly, we want to consider the probability of having exactly i inhibitory inputs out of y inhibitory connections,
+                \[
+                P(i) = \binom{y}{i} R_i^i (1 - R_i)^{y-i}
+                \]
+            </p>
+            <p>In turn, we can obtain the joint probability of receiving e excitatory inputs and i inhibitory inputs as,
+                \[
+                P(e, i) = P(e) \cdot P(i) = \binom{x}{e} R_e^e (1 - R_e)^{x-e} \cdot \binom{y}{i} R_i^i (1 - R_i)^{y-i}
+                \]
+            </p>
+            <p>We want to consider the joint probability that the A-unit will receive e excitatory inputs and i inhibitory inputs over all possible values of the number of excitatory signals from the threshold to the total number of excitatory connections Θ to x,
+                \[
+                P_a = \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} P(e, i)
+                \]
+            </p>
+
+            <p>Thus, the expected proportion of activated A-units can be determined by,
+                \[
+                P_a = \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} P(e, i)
+                \]
+            </p>
+
+            <h3>Mathematical Analysis of Learning in the Perceptron</h3>
+            <p>Rosenblatt defines the postdominant response as the stage where activity is limited to a single source-set with the other sets being suppressed. He describes two systems to determine the dominant response:
+                <ol>
+                    <li>Mean-discriminating System (μ-system): greatest mean value of inputs responds first.</li>
+                    <li>Sum-discriminating System (Σ-system): greatest net value of inputs responds first.</li>
+                </ol>
+            </p>
+            <p>In α-systems and β-systems, μ-systems generally are more robust and less influenced by random variations. In γ-systems, the μ-system and Σ-system are identical.</p>
+            <p>Rosenblatt notes that perceptrons can benefit from both supervised learning and unsupervised learning. The perceptron can learn from the result of the activity of the A-cells given stimulus patterns and can thrive in supervised learning with positive/negative reinforcement. The probability of correct choice of response between two alternatives is denoted P<sub>r</sub>. Additionally, the model can benefit from the case in which stimuli may be drawn from the same classes and the perceptron can learn to classify without supervision. This probability of a correct generalization is denoted P<sub>g</sub>.</p>
+
+            <h3>Bivalent Systems</h3>
+            <p>Rosenblatt mentions that a bivalent system consists of reinforcement learning. Binary-coded responses enable some sort of feedback (what is later developed as backpropagation). He also mentions the ideas of overfitting and the need for a parasitic gain system in the current state of the perceptron. Such bivalent systems were trained on an IBM704 computer. I’ve attached a photo of such a computer from NASA under public domain below to help set the context.<sup>[2]</sup></p>
+            <img src="../files/img/figures/perceptron/ibm704.jpg" alt="IBM 704 Computer" class="figure">
+
+            <h3>Improved Perceptrons and Spontaneous Organization</h3>
+            <p>As a point of improvement, Rosenblatt mentions using time as a stimulus dimension. This is an incredibly important idea, and forms the basis of RNNs which in turn developed into Transformers, which in turn are shifting towards a State Space Model (SSM) paradigm. He notes the need for parasitic decay in such a temporal network, and even mentions the necessity for selective recall and selective attention. A vitally dramatic (and likely my favorite) line of his is, “The question may well be raised at this point of where the perceptron’s capabilities actually stop,” to which he responds with the idea of relative judgment given stimuli. This now enters the realm of philosophy and the definition of intelligence. How is higher order abstraction possible beyond statistical separability?</p>
+
+            <h3>Conclusions and Evaluation</h3>
+            <p>Rosenblatt organizes his findings into a list, which I will summarize here:
+                <ol>
+                    <li>Given random stimuli, perceptrons can learn to extract features to specific stimuli.</li>
+                    <li>The probability of a correct response diminishes towards random as the number of stimuli learned increases.</li>
+                    <li>In such an environment, no basis for generalization exists.</li>
+                    <li>Learned associations can be retained amidst class learning.</li>
+                    <li>In such an environment as (4), the probability that an unseen stimulus is correct approaches the same asymptote as the probability of a correct response to a previously reinforced stimulus.</li>
+                    <li>Contour-sensitive projection areas and binary response systems help this model.</li>
+                    <li>Trial-and-error learning is possible using reinforcement learning.</li>
+                    <li>Temporal stimulus can be learned via statistical separability.</li>
+                    <li>Perceptron memory is distributed.</li>
+                    <li>Spontaneous class recognition is possible.</li>
+                </ol>
+            </p>
+
+            <p>Given these findings, Rosenblatt mentions the six fundamental parameters to his perceptron. Let,
+                <ul>
+                    <li>x be the number of excitatory connections</li>
+                    <li>y be the number of inhibitory connections</li>
+                    <li>Θ be the expected threshold</li>
+                    <li>ω be the R-unit to A-unit connection proportion</li>
+                    <li>N<sub>a</sub> be the number of A-units</li>
+                    <li>N<sub>r</sub> be the number of R-units</li>
+                </ul>
+            </p>
+            <p>These parameters result in three main ideas:
+                <ol>
+                    <li>Parsimony: Only one value of an A-cell is stated (V)</li>
+                    <li>Verifiability: Behavior can be measured via curve fitting</li>
+                    <li>Explanatory Power and Generality: this theory loses none of its explanatory power and precision through generality</li>
+                </ol>
+            </p>
+            <p>Rosenblatt largely accredits Hebb’s philosophy on connectionist neurology and notes that this inspiration has allowed a feasible approach to cognitive systems with a quantitative statistical approach.</p>
+
+            <h3>Citations</h3>
+            <ul>
+                <li>[1] Rosenblatt, F. (1958). The perceptron: A probabilistic model for information storage and organization in the brain. Psychological Review, 65(6), 386-408. https://doi.org/10.1037/h0042519</li>
+                <li>[2] NASA. (1959). Human computer with IBM 704. Wikimedia Commons. https://commons.wikimedia.org/wiki/File:Human_computer_with_IBM_704_in_1959.jpg</li>
+            </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 The Perceptron. All rights reserved.</p>
+    </footer>
+</body>
+</html>
