@@ -193,37 +193,39 @@
     <p>It is useful to consider the performance of a γ-system in which nsr is a random variable. Let,</p>
     <ul>
         <li>q be the ratio of the nsr standard deviation to mean (σ(nsr):μ(nsr))</li>
-        <li>Nr be the number of system responses</li>
-        <li>NA be the number of A-units</li>
-        <li>wc be the proportion of intersecting response A-units</li>
+        <li>N<sub>r</sub> be the number of system responses</li>
+        <li>N<sub>A</sub> be the number of A-units</li>
+        <li>w<sub>c</sub> be the proportion of intersecting response A-units</li>
     </ul>
-    <p>The γ-system can be characterized by:</p>
+
+    <p>The αμ-system can be characterized by:</p>
     <p>\[ c_1 = 0 \]</p>
-    <p>\[ c_2 = 1 - Pa = 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \]</p>
-    <p>\[ c_3 = 2 Pa^2 q^2 \left(\frac{Nr-1}{2Nr-2} + 1\right) = 2 \left(1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i}\right) Nr \left(1 - \frac{c Na}{Nr}\right) \]</p>
-    <p>\[ c_4 = 2 \left(1 - Pa\right) Nr \left(1 - \frac{c Na}{Nr}\right) = 2 \left(1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i}\right) Nr \left(1 - \frac{c Na}{Nr}\right) \]</p>
-    <p>The γ-system constants adapted for the β-system in a random variable scenario are described by:</p>
+    <p>\[ c_2 = (1 - P_a) = \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \right) \]</p>
+    <p>\[ c_3 = 2 P_a^2 q^2 \left( \frac{Nr - 1}{2 Nr - 2} + 1 \right) = 2 \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \right) Nr \left( 1 - \frac{c N_a}{N_r} \right) \]</p>
+    <p>\[ c_4 = 2 \left( 1 - P_a \right) Nr \left( 1 - \frac{c N_a}{N_r} \right) = 2 \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \right) Nr \left( 1 - \frac{c N_a}{N_r} \right) \]</p>
+    <p>The β-system constants adapted for the μ-system in a random variable scenario are described by:</p>
     <p>\[ c_1 = 0 \]</p>
-    <p>\[ c_2 = 1 - Pa Ne = 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} Ne \]</p>
-    <p>\[ c_3 = 2 Pa Ne q Nr^2 \left(\frac{1}{2}\right)^2 \]</p>
-    <p>\[ c_4 = 2 \left(1 - Pa\right) Nr Ne \]</p>
-    <p>The β-system struggles even more than the γ-system due to the lack of parasitic impact on the net values. This is why the γ-system performs much better in practice.</p>
+    <p>\[ c_2 = (1 - P_a) N_e = \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} N_e \right) \]</p>
+    <p>\[ c_3 = 2 P_a N_e q \left( \frac{ω N_r - 1}{2 N_r - 2} \right)^2 \]</p>
+    <p>\[ c_4 = 2 \left( 1 - P_a \right) ω N_r N_e \]</p>
+    <p>The β-system struggles even more than the α-system due to the lack of parasitic impact on the net values. This is why the γ-system performs much better in practice.</p>
     <p>Rosenblatt now considers a “differentiated environment”, where the perceptron is tasked with stimuli classification. He notes that “the equation for the perceptron’s performance after infinite experience with each class of stimuli is identical for P<sub>r</sub> and P<sub>g</sub>”. This probability after infinite training can be modeled as,</p>
-    <p>\[ Pr = Pg = 1 - \frac{1 - Pa Ne}{c_1 c_3} \]</p>
-    <p>After highlighting the importance of usable data, Rosenblatt notes the expected value of Pc between pairs of stimuli drawn at random from classes c<sub>1</sub> and c<sub>2</sub> as P<sub>c</sub>. The Σ-system is then characterized by the following coefficients,</p>
-    <p>\[ c_1 = Pa Ne Pc \frac{1 - Pc}{1 - Pc/2} \]</p>
-    <p>\[ c_2 = Pa Ne \left(1 - Pc/1\right) \]</p>
-    <p>\[ c_3 = \sum_{r=1,2} 2 Pa \left(1 - Pa\right) Ne Pc^2 \left(\frac{1}{r+3}\right)2 Pc \left(\frac{1}{r+j}\right) 2 Pc \left(\frac{1}{x+s}\right) 2 Pc \left(\frac{1}{r+j}\right) 2 Pc \left(\frac{1}{r+x}\right) + Pc \left(\frac{1}{r}\right) 2 Pc^2 \left(\frac{1}{1r}\right) + Pc \left(\frac{1}{x+s}\right) 2 Pc \left(\frac{1}{x+j}\right) 2 Pc \left(\frac{1}{x+r}\right) 2 Pc \left(\frac{1}{r+x}\right) \]</p>
-    <p>\[ c_4 = \sum_{r=1,2} 2 Pa Ne Pc^2 \left(\frac{1}{r - Pc}\right) - Pc \left(\frac{1}{x+j}\right) - Pc \left(\frac{1}{r+j}\right) - Pc \left(\frac{1}{x+j}\right) - Pc \left(\frac{1}{x+j}\right) - Pc \left(\frac{1}{j}\right) - Pc \left(\frac{1}{x}\right) \]</p>
-    <p>In turn, the β-system is described by,</p>
-    <p>\[ c_1 = Pc \frac{1 - Pc}{1 - Pc/2} \]</p>
-    <p>\[ c_2 = 1 - Pc/1 \]</p>
-    <p>\[ c_3 = \sum_{r=1,2} \frac{1 - Pa Ne}{1 - Ne/1} 2 Pc \left(\frac{1}{r+j}\right) 2 Pc \left(\frac{1}{x+s}\right) 2 Pc \left(\frac{1}{r+j}\right) 2 Pc \left(\frac{1}{x+s}\right) \]</p>
-    <p>\[ c_4 = \sum_{r=1,2} Pa Ne Pc \left(\frac{1}{r - Pc}\right) - Pc \left(\frac{1}{j}\right) - Pc \left(\frac{1}{x+j}\right) - Pc \left(\frac{1}{r}\right) - Pc \left(\frac{1}{x}\right) \]</p>
+    <p>\[ P_{r_{\infty}} = P_{g_{\infty}} = 1 - \left( 1 - P_a \right)^N_e \cdot ϕ \left( \frac{c_1}{\sqrt{c_3}} \right) \]</p>
+    <p>After highlighting the importance of usable data, Rosenblatt notes the expected value of Pc between pairs of stimuli drawn at random from classes α and β as Pcαβ. The αΣ-system is then characterized by the following coefficients,</p>
+    <p>\[ c_1 = P N_a N_e \left( P_{c_{11}} - P_{c_{12}} \right) \]</p>
+    <p>\[ c_2 = P N_a N_e \left( 1 - P_{c_{11}} \right) \]</p>
+    <p>\[ c_3 = \sum_{r=1,2} 2 P_a \left( 1 - P_a \right) N_e \left[ \left( P_{c_{1r}} + σ_{c_{1r}}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \times \left( P_{c_{1x}} + σ_{c_{1r}}^2 (P_{c_{1r}}) \right) \right) + 2 (P_{c_{1r}} P_{c_{1x}}) + P_{c_{1r}}^2 \left( σ_{c_{1r}}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \times \left( P_{c_{1x}} + σ_{c_{1r}}^2 (P_{c_{1r}}) \right) \right) \right] \]</p>
+    <p>\[ c_4 = \sum_{r=1,2} P_a N_e \left[ \left( P_{c_{1r}} - P_{c_{1r}}^2 - σ_{s}^2 (P_{c_{1r}}) - σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1) \left( P_{c_{1x}} - P_{c_{1x}}^2 - σ_{j}^2 (P_{c_{1x}}) \right) \right) \right] \]</p>
+    <p>In turn, the αμ-system is described by,</p>
+    <p>\[ c_1 = \left( P_{c_{11}} - P_{c_{12}} \right) \]</p>
+    <p>\[ c_2 = \left( 1 - P_{c_{11}} \right) \]</p>
+    <p>\[ c_3 = \sum_{r=1,2} \frac{1}{N_e} \left[ P_a \left( \frac{1}{N_e - 1} \right) \left[ σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \times \left( σ_{j}^2 (P_{c_{1r}}) \right) \right] + σ_{s}^2 (P_{c_{1r}}) + \left( ω N_r - 1 \right)^2 \times \left( σ_{s}^2 (P_{c_{1r}}) \right) \right] \]</p>
+    <p>\[ c_4 = \sum_{r=1,2} P_a N_e \left[ \left( P_{c_{1r}} - P_{c_{1r}}^2 - σ_{s}^2 (P_{c_{1r}}) - σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1) \left( P_{c_{1x}} - P_{c_{1x}}^2 - σ_{j}^2 (P_{c_{1x}}) \right) \right) \right] \]</p>
+
     <p>As the number of association cells in the system increases, the asymptote approaches unity. Similarly, as the number of responses increases, the system performance decreases. These are both consequences of the Law of Large Numbers in statistical inference. Rosenblatt mentions that this model would improve from binary-coded responses and lays the foundation for feature learning.</p>
     <h3>Bivalent Systems</h3>
     <p>Rosenblatt mentions that a bivalent system consists of reinforcement learning. Binary-coded responses enable some sort of feedback (what is later developed as backpropagation). He also mentions the ideas of overfitting and the need for a parasitic gain system in the current state of the perceptron. Such bivalent systems were trained on an IBM704 computer. I’ve attached a photo of such a computer from NASA under public domain below to help set the context.<sup>[2]</sup></p>
-    <img src="../files/img/figures/a06/a06-f8.jpg" alt="IBM704 Computer" class="figure">
+    <img src="../files/img/figures/a06/a06-f08.jpg" alt="IBM704 Computer" class="figure">
     
     <h3>Improved Perceptrons and Spontaneous Organization</h3>
     <p>As a point of improvement, Rosenblatt mentions using time as a stimulus dimension. This is an incredibly important idea, and forms the basis of RNNs which in turn developed into Transformers, which in turn are shifting towards a State Space Model (SSM) paradigm. He notes the need for parasitic decay in such a temporal network, and even mentions the necessity for selective recall and selective attention. A vitally dramatic (and likely my favorite) line of his is, “The question may well be raised at this point of where the perceptron’s capabilities actually stop,” to which he responds with the idea of relative judgment given stimuli. This now enters the realm of philosophy and the definition of intelligence. How is higher order abstraction possible beyond statistical separability?</p>
