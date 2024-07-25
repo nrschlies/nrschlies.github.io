@@ -123,12 +123,12 @@
             <p>\[ H = C(X) + B^T(X - F(WX)) \]</p>
             <p>It is now of interest to examine the change in cost with respect to weights while staying at such a fixed point.</p>
             <p>The variation in the Hamiltonian can be decomposed as the changes in Hamiltonian with respect to the change in state combined with that change in state summed with the changes in Hamiltonian with respect to the change in weights combined with that change in weights,</p>
-            <p>\[ \frac{\partial H}{\partial X} \frac{\partial X} + \frac{\partial H}{\partial W} \frac{\partial W} \]</p>
+            <p>\[ \frac{\partial H}{\partial X} \frac{\partial X}{\partial t} + \frac{\partial H}{\partial W} \frac{\partial W}{\partial t} \]</p>
             <p>Intuitively, this means that the change in Hamiltonian is dependent on the change in the state and weight space. We can compute each of the intermediary partials with respect to the state X and weights W as,</p>
             <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X} + B^T\frac{\partial (X - F(WX))}{\partial X} \]</p>
             <p>\[ \frac{\partial H}{\partial W} = \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W} \]</p>
             <p>The variation in Hamiltonian can be expanded as,</p>
-            <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X} + B^T\frac{\partial (X - F(WX))}{\partial X}\frac{\partial X} + \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W}\frac{\partial W} \]</p>
+            <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X} + B^T \frac{\partial (X - F(WX))}{\partial X} \]</p>
             <p>Le Cun notes that we are interested in the case where the variation in X does not affect the variation in Hamiltonian (so that we just need to update our weights). This motivates setting the change in Hamiltonian with respect to the state to zero,</p>
             <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X} + B^T(I - \frac{\partial F}{\partial (WX)}W) = 0 \]</p>
             <p>We can expand the following term, where I is the identity matrix,</p>
@@ -146,7 +146,7 @@
             <p>Which can be rewritten in terms of the variable Y to yield the Pineda-Almeida equation for computing the gradients of the fixed point with respect to the weights,</p>
             <p>\[ \frac{\partial F}{\partial (WX)} W^TY - \frac{\partial C}{\partial X} - Y = \tau_y \frac{dY}{dt} \]</p>
             <p>Since we set \(\frac{\partial H}{\partial X} = 0\), the variation in the Hamiltonian is simply,</p>
-            <p>\[ \frac{\partial H}{\partial W}\frac{\partial W} \]</p>
+            <p>\[ \frac{\partial H}{\partial W} = \frac{\partial C}{\partial W} + B^T \frac{\partial (X - F(WX))}{\partial W} \]</p>
             <p>\[ \frac{\partial H}{\partial W} = \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W} \]</p>
             <p>Given the fixed nature of our point, we can say that,</p>
             <p>\[ \frac{dH}{dW} = \frac{dC}{dW} = \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W} \]</p>
