@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Theoretical Framework for Back-Propagation</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+
+    <main>
+        <article>
+            <h2>A Theoretical Framework for Back-Propagation</h2>
+            <h3>By: Yann Le Cun</h3>
+            <p>Published on: <time datetime="1988-01-01">1988</time></p>
+            <object data="../files/Backprop_via_Lagrangians.pdf" type="application/pdf" width="100%" height="500">
+                <p>Please download the annotated PDF to view it: <a href="../files/Backprop_via_Lagrangians.pdf">Download PDF</a>.</p>
+            </object>
+            <h3>Abstract</h3>
+            <p>Yann Le Cun tackles the problem of backpropagation through a Lagrangian framework. Using principles in optimal control theory and variational calculus, Le Cun poses back-propagation as an optimization problem with nonlinear constraints. They generalize to the cases of linearly dependent weight spaces and continuous time recurrent neural networks (CTRNNs), which yield the Pineda-Almeida equation for computing the gradient of the fixed point with respect to the weights using a Hamiltonian framework.</p>
+            
+            <h3>Introduction</h3>
+            <p>The author begins with the note that back-propagation is simply an extension of the chain rule and gradient descent. In optimal control theory, we use Lagrange multipliers to find the optimal values for control variables by minimizing an objective function subject to constraints. Although written several years later, Cortes and Vapnik’s Support Vector Networks utilize the same framework for optimizing higher-dimensional hyperplanes.</p>
+            <p>The difficult part about back-propagation is the influence of a parameter on a function whose computation involves many steps as reflected by the connectionist nature of the problem. Optimal control theory studies how the state of a system at time <i>T</i> will be modified by a change in control variables at time <i>T - t</i>. Le Cun notes that we can leverage this procedure by considering layer indices instead of time.</p>
+            <p>He defines backpropagation as computing partial derivatives of the states with respect to the parameters to minimize an objective function. He expands beyond Lagrangian formalism and into that of the single Hamiltonian function, which meets some optimality criterion as a consequence of the Pontryagin principle and Bellman’s dynamic programming. Despite these methods, only the standard Lagrange multiplier method is necessary.</p>
+            <p>Formally, the back-propagated vector is called the co-state or adjoint state, and the backward system is the adjoint system. This optimal control solution entails a cascade of elementary systems with a minimized performance index (i.e. change in loss with respect to weights). These problems can be noted as two-point boundary value problems due to the forward pass and backward pass.</p>
+            
+            <h3>Deriving Back-Propagation Using the Hamiltonian/Lagrangian Formalism</h3>
+            <p>Assume the network consists of a number of layers in a feed-forward manner, with no skip connections. The layers are indexed from 0 to N, with the state of layer k for pattern p denoted as X<sub>p</sub><sup>k</sup>. Note that X<sub>p</sub> is all the concatenated X<sub>p</sub><sup>k</sup>'s and W<sub>k</sub> is the weight matrix between layer k-1 and layer k. The vector of weighted sums is given as,</p>
+            <p>\[ A_p^{(k)} = W^{(k)}X_p^{(k-1)} \]</p>
+            <p>Consequently, let F<sub>k</sub> represent some non-linear activation function (in this case sigmoid). Intuitively, state X<sub>p</sub><sup>k</sup> can be written as,</p>
+            <p>\[ X_p^{(k)} = F_k(A_p^{(k)}) = F_k(W^{(k)}X_p^{(k-1)}) \forall k \in [1, N] \]</p>
+            <p>This requires a set of labeled desired outputs D<sub>p</sub>, further emphasizing the paradigm that models are only as good as their training data. So far we’ve discussed the simple equations for the forward pass of backpropagation, let’s move onto the backwards pass.</p>
+            <p>Since X(N) encompasses previous layers through a dependency on intermediate states and propagation of error, we only need to worry about minimizing C(X(N)). Thus, we obtain the following objective function,</p>
+            <p>\[ \text{Minimize } C(X_p^{(N)}) \]</p>
+            <p>As mentioned previously, we need a constraint to reflect the recurrent nature of our network.</p>
+            <p>\[ \text{Subject to: } X_p^{(k)} = F_k(W^{(k)}X_p^{(k-1)}) \]</p>
+            <p>This constraint can be rewritten to equate to zero,</p>
+            <p>\[ \text{Subject to: } X_p^{(k)} - F_k(W^{(k)}X_p^{(k-1)}) = 0 \]</p>
+            <p>For a Lagrangian multiplier vector B_p(k), the Lagrangian equates to,</p>
+            <p>\[ L_p(W, X_p, B_p) = C(X_p^{(N)}) + \sum_{k=1}^{N} B_p^{(k)^T}(X_p^{(k)} - F_k(W^{(k)}X_p^{(k-1)})) \]</p>
+            <p>Here, the total loss function is simply the sum of patterns over the number of training examples P,</p>
+            <p>\[ L(W, X, B) = \sum_{p=1}^{P} L_p(W, X_p, B_p) = \sum_{p=1}^{P} C(X_p^{(N)}) + \sum_{k=1}^{N} B_p^{(k)^T}(X_p^{(k)} - F_k(W^{(k)}X_p^{(k-1)})) \]</p>
+            <p>Consider the case where the objective function is the squared error,</p>
+            <p>\[ C(X_p^{(N)}) = (D_p - X_p^{(N)})^T (D_p - X_p^{(N)}) \]</p>
+            <p>The Lagrangian expands to,</p>
+            <p>\[ L(W, X, B) = \sum_{p=1}^{P} (D_p - X_p^{(N)})^T (D_p - X_p^{(N)}) + \sum_{k=1}^{N} B_p^{(k)^T}(X_p^{(k)} - F_k(W^{(k)}X_p^{(k-1)})) \]</p>
+            <p>By definition of the Lagrangian, we can attain a local minimum for the objective function at,</p>
+            <p>\[ \nabla L(W, X, B) = 0 \]</p>
+            <p>This gradient can then be expanded into the respective partial derivatives,</p>
+            <p>\[ \frac{\partial L(W,X,B)}{\partial B} = 0 \]</p>
+            <p>\[ \frac{\partial L(W,X,B)}{\partial X} = 0 \]</p>
+            <p>\[ \frac{\partial L(W,X,B)}{\partial W} = 0 \]</p>
+            <p>The partial with respect to error accounts for the forward pass, the partial with respect to the state accounts for the backward pass, and the partial with respect to the weight ensures optimality. Through careful analysis, we can see that the first condition yields the formal dynamics equation,</p>
+            <p>\[ X_p^{(k)} = F_k(A_p^{(k)}) = F_k(W^{(k)}X_p^{(k-1)}) \forall k, p \in [1, N][1, P] \]</p>
+            <p>The second equation (as derived from the squared error) acts as the boundary condition for k = N,</p>
+            <p>\[ \frac{\partial C}{\partial X_p^{(N)}} = B_p^{(N)} = 2 (D_p - X_p^{(N)}) \]</p>
+            <p>The second condition also entails the recursive dynamics of our network for k ≠ N,</p>
+            <p>\[ \frac{\partial C}{\partial X_p^{(k)}} = B_p^{(k)} = W^{(k+1)^T}\nabla F_k(A_p^{(k+1)})B_p^{(k+1)} \]</p>
+            <p>Le Cun takes special note of the Jacobian matrix of F_k at point A_p^{(k+1)} given the i-th diagonal term,</p>
+            <p>\[ \nabla F_k(A_p^{(k+1)}) = f'(a_i^{(k+1)}) \]</p>
+            <p>They then establish variables to represent the Jacobian of the activation with errors. Let Y_p^{(N)} be the output layer boundary condition and Y_p^{(k)} be the backpropagation dynamics,</p>
+            <p>\[ Y_p^{(N)} = 2\nabla F_k(A_p^{(N)}) (D_p - X_p^{(N)}) \]</p>
+            <p>\[ Y_p^{(k)} = \nabla F_k(A_p^{(k)})B_p^{(k)} = \nabla F_k(A_p^{(k)})W^{(k+1)^T}Y_p^{(k+1)} \forall k \in [1, n - 1] \]</p>
+            <p>Intuitively, we can define the initial state as the input pattern our other boundary condition,</p>
+            <p>\[ X_p^{(0)} = I_p \]</p>
+            <p>The third gradient equation of the Lagrangian formulation ensures W is a local extrema,</p>
+            <p>\[ \frac{\partial L(W,X,B)}{\partial W} = \sum_{p=1}^{P} \nabla F_k(A_p^{(k)})B_p^{(k)}X_p^{(k-1)^T} = 0 \forall k \in [1, N] \]</p>
+            <p>Such an equation gives way for gradient descent, of which can be formulated as for step size λ,</p>
+            <p>\[ W^{(k)} \leftarrow W^{(k)} - \lambda \frac{\partial L(W,X,B)}{\partial B} \]</p>
+            <p>Which can be expanded as,</p>
+            <p>\[ W^{(k)} \leftarrow W^{(k)} - \lambda \sum_{p=1}^{P} Y_p^{(k)}X_p^{(k-1)^T} \]</p>
+            <p>Or if you’d prefer,</p>
+            <p>\[ W^{(k)} \leftarrow W^{(k)} - \lambda \sum_{p=1}^{P} \nabla F_k(A_p^{(k)})W^{(k+1)^T}Y_p^{(k+1)}X_p^{(k-1)^T} \]</p>
+            <p>Le Cun notes that, as derived by Bryson and Ho[2], the Hamiltonian can similarly be derived as,</p>
+            <p>\[ H_p^{(k)} = B_p^{(k)^T}F(W^{(k)}X_p^{(k-1)}) \]</p>
+
+            <h3>A Few Extensions</h3>
+            <p>A priori knowledge refers to information that is independent of empirical observation and often relates to the assumptions about the data. Weights can be treated as functions W(U, k) to integrate a priori knowledge directly into the network. With this change, our Lagrangian is similarly,</p>
+            <p>\[ L_p(W, X_p, B_p) = C(X_p^{(N)}) + \sum_{k=1}^{N} B_p^{(k)^T}(X_p^{(k)} - F_k(W(U, k)X_p^{(k-1)})) \]</p>
+            <p>Again, by definition of the Lagrangian, we can attain a local minimum for the objective function C at,</p>
+            <p>\[ \nabla L(W, X, B) = 0 \]</p>
+            <p>The analysis for the first two subconditions and the third weight subcondition for optimality is of interest,</p>
+            <p>\[ \frac{\partial L(W,X,B)}{\partial U} = 0 \]</p>
+            <p>The update rule then becomes,</p>
+            <p>\[ u_q \leftarrow u_q - \lambda \sum_{ijk} \frac{\partial L}{\partial u_q} \]</p>
+            <p>With this in mind, our partial of the Lagrangian with respect to the error can be expanded using the chain rule,</p>
+            <p>\[ \frac{\partial L}{\partial u_q} = \frac{\partial L}{\partial w_{ij}^{(k)}} \cdot \frac{\partial w_{ij}^{(k)}}{\partial u_q} \]</p>
+            <p>Similarly, by definition of our partial of the Lagrangian with respect to the weights, we obtain,</p>
+            <p>\[ \frac{\partial L}{\partial w_{ij}^{(k)}} = y_i^{(k)}x_j^{(k-1)} \]</p>
+            <p>So the new update rule then can be expanded,</p>
+            <p>\[ u_q \leftarrow u_q - \lambda \sum_{ijk} y_i^{(k)}x_j^{(k-1)}\frac{\partial w_{ij}^{(k)}}{\partial u_q} \]</p>
+            <p>Le Cun mentions the utility in weight sharing as a component in Recurrent Neural Networks (RNNs). The paper transitions to a discussion of continuous time recurrent neural networks (CTRNNs) and provides the following differential equation,</p>
+            <p>\[ \tau_x \frac{dX}{dt}(t) = F(WX(t)) - X(t) \]</p>
+            <p>In other words, the change in state with respect to time (and some time constant \(\tau_x\)) is equal to an activation of the weighted input minus the state itself. Such an equation can be intuitively simplified if,</p>
+            <p>\[ X_f = F(WX(t)) \text{ and } X_i = X(t) \Delta X = X_f - X_i \]</p>
+            <p>\[ \tau_x \frac{dX}{dt}(t) = \Delta X \]</p>
+            <p>The author also mentions the case where,</p>
+            <p>\[ X_f = F(X(t)) \cdot F(W) \tau_x = \text{diag}(\tau_1, \tau_2, ..., \tau_n) \]</p>
+            <p>The conversation shifts to that of the Hamiltonian energy landscape of recurrent neural networks. A fixed point can be defined such that there is no change in a state with respect to time,</p>
+            <p>\[ \frac{dX}{dt} = 0 \]</p>
+            <p>We can describe such a fixed point as the effect of some nonlinear activation subtracted from the current state. This formulation is the definition of equilibrium; a result that there is no change over time. As you’ll see, this term becomes our constraint for Hamiltonian optimization,</p>
+            <p>\[ \frac{dX}{dt} = X - F(WX) = 0 \]</p>
+            <p>As is formalized in optimal control theory, the Hamiltonian combines the objective function C(X) and a constraint term B^T(X - F(WX)). The Hamiltonian measures the total cost of the system through this formulation,</p>
+            <p>\[ H = C(X) + B^T(X - F(WX)) \]</p>
+            <p>It is now of interest to examine the change in cost with respect to weights while staying at such a fixed point.</p>
+            <p>The variation in the Hamiltonian can be decomposed as the changes in Hamiltonian with respect to the change in state combined with that change in state summed with the changes in Hamiltonian with respect to the change in weights combined with that change in weights,</p>
+            <p>\[ \frac{\partial H}{\partial X} \frac{\partial X} + \frac{\partial H}{\partial W} \frac{\partial W} \]</p>
+            <p>Intuitively, this means that the change in Hamiltonian is dependent on the change in the state and weight space. We can compute each of the intermediary partials with respect to the state X and weights W as,</p>
+            <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X} + B^T\frac{\partial (X - F(WX))}{\partial X} \]</p>
+            <p>\[ \frac{\partial H}{\partial W} = \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W} \]</p>
+            <p>The variation in Hamiltonian can be expanded as,</p>
+            <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X} + B^T\frac{\partial (X - F(WX))}{\partial X}\frac{\partial X} + \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W}\frac{\partial W} \]</p>
+            <p>Le Cun notes that we are interested in the case where the variation in X does not affect the variation in Hamiltonian (so that we just need to update our weights). This motivates setting the change in Hamiltonian with respect to the state to zero,</p>
+            <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X} + B^T(I - \frac{\partial F}{\partial (WX)}W) = 0 \]</p>
+            <p>We can expand the following term, where I is the identity matrix,</p>
+            <p>\[ \frac{\partial (X - F(WX))}{\partial X} = I - \frac{\partial F}{\partial (WX)}W \]</p>
+            <p>So our change in cost with respect to the state becomes,</p>
+            <p>\[ \frac{\partial H}{\partial X} = \frac{\partial C}{\partial X}^T + B - W^T\frac{\partial F}{\partial (WX)}^TB = 0 \]</p>
+            <p>We can characterize such a fixed point dynamical system as,</p>
+            <p>\[ - \frac{\partial H}{\partial X} = r_b\frac{dB}{dt} \]</p>
+            <p>Or to expand,</p>
+            <p>\[ - \frac{\partial C}{\partial X}^T - B + W^T\frac{\partial F}{\partial (WX)}^TB = r_b\frac{dB}{dt} \]</p>
+            <p>Le Cun uses a variable Y to represent the sensitivity of the activation with respect to small changes in WX given a vector of Lagrange multipliers B,</p>
+            <p>\[ Y = \frac{\partial F}{\partial (WX)^T}B \]</p>
+            <p>We can multiply both sides of the previous equation by the change in activation with respect to small changes in WX,</p>
+            <p>\[ - \frac{\partial F}{\partial (WX)} \frac{\partial C}{\partial X}^T - \frac{\partial F}{\partial (WX)} B + \frac{\partial F}{\partial (WX)} W^T\frac{\partial F}{\partial (WX)^T}B = r_b\frac{dB}{dt} \frac{\partial F}{\partial (WX)} \]</p>
+            <p>Which can be rewritten in terms of the variable Y to yield the Pineda-Almeida equation for computing the gradients of the fixed point with respect to the weights,</p>
+            <p>\[ \frac{\partial F}{\partial (WX)} W^TY - \frac{\partial C}{\partial X} - Y = \tau_y \frac{dY}{dt} \]</p>
+            <p>Since we set \(\frac{\partial H}{\partial X} = 0\), the variation in the Hamiltonian is simply,</p>
+            <p>\[ \frac{\partial H}{\partial W}\frac{\partial W} \]</p>
+            <p>\[ \frac{\partial H}{\partial W} = \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W} \]</p>
+            <p>Given the fixed nature of our point, we can say that,</p>
+            <p>\[ \frac{dH}{dW} = \frac{dC}{dW} = \frac{\partial C}{\partial W} + B^T\frac{\partial (X - F(WX))}{\partial W} \]</p>
+            <p>If the cost function is not a direct function of the weights, the expression reduces to,</p>
+            <p>\[ \frac{dC}{dW} = B^T\frac{\partial (X - F(WX))}{\partial W} \]</p>
+            <p>The change in cost function with respect to the weight components C with respect to w_ij is obtained as,</p>
+            <p>\[ \frac{dC}{dw_{ij}} = - y_ix_j \]</p>
+            <p>The update rule then becomes,</p>
+            <p>\[ w_{ij} \leftarrow w_{ij} - \lambda y_ix_i \]</p>
+            <p>And the continuous version becomes,</p>
+            <p>\[ \tau_w \frac{dw_{ij}}{dt} = y_ix_j \]</p>
+            <p>Le Cun notes that such a Lagrangian/Hamiltonian approach to neural networks is only the tip of the iceberg and there is much meaningful work to be done in modeling connectionist systems.</p>
+
+            <h3>Citations</h3>
+            <ul>
+                <li>Le Cun, Y. (1988). A theoretical framework for back-propagation. Proceedings of the 1988 Connectionist Models Summer School, 21-28. San Mateo, CA: Morgan Kaufmann.</li>
+                <li>Bryson, A. E., & Ho, Y.-C. (1969). Applied optimal control: Optimization, estimation, and control. Blaisdell Publishing Company.</li>
+            </ul>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+</html>
