@@ -146,14 +146,14 @@ button[type="submit"]:hover {
 
 .text-container {
     padding: 20px;
-    flex: 1;
+    flex: 1 1 100%;
 }
 
 .profile-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1;
+    flex: 1 1 100%;
     padding: 20px;
 }
 
@@ -166,20 +166,20 @@ button[type="submit"]:hover {
 
 .categories-container {
     display: flex;
-    flex: 2;
-    justify-content: space-between;
     flex-wrap: wrap;
+    width: 100%;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .category {
+    flex: 1;
+    margin: 10px;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-    flex: 1;
-    margin: 10px;
 }
 
 .category h2 {
@@ -189,8 +189,8 @@ button[type="submit"]:hover {
 }
 
 .tag {
-    display: inline-block;
-    margin: 5px;
+    display: block;
+    margin: 10px auto;
     padding: 10px 15px;
     border-radius: 50px;
     background-color: #ff6f61;
@@ -214,9 +214,9 @@ button[type="submit"]:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
     .about {
-        flex-wrap: nowrap;
+        flex-direction: row;
     }
 
     .text-container {
@@ -228,12 +228,27 @@ button[type="submit"]:hover {
     }
 
     .categories-container {
-        flex: 3;
+        display: flex;
         justify-content: space-between;
+        flex: 3;
     }
 
     .category {
         flex: 1;
         max-width: 48%;
+    }
+}
+
+@media (max-width: 799px) {
+    .about, .categories-container {
+        flex-direction: column;
+    }
+
+    .profile-container, .categories-container, .category {
+        flex: 1 1 100%;
+    }
+
+    .category {
+        max-width: 100%;
     }
 }
