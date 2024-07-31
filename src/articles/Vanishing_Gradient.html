@@ -78,7 +78,9 @@
         <p>\[ a_t^k = w f(a_{t-1}^k) + h_t^k \]</p>
         <p>They then provide an analysis of the temporal dynamics using hyperbolic attractors. An attractor is the space from which trajectories evolve after a long enough time. In our case, we are interested in hyperbolic attractors—of which the system behavior for every point on the attractor splits into two subspaces. In one direction (the stable manifold \( E_s \)), if the system starts near the attractor, it gets pulled in over time. In the other (unstable manifold \( E_w \)), small differences can cause very different outcomes. Such a system provides insight into the stability and predictability of complex systems.<sup>[2]</sup></p>
         <p>By definition, an attractor occurs where the output of the system remains constant over time. For a linear transformation of input \( a \) based on weight \( w \), we look for points where that linear transformation is equal to its activation,</p>
-        <p>\[ f(a) = aw \] or more precisely, \[ \tanh(a) = aw \]</p>
+        <p>\[ f(a) = \frac{a}{w} \]</p>
+        <p>or more precisely,</p>
+        <p>\[ \tanh(a) = \frac{a}{w} \]</p>
         <p>The authors note that weight \( w \) must be greater than the reciprocal of the activation function derivative at 0 to ensure two distinct non-zero attractors,</p>
         <p>\[ w > \frac{1}{f'(0)} \]</p>
         <p>For \( f(0) = \tanh(0) \), \( f'(0) = 1 - \tanh^2(0) = 1 \), \(\therefore f'(0) = 1\) and \( w > 1 \).</p>
@@ -117,7 +119,7 @@
         <p>Our augmented state vector can be rewritten now as an additive system,</p>
         <p>\[ a_t' = N'(a'_{t-1}) + u_t' \]</p>
         <p>In turn, we can also write our new map N' in terms of the old mapping N,</p>
-        <p>\[ N'(a'_{t-1}) = N(a_{t-1}, u_{t-1}, 0) \]</p>
+        <p>\[ N'(a'_{t-1}) = N((a_{t-1}, u_{t-1}), 0) \]</p>
 
         <h3>Analysis</h3>
         <p>To latch a bit of information, the system’s state \( a_t \) is restricted to a subset S of its domain. Thus, the state is either inside the set S or outside it. The region in the state space from which the system’s state will converge to the attractor is known as the basin of attraction. To ensure that \( a_t \) remains within S, the system’s dynamics are designed so that S is within the basin of attraction of an attractor. To erase a bit of information, inputs can be used to push the system’s state \( a_t \) out of the basin of attraction, possibly into another attractor’s basin (thereby changing the stored bit of information). Through six handy definitions for the basin of attraction of such a system, the authors prove that the sensitivity of the state \( a_t \) to the initial state \( a_0 \) ( \( \frac{\partial a_t}{\partial a_0} \) ) vanishes over long sequences.</p>
@@ -144,7 +146,7 @@
         </ul>
         <p>For an arbitrarily small positive distance \( \epsilon > 0 \), there exists a time step \( l \) and a point \( x \in X \) such that the distance between the state \( M^l(a) \) and the point x is less than \( \epsilon \). Starting from any initial condition a in the basin, the trajectory will get arbitrarily close to some point x in the attractor X after a finite number of iterations l,</p>
         <p>\[ β(X) = \{ a: \forall \epsilon, \exists l, \exists x \in X \text{ such that } ||M^l(a) - x|| < \epsilon \} \]</p>
-        <p><strong>Definition 4:</strong> “We call \( Γ(X) \), the reduced attracting set of a hyperbolic attractor X, the set of points \( y \) in the basin of attraction of X, such that for all \( l \geq 1 \), all the eigenvalues of \( M^l'(y) \) are less than 1”</p>
+        <p><strong>Definition 4:</strong> “We call \( \Gamma(X) \), the reduced attracting set of a hyperbolic attractor \( X \), the set of points \( y \) in the basin of attraction of \( X \), such that for all \( l \geq 1 \), all the eigenvalues of \( (M^l)'(y) \) are less than 1”</p>
         <p>Such a reduced attracting set is more restrictive than the stable manifold and only includes points where the linearized dynamics around point y ensure uniform contraction in a uniformly stable manner.</p>
         <p><strong>Definition 5:</strong> “A system is robustly latched at time \( t_0 \) to X, one of several hyperbolic attractors, if \( a_{t0} \) is in the reduced attracting set of X under a map M defining the autonomous system dynamics”</p>
         <p>As mentioned in the original RNN task, we want the system to latch onto an attractor despite the presence of noise. Intuitively, we want this latching to be defined by a uniform contraction to such an attractor through the stability of eigenvalues.</p>
@@ -175,10 +177,10 @@
             <li> \( \epsilon \) be a small positive constant that prevents division by zero</li>
         </ul>
         <p>The update function \( w_i^p \) takes into account the Jacobian and Hessian of the cost function with respect to each weight,</p>
-        <p>\[ w_i^p = -\frac{\partial^2 C_p}{\partial w_i^2} + \frac{\partial C_p}{\partial w_i} \]</p>
+        <p>\[ \Delta w_i(p) = -\frac{\eta}{\left|\frac{\partial^2 C(p)}{\partial w_i^2}\right| + \mu} \times \frac{\partial C(p)}{\partial w_i} \]</p>
         <p>The Hessian serves as a normalizing factor for the curvature of the parameter space, which can in turn help accelerate learning. The authors note that such an algorithm outperforms back-propagation but still fails to robustly address the vanishing gradient problem.</p>
         <p>The authors then extend this idea to a time-weighted algorithm, which considers each instantiation of weight \( w_i \) at different time steps as a separate variable. The algorithm uses a diagonal approximation of the Hessian to keep computations efficient. They use a global learning rate \( \alpha \) of 0.01, and a clipping constant \( \epsilon \) of 0.001 to 0.3, with a momentum term of 0.8 attached to the clipping constant. This extension is formulated as,</p>
-        <p>\[ w_i^p = -t \frac{\partial^2 C_p}{\partial w_{i,t}^2} + \frac{\partial C_p}{\partial w_{i,t}} \]</p>
+        <p>\[ \Delta w_i(p) = -\sum_t \frac{\eta}{\left|\frac{\partial^2 C(p)}{\partial w_{it}^2}\right| + \mu} \times \frac{\partial C(p)}{\partial w_{it}} \]</p>
         <p>Here, the summation arises because these variables are constrained to be equal since they represent the same underlying weight across different times.</p>
 
         <h3>Discrete Error Propagation</h3>
@@ -200,7 +202,7 @@
         -x_i & y_i = 2 \\
         \end{cases} \]</p>
         <p>The authors can in turn calculate a pseudo-gradient,</p>
-        <p>\[ C'_{x_i} = \frac{1}{\Delta x_i} y_i \text{ s.t. } y_i \neq 0 \]</p>
+        <p>\[ \frac{\Delta C}{\Delta x_i} = \frac{1}{\Delta x_i (\Delta y_i)} \text{ s.t. } \Delta y_i \neq 0 \]</p>
         <p>To handle the discrete nature of such an output change, the authors define a continuous variable \( g_i \) that relates to the error signal to be propagated,</p>
         <p>\[ \text{MIN} \leq g_i \leq \text{MAX} \]</p>
         <p>A stochastic function \( S(g_i) \) is defined to map the continuous variable to the discrete set \{-2, 2\},</p>
