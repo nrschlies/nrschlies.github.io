@@ -13,9 +13,10 @@ body {
 header {
     background: #fff;
     color: #000;
-    padding: 10px 20px;
+    padding: 20px;
     text-align: center;
     border-bottom: 1px solid #ccc;
+    font-size: 1.2em;
 }
 
 main {
@@ -26,19 +27,12 @@ main {
     transition: margin-left 0.5s;
 }
 
-article {
-    background: white;
-    margin: 20px 0;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 footer {
     text-align: center;
     padding: 20px;
     background: #222;
     color: white;
+    font-size: 0.9em;
 }
 
 .nav-menu {
@@ -57,7 +51,7 @@ footer {
 .nav-menu a {
     padding: 10px 15px;
     text-decoration: none;
-    font-size: 22px;
+    font-size: 18px;
     color: white;
     display: block;
     transition: 0.3s;
@@ -95,41 +89,7 @@ footer {
 
 @media screen and (max-height: 450px) {
     .nav-menu {padding-top: 15px;}
-    .nav-menu a {font-size: 18px;}
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-button[type="submit"] {
-    background-color: #ff6f61;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button[type="submit"]:hover {
-    background-color: #ff4f41;
+    .nav-menu a {font-size: 16px;}
 }
 
 .about {
@@ -141,20 +101,22 @@ button[type="submit"]:hover {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    align-items: center;
 }
 
 .text-container {
+    flex: 2;
     padding: 20px;
-    flex: 1 1 100%;
+    box-sizing: border-box;
 }
 
 .profile-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1 1 100%;
+    flex: 1;
     padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 .profile-headshot {
@@ -162,35 +124,34 @@ button[type="submit"]:hover {
     height: 300px;
     object-fit: cover;
     border-radius: 10px;
+    margin: 0 auto;
 }
 
 .categories-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
 }
 
 .category {
-    flex: 1;
-    margin: 10px;
+    margin-bottom: 20px;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
 }
 
 .category h2 {
     font-size: 1.5em;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: #333;
 }
 
 .tag {
-    display: block;
-    margin: 10px auto;
+    display: inline-block;
+    margin: 5px;
     padding: 10px 15px;
     border-radius: 50px;
     background-color: #ff6f61;
@@ -214,28 +175,34 @@ button[type="submit"]:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.contact-btn {
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.contact-btn:hover {
+    background-color: #ff4f41;
+}
+
 @media (min-width: 800px) {
     .about {
         flex-direction: row;
     }
 
-    .text-container {
-        flex: 2;
-    }
-
-    .profile-container {
-        flex: 1;
-    }
-
     .categories-container {
         display: flex;
         justify-content: space-between;
-        flex: 3;
     }
 
     .category {
         flex: 1;
-        max-width: 48%;
+        margin: 10px;
     }
 }
 
@@ -244,11 +211,8 @@ button[type="submit"]:hover {
         flex-direction: column;
     }
 
-    .profile-container, .categories-container, .category {
+    .profile-container, .category {
         flex: 1 1 100%;
     }
-
-    .category {
-        max-width: 100%;
-    }
 }
+
