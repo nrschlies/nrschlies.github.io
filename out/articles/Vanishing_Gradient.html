@@ -32,6 +32,7 @@
             &#9776;
         </button>
     </aside>
+<main>
     <article>
         <h1>Learning Long-Term Dependencies with Gradient Descent is Difficult</h1>
           <h3>Annotated by: <strong>Noah Schliesman</strong></h3>
@@ -75,13 +76,14 @@
         <p>From here, we can define our simple recurrent state \( a_t^k \) as a function of our weight parameter \( w \), the hidden state \( h_t^k \), and the activated previous recurrent state \( f(a_{t-1}^k) \). The authors use the hyperbolic tangent as their choice of activation (take careful note that the range is -1, 1),</p>
         <p>\[ x_t^k = f(a_t^k) = \tanh(a_t^k) \]</p>
         <p>\[ a_t^k = w f(a_{t-1}^k) + h_t^k \]</p>
-        <p>They then provide an analysis of the temporal dynamics using hyperbolic attractors. An attractor is the space from which trajectories evolve after a long enough time. In our case, we are interested in hyperbolic attractors—of which the system behavior for every point on the attractor splits into two subspaces. In one direction (the stable manifold \( E_s \)), if the system starts near the attractor, it gets pulled in over time. In the other (unstable manifold \( E_w \)), small differences can cause very different outcomes. Such a system provides insight into the stability and predictability of complex systems.</p>
+        <p>They then provide an analysis of the temporal dynamics using hyperbolic attractors. An attractor is the space from which trajectories evolve after a long enough time. In our case, we are interested in hyperbolic attractors—of which the system behavior for every point on the attractor splits into two subspaces. In one direction (the stable manifold \( E_s \)), if the system starts near the attractor, it gets pulled in over time. In the other (unstable manifold \( E_w \)), small differences can cause very different outcomes. Such a system provides insight into the stability and predictability of complex systems.<sup>[2]</sup></p>
         <p>By definition, an attractor occurs where the output of the system remains constant over time. For a linear transformation of input \( a \) based on weight \( w \), we look for points where that linear transformation is equal to its activation,</p>
         <p>\[ f(a) = aw \] or more precisely, \[ \tanh(a) = aw \]</p>
         <p>The authors note that weight \( w \) must be greater than the reciprocal of the activation function derivative at 0 to ensure two distinct non-zero attractors,</p>
         <p>\[ w > \frac{1}{f'(0)} \]</p>
         <p>For \( f(0) = \tanh(0) \), \( f'(0) = 1 - \tanh^2(0) = 1 \), \(\therefore f'(0) = 1\) and \( w > 1 \).</p>
         <p>When we plot such a system, we obtain the two distinct attractors for \( w > 1 \),</p>
+        <img src="../files/img/figures/a08/a08-f01.jpg" alt="Two distinct attractors" class="figure">
         <p>From here, the authors assume that the initial state is \( x_0 = -x \). For a threshold value \( h^* > 0 \), the system will remain near the attractor \( x_0 \) as long as the magnitude of \( h_t \) is below the threshold \( h^* \), ensuring the stability of the system around the attractor,</p>
         <p>\[ |h_t| < h^* \]</p>
         <p>Intuitively, if the hidden state \( h_t \) exceeds the threshold \( h^* \) consistently for a certain number of steps \( L_1 \), the system will transition to the positive attractor \( x \) by time step \( L_1 \). This means that there exists a finite number of steps \( L_1 \) such that the state \( x_{L1} \) of the system is greater than the attractor,</p>
@@ -90,7 +92,14 @@
         <p>\[ x_{L1} < -x \ \text{iff} \ h_t > -h^* \ \forall t \leq L1 \]</p>
         <p>Consider the case in which the threshold \( h^* \) increases with weight \( w \). Thus, larger weights allow the system to tolerate larger hidden state deviations before switching attractors. Conversely, the transient length \( L_1 \) (time it takes the system to settle to a new attractor) decreases when \( |h_t| \) increases. In other words, larger hidden state values lead to quicker transitions between attractors.</p>
         <p>This is exactly why long-term gradient dependencies are difficult. We want robustness to noise and hidden state deviations, but there is a tradeoff which reduces the transient length \( L_1 \), leading to the model failing to capture long-term dependencies.</p>
-
+        <img src="../files/img/figures/a08/a08-f02.jpg" alt="Latching process" class="figure">
+        <p>The recurrent weight \( w \) is also trainable and as mentioned produces two stable attractors for \( w > 1 \). Similarly, a larger weight \( w \) results in a larger critical value \( h^* \), leading to greater resistance to noise. To ensure the neuron’s state converges to an attractor, we set,</p>
+        <p>\[ h_t^1 \geq H \text{ and } h_t^2 \leq -H \text{ for } H > h^* \]</p>
+        <p>The authors then go into the experimental setup and process for training such a latching recurrent neuron. Two sample sequences are provided as input to the recurrent neuron. For time steps \( t \leq L \), the inputs \( h_t^k \) are trainable and set to small uniform random values and are trainable. After training (for time steps \( t > L \)), the inputs are drawn from a zero-mean Gaussian distribution with noise variance \( s \). They used BPTT to update weights based on error gradients over time.</p>
+        <p>The first experiment investigates the effect of noise variance \( s \) (vertical axis) and initial weight \( w_0 \) (horizontal axis). With the white areas being high density of convergence, we can see a clear stable region,</p>
+        <img src="../files/img/figures/a08/a08-f03.jpg" alt="Feasibility chart" class="figure">
+        <p>The second experiment measured the frequency of training convergence with respect to sequence length \( T \) with noise variance \( s = 0.2 \) and initial weight \( w_0 = 1.25 \). This is a test of the network’s ability to transmit error information backward while maintaining the ability to latch. As revealed through the hyperbolic attractor theoretical analysis above, the authors find difficulty in creating a system that converges well over long sequences while maintaining robustness to noise. Such a pattern is shown below,</p>
+        <img src="../files/img/figures/a08/a08-f04.jpg" alt="Frequency of training convergence" class="figure">
         <h2>Learning to Latch with Dynamical Systems</h2>
         <p>The authors choose to go one layer of abstraction higher by explaining the case of long-term dependencies in a parametric dynamical system. Consider a non-autonomous discrete-time system, where,</p>
         <ul>
@@ -203,17 +212,26 @@
         <p>The authors note that training on shorter sequences can be helpful in capturing short-term dependencies, but many tasks limit such availability to shorter sequences. They induce uniformly distributed noise in the range -0.2, 0.2 to assess the robustness of the algorithm. Additionally, the length of the input/output sequences varied. They used average classification error and average number of function evaluations as performance metrics.</p>
         <p>Network parameters were initialized uniformly between -0.5 and 0.5. For each trial, a training set whose length was uniformly distributed between \( \frac{T}{2} \) and \( T \), where T is the maximum sequence length.</p>
         <p>The first task was that of the latch problem, which involved a network learning to latch onto input values based on the initial input. The network had only one unit, with self-loop weight w, positive initial input u1, and negative initial input u2.</p>
+        <img src="../files/img/figures/a08/a08-f05.jpg" alt="Latch Problem" class="figure">
         <p>The authors also tested the 2-sequence problem, where the network must classify a noisy input sequence as one of two sequences after being given the first N elements of the sequence. They used a fully connected RNN with five units and no biases, except one unit with an external additive input (25 free parameters).</p>
+        <img src="../files/img/figures/a08/a08-f06.jpg" alt="2-Sequence Problem" class="figure">
         <p>Lastly, the authors tested the parity problem, of which the goal was to determine the parity (odd/even number of ones) of an input sequence of 1’s and -1’s (output of 1 if there is an odd parity). The minimal size network implemented had 7 free parameters and 2 units connected to one hidden unit and one output unit.</p>
-
+        <img src="../files/img/figures/a08/a08-f07.jpg" alt="Parity Problem" class="figure">
+        <p>In these results, the square is standard backpropagation, the nabla is pseudo-Newton, the triangle is the time-weighted pseudo-Newton, the circle is discrete error propagation, the dot is multi-grid random search.</p>
+        <p>Simulated annealing performed well across all problems, but took significantly more training time and struggled with sequence length in the Latch problem. Discrete error propagation performed reasonably well and was faster than simulated annealing and multi-grid random search. Pseudo-Newton back-propagation outperformed standard back-propagation, but struggled as the temporal span of dependencies increased. Lastly, the time-weighted pseudo-newton algorithm outperformed the other two variants of backpropagation.</p>
+            
         <h2>Conclusion</h2>
         <p>In this paper, the authors formalize the problem of the vanishing gradient to that of hyperbolic attractors and conclude that there is a trade-off between noise resistance and long-term context. To address this, they propose several other error propagation methods including the time-weighted pseudo-Newton method and discrete error propagation algorithm. This paper largely incentivized future endeavors in long-term context such as the LSTM, GRU, and modern attention-based mechanisms.</p>
-
+    
         <h2>References</h2>
         <ul>
             <li>[1] Bengio, Y., Simard, P., & Frasconi, P. (1994). Learning long-term dependencies with gradient descent is difficult. IEEE Transactions on Neural Networks, 5(2), 157-166.</li>
             <li>[2] Todd Fisher (2008) Uniformly hyperbolic attractors. Scholarpedia, 3(4):5625.</li>
         </ul>
     </article>
+    </main>
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
 </body>
 </html>
