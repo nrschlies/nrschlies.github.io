@@ -20,14 +20,14 @@
     </style>
 </head>
 <body>
-      <div id="mySidenav" class="nav-menu">
+    <div id="mySidenav" class="nav-menu">
         <button class="closebtn" onclick="closeNav()">&times;</button>
         <a href="../index.html">Home</a>
         <a href="../articles.html">Articles</a>
         <a href="../blog.html">Blog</a>
         <a href="../animations.html">Animations</a>
     </div>
-     <aside>
+    <aside>
         <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
             &#9776;
         </button>
@@ -56,34 +56,34 @@
         <h3>Forward Pass</h3>
         <p>The probability of the hidden unit activation given all visible units is given as:</p>
         <p>\[ \sigma(x) = \frac{1}{1 + e^{-x}} \]</p>
-        <p>\[ P(h_j = 1 | v) = \sigma(b_j + \sum_i v_i w_{ij}) \]</p>
-        <p>For each hidden unit \(h_j\), generate a random number \(r_j\) from a uniform distribution between 0 and 1. Set \(h_j = 1\) if \(r_j \leq P(h_j = 1 | v)\); otherwise set \(h_j = 0\).</p>
+        <p>\[ P(h_j = 1 \mid v) = \sigma(b_j + \sum_i v_i w_{ij}) \]</p>
+        <p>For each hidden unit \(h_j\), generate a random number \(r_j\) from a uniform distribution between 0 and 1. Set \(h_j = 1\) if \(r_j \leq P(h_j = 1 \mid v)\); otherwise set \(h_j = 0\).</p>
         <p>We are concerned with calculating the similarity between computed hidden \(h_j\) and previous visible units in the data \(v_i\) (during the forward pass). All we need to do is compute the dot product for all visible-hidden unit pairs and average these products over all training examples \(N\):</p>
-        <p>\[ <v_i h_j>_{data} = \frac{1}{N} \sum_{n=1}^{N} v_{in} h_{jn} \]</p>
+        <p>\[ \langle v_i h_j \rangle_{\text{data}} = \frac{1}{N} \sum_{n=1}^{N} v_{in} h_{jn} \]</p>
 
         <h3>Backward Pass</h3>
         <p>Similarly, we aim to reconstruct the probability of the visible unit being activated given all hidden units sampled from the positive phase:</p>
-        <p>\[ P(v_i = 1 | h) = \sigma(a_i + \sum_j h_j w_{ij}) \]</p>
-        <p>For each visible unit \(v_i\), generate a random number \(r_i\) from a uniform distribution between 0 and 1. Set \(v'_i = 1\) if \(r_i \leq P(v_i = 1 | h)\); otherwise set \(v'_i = 0\).</p>
+        <p>\[ P(v_i = 1 \mid h) = \sigma(a_i + \sum_j h_j w_{ij}) \]</p>
+        <p>For each visible unit \(v_i\), generate a random number \(r_i\) from a uniform distribution between 0 and 1. Set \(v'_i = 1\) if \(r_i \leq P(v_i = 1 \mid h)\); otherwise set \(v'_i = 0\).</p>
         <p>Here, we compute the activation probabilities for hidden units based on \(v'\):</p>
-        <p>\[ P(h_j = 1 | v') = \sigma(b_j + \sum_i v'_i w_{ij}) \]</p>
-        <p>For each hidden unit \(h_j\), generate a random number \(r_j\) from a uniform distribution between 0 and 1. Set \(h'_j = 1\) if \(r_j \leq P(h_j = 1 | v')\); otherwise set \(h'_j = 0\).</p>
+        <p>\[ P(h_j = 1 \mid v') = \sigma(b_j + \sum_i v'_i w_{ij}) \]</p>
+        <p>For each hidden unit \(h_j\), generate a random number \(r_j\) from a uniform distribution between 0 and 1. Set \(h'_j = 1\) if \(r_j \leq P(h_j = 1 \mid v')\); otherwise set \(h'_j = 0\).</p>
         <p>We can compute the negative phase expectation by comparing the computed visible \(v'_i\) and sampled hidden units \(h'_j\):</p>
-        <p>\[ <v_i h_j>_{recon} = \frac{1}{N} \sum_{n=1}^{N} v'_{in} h'_{jn} \]</p>
+        <p>\[ \langle v_i h_j \rangle_{\text{recon}} = \frac{1}{N} \sum_{n=1}^{N} v'_{in} h'_{jn} \]</p>
 
         <h3>Top Layer</h3>
         <p>For the top RBM layer, the activation probability for hidden and visible units is computed the same:</p>
-        <p>\[ P(h_j = 1 | v) = \sigma(b_j + \sum_i v_i w_{ij}) \]</p>
-        <p>\[ P(v_i = 1 | h) = \sigma(a_i + \sum_j h_j w_{ij}) \]</p>
+        <p>\[ P(h_j = 1 \mid v) = \sigma(b_j + \sum_i v_i w_{ij}) \]</p>
+        <p>\[ P(v_i = 1 \mid h) = \sigma(a_i + \sum_j h_j w_{ij}) \]</p>
         <p>Instead of generating a random number from a uniform distribution and measuring its distance from unity, the hidden state is sampled from a Gaussian distribution with a mean of the activation probability and unit variance:</p>
         <p>\[ h_j \sim \mathcal{N}(\mu_j, 1) \]</p>
         <p>This process is known as Contrastive Divergence with a single Gibbs step (CD-1). If we repeat the steps in the backward pass (i.e., repeat the forward pass once then move onto the backward pass times with shared parameters), we can improve distribution accuracy at the cost of computational complexity.[2]</p>
 
         <h3>Analysis</h3>
         <p>The change in weight is simply the difference between the visible-hidden state similarity for the forward pass and the reconstructed visible-hidden state similarity for the backward pass. Let \(\epsilon\) be the learning rate:</p>
-        <p>\[ \Delta w_{ij} = \epsilon (<v_i h_j>_{data} - <v_i h_j>_{recon}) \]</p>
+        <p>\[ \Delta w_{ij} = \epsilon \left( \langle v_i h_j \rangle_{\text{data}} - \langle v_i h_j \rangle_{\text{recon}} \right) \]</p>
         <p>This whole idea of reconstructing based on activation comes from an analysis of the energy of visible-hidden units. We must account for the contributions of biases of the visible units to the energy \(b_i v_i\). Similarly, we want to account for the contribution of biases to hidden units to the energy \(b_j h_j\). Lastly, we want to account for the interaction between visible units and hidden units given the weight between them \(v_i h_j w_{ij}\). This formulation yields the following energy function:</p>
-        <p>\[ E(v, h) = -\sum_{i \in pixels} b_i v_i - \sum_{j \in features} b_j h_j - \sum_{i, j} v_i h_j w_{ij} \]</p>
+        <p>\[ E(v, h) = -\sum_{i \in \text{pixels}} b_i v_i - \sum_{j \in \text{features}} b_j h_j - \sum_{i, j} v_i h_j w_{ij} \]</p>
         <p>We’re now motivated to find some partition function \(Z\) over all possible configurations of visible and hidden units:</p>
         <p>\[ P(v, h) = \frac{e^{-E(v, h)}}{Z} \]</p>
         <p>Since the computation of such a function is too large for a sufficiently large network, we can approximate our partition function using Annealed Importance Sampling (AIS).[3] AIS is described below.</p>
@@ -92,7 +92,7 @@
         <p>A distribution \(p_j\) is invariant under a stationary Markov chain with transition probabilities \(T_j\) if the probability of transitioning from state \(x'\) to state \(x\) matches the stationary distribution \(p_j\):</p>
         <p>\[ p_j(x) = \sum_{x'} p_j(x') T_j(x', x) \]</p>
         <p>From here, we choose a schedule for annealing, sample a point and simulate the Markov Chain to compute the importance weights for each sample using the ratio of probabilities and obtain \(Z\). This subject is slightly beyond the scope of the paper and I implore you to read Neal’s work in reference [3]. The big picture here is that:</p>
-        <p>\[ \frac{\partial P(v, h)}{\partial w_{ij}} = \Delta w_{ij} = \epsilon (<v_i h_j>_{data} - <v_i h_j>_{recon}) \]</p>
+        <p>\[ \frac{\partial P(v, h)}{\partial w_{ij}} = \Delta w_{ij} = \epsilon \left( \langle v_i h_j \rangle_{\text{data}} - \langle v_i h_j \rangle_{\text{recon}} \right) \]</p>
         <p>From here, the process moves on to unrolling. We take the transpose of each weight and reverse the encoder to obtain our decoder. This gives the autoencoder the characteristic hourglass architecture.</p>
         <img src="../files/img/figures/a09/a09-f02.jpg" alt="Unrolling" class="figure">
         <p>Lastly, we fine tune the weights and biases in our autoencoder by minimizing the cross-entropy error. Let \(p_i\) be the intensity of pixel \(i\) and \(p'_i\) be the intensity of its reconstruction. Our cost function to minimize becomes:</p>
