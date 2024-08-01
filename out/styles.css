@@ -7,7 +7,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     background: #352f2f;
-    color: #e5cfcf;
+    color: #500b0b;
 }
 
 header {
@@ -97,7 +97,7 @@ footer {
     flex-wrap: wrap;
     max-width: 1200px;
     margin: 20px auto;
-    background-color: #fff;
+    background-color: #cdcdcd;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -137,7 +137,7 @@ footer {
 
 .category {
     margin-bottom: 20px;
-    background-color: #fff;
+    background-color: #cfcfcf79;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -154,7 +154,7 @@ footer {
     margin: 5px;
     padding: 10px 15px;
     border-radius: 50px;
-    background-color: #ff6f61;
+    background-color: #6c120a;
     color: white;
     text-align: center;
     cursor: pointer;
@@ -162,7 +162,7 @@ footer {
 }
 
 .tag:hover {
-    background-color: #ff4f41;
+    background-color: #dd6459;
 }
 
 .figure {
@@ -176,7 +176,7 @@ footer {
 }
 
 .contact-btn {
-    background-color: #ff6f61;
+    background-color: #6c120a;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -187,7 +187,7 @@ footer {
 }
 
 .contact-btn:hover {
-    background-color: #ff4f41;
+    background-color: #dd6459;
 }
 
 @media (min-width: 800px) {
