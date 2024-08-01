@@ -35,6 +35,10 @@ footer {
     font-size: 0.9em;
 }
 
+p {
+    font-size: 20px; /* Adjust the size as needed */
+}
+
 .nav-menu {
     height: 100%;
     width: 250px;
@@ -137,7 +141,7 @@ footer {
 
 .category {
     margin-bottom: 20px;
-    background-color: #d3aeae79;
+    background-color: #e7e6e679;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -215,5 +219,4 @@ footer {
         flex: 1 1 100%;
     }
 }
-
 
