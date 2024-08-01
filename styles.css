@@ -198,6 +198,8 @@ p {
 @media (max-width: 768px) {
     .main-container {
         flex-direction: column;
+        align-items: center; /* Center align the content */
+        width: 100%; /* Ensure full width use */
     }
 
     .left-side, .right-side {
@@ -207,6 +209,7 @@ p {
     .center-content {
         width: 100%;
         padding: 10px;
+        box-sizing: border-box; /* Ensure padding and border are accounted for */
     }
 
     .left-side img, .right-side img {
@@ -216,15 +219,19 @@ p {
 
     header, footer {
         padding: 20px 10px;
+        text-align: center; /* Center text for mobile */
     }
 
     p {
-        font-size: 14px; /* Smaller font size for mobile */
+        font-size: 16px; /* Increase size for readability on small screens */
     }
 
     .category .tag {
-        padding: 8px 12px; /* Smaller padding for mobile buttons */
-        font-size: 14px; /* Smaller font size for mobile buttons */
+        padding: 10px 15px; /* Adequate padding for touch interfaces */
+        font-size: 16px; /* Larger, more readable text */
+        margin: 10px auto; /* Center tags */
+        display: block; /* Ensure full width clickable area */
     }
 }
+
 
