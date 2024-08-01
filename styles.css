@@ -9,6 +9,7 @@ body {
     min-height: 100vh;
     background: #352f2f;
     color: #bdbcbc;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 header {
@@ -18,14 +19,17 @@ header {
     text-align: center;
     border-bottom: 1px solid #ccc;
     font-size: 1.2em;
+    width: 100%;
 }
 
 main {
     padding: 20px;
-    margin: 0 10%;
+    margin: 0 auto;
     flex-grow: 1;
     position: relative;
-    transition: margin-left 0.5s;
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
 }
 
 footer {
@@ -34,6 +38,7 @@ footer {
     background: #222;
     color: white;
     font-size: 0.9em;
+    width: 100%;
 }
 
 p {
@@ -99,26 +104,30 @@ p {
 
 .about {
     display: flex;
-    flex-wrap: wrap;
-    max-width: 1200px;
+    flex-direction: column;
+    max-width: 100%;
     margin: 20px auto;
     background-color: #4d3c3c;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%; /* Full width */
 }
 
 .text-container {
-    flex: 2;
-    padding: 20px;
+    width: 100%;
+    padding: 0 10px; /* Reduce padding to allow more text space */
     box-sizing: border-box;
+    text-align: left; /* Left-align text for natural reading */
 }
 
 .profile-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1;
+    width: 100%;
     padding: 20px;
     box-sizing: border-box;
     text-align: center;
@@ -133,11 +142,10 @@ p {
 }
 
 .categories-container {
-    display: flex;
-    flex-direction: column;
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
+    text-align: center;
 }
 
 .category {
@@ -199,20 +207,29 @@ p {
 @media (max-width: 768px) {
     .main-container {
         flex-direction: column;
-        align-items: center; /* Center align the content */
-        width: 100%; /* Use full width */
+        align-items: left; /* Center align the content */
+        width: 170%; /* Use full width */
+    }
+
+    .left-side, .right-side {
+        display: none !important; /* Ensure left and right images are hidden on mobile */
     }
 
     .center-content {
-        width: 95%; /* Increase width for the central content */
-        padding: 15px; /* Add some padding */
+        width: 100%; /* Full width for the central content */
+        padding: 0 10px; /* Reduce padding */
         box-sizing: border-box; /* Ensure padding and border are included in the total width */
     }
 
-    .text-container, .profile-container, .categories-container {
+    .about, .text-container, .profile-container, .categories-container {
         width: 100%;
-        max-width: none; /* Remove any max-width if set */
+        max-width: 100%; /* Ensure full width */
         text-align: center; /* Center the text content */
+    }
+
+    .text-container {
+        padding: 10px 0; /* Reduce padding to allow more space for text */
+        text-align: justify; /* Justify text for better distribution */
     }
 
     header, footer {
