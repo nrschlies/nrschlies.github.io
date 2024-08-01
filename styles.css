@@ -7,7 +7,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     background: #352f2f;
-    color: #500b0b;
+    color: #bdbcbc;
 }
 
 header {
@@ -97,7 +97,7 @@ footer {
     flex-wrap: wrap;
     max-width: 1200px;
     margin: 20px auto;
-    background-color: #cdcdcd;
+    background-color: #4d3c3c;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -137,7 +137,7 @@ footer {
 
 .category {
     margin-bottom: 20px;
-    background-color: #cfcfcf79;
+    background-color: #d3aeae79;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
