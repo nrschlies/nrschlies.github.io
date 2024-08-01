@@ -11,56 +11,71 @@
     <style>
         body {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
             background-color: #f0f0f0;
             padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
         }
 
         .left-side, .right-side {
-            flex: 1;
+            width: 20%;
         }
 
         .center-content {
-            flex: 2;
+            width: 60%;
             margin: 0 20px;
         }
 
         .left-side img, .right-side img {
-            max-width: 100%;
+            width: 100%;
             height: auto;
+            object-fit: cover;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .categories-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
     </style>
 </head>
 <body>
-    <div class="left-side">
-        <img src="/files/img/left.jpg" alt="Left Image">
-    </div>
-    <div class="center-content">
-        <div id="mySidenav" class="nav-menu">
-            <button class="closebtn" onclick="closeNav()">&times;</button>
-            <a href="index.html">Home</a>
-            <a href="articles.html">Annotated Articles</a>
-            <a href="blog.html">Blog</a>
-            <a href="animations.html">Animations</a>
-            <!-- <a href="contact.html">Contact Me</a> TODO: Implement Firebase -->
+    <header>
+        <h1>Pay Attention.</h1>
+        <p>Exploring and annotating the latest research in Generative AI</p>
+    </header>
+
+    <div class="container">
+        <div class="left-side">
+            <img src="/files/img/left.jpg" alt="Left Image">
         </div>
+        <div class="center-content">
+            <div id="mySidenav" class="nav-menu">
+                <button class="closebtn" onclick="closeNav()">&times;</button>
+                <a href="index.html">Home</a>
+                <a href="articles.html">Annotated Articles</a>
+                <a href="blog.html">Blog</a>
+                <a href="animations.html">Animations</a>
+                <!-- <a href="contact.html">Contact Me</a> TODO: Implement Firebase -->
+            </div>
 
-        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
-            &#9776;
-        </button>
+            <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+                &#9776;
+            </button>
 
-        <header>
-            <h1>Pay Attention.</h1>
-            <p>Exploring and annotating the latest research in Generative AI</p>
-        </header>
-        <style>
-            a {
-                text-decoration: none;
-            }
-        </style>
-
-        <main>
             <section class="about">
                 <div class="text-container">
                     <h1>About Myself</h1>
@@ -98,14 +113,15 @@
                     </div>
                 </div>
             </section>
-        </main>
-    </div>
-    <div class="right-side">
-        <img src="/files/img/right.jpg" alt="Right Image">
+        </div>
+        <div class="right-side">
+            <img src="/files/img/right.jpg" alt="Right Image">
+        </div>
     </div>
     <footer>
         <p>&copy; 2024 Pay Attention. All rights reserved.</p>
     </footer>
 </body>
 </html>
+
 
