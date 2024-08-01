@@ -14,6 +14,9 @@
             flex-direction: column;
             margin: 0;
         }
+        a {
+            text-decoration: none;
+        }
 
         .main-container {
             display: flex;
@@ -36,7 +39,7 @@
         }
 
         .left-side img, .right-side img {
-            width: 100%;
+            width: 200%;
             height: 100%;
             object-fit: cover;
         }
@@ -48,22 +51,43 @@
             padding: 10px 0;
             width: 100%;
         }
-
         .categories-container {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+        }
+
+        .category {
+            text-align: center;
+        }
+
+        .category .tag {
+            display: inline-block;
+            margin: 5px;
         }
 
         footer {
             width: 100%;
             text-align: center;
-            background-color: #f0f0f0;
+            background-color: #807878;
             padding: 10px 0;
         }
     </style>
 </head>
 <body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
     <header>
         <h1>Pay Attention.</h1>
         <p>Exploring and annotating the latest research in Generative AI</p>
@@ -71,7 +95,7 @@
 
     <div class="main-container">
         <div class="left-side">
-            <img src="/files/img/left.jpg" alt="Left Image">
+            <img src="/files/img/left.jpg" alt="Left Img">
         </div>
         <div class="center-content">
             <main>
@@ -115,7 +139,7 @@
             </main>
         </div>
         <div class="right-side">
-            <img src="/files/img/right.jpg" alt="Right Image">
+            <img src="/files/img/right.jpg" alt="Right Img">
         </div>
     </div>
     <footer>
