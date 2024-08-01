@@ -1,3 +1,4 @@
+/* Base styles */
 body {
     font-family: 'Courier New', Courier, monospace;
     line-height: 1.6;
@@ -199,22 +200,19 @@ p {
     .main-container {
         flex-direction: column;
         align-items: center; /* Center align the content */
-        width: 100%; /* Ensure full width use */
-    }
-
-    .left-side, .right-side {
-        width: 100%;
+        width: 100%; /* Use full width */
     }
 
     .center-content {
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box; /* Ensure padding and border are accounted for */
+        width: 95%; /* Increase width for the central content */
+        padding: 15px; /* Add some padding */
+        box-sizing: border-box; /* Ensure padding and border are included in the total width */
     }
 
-    .left-side img, .right-side img {
+    .text-container, .profile-container, .categories-container {
         width: 100%;
-        height: auto;
+        max-width: none; /* Remove any max-width if set */
+        text-align: center; /* Center the text content */
     }
 
     header, footer {
@@ -223,15 +221,13 @@ p {
     }
 
     p {
-        font-size: 16px; /* Increase size for readability on small screens */
+        font-size: 16px; /* Adjust font size for readability */
     }
 
     .category .tag {
-        padding: 10px 15px; /* Adequate padding for touch interfaces */
-        font-size: 16px; /* Larger, more readable text */
+        padding: 10px 15px; /* Adjust padding for touch interfaces */
+        font-size: 16px; /* Ensure readability */
         margin: 10px auto; /* Center tags */
-        display: block; /* Ensure full width clickable area */
+        display: block; /* Ensure full-width clickable area */
     }
 }
-
-
