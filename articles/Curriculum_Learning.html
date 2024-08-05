@@ -98,7 +98,7 @@
                 </li>
                 <li>Conditional Entropy measures the amount of information needed to describe one random variable’s outcome given another’s known value,
                 \[
-                H(X | Y) = -\sum_{x \in X} P(y)\sum_{y \in Y} P(x | y)\log_2P(x | y)
+                H(X | Y) = -\sum_{x \in X} \sum_{y \in Y} P(y)P(x | y)\log_2P(x | y)
                 \]
                 </li>
                 <li>Mutual Information measures the amount of information one random variable contains about another random variable,
