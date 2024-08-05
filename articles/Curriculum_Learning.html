@@ -106,13 +106,15 @@
                 I(X; Y) = H(X) + H(Y) - H(X, Y) = H(X) - H(X | Y)
                 \]
                 </li>
-                <li>Relative Entropy (Kullback-Leibler (KL) Divergence) measures the difference between two probability distributions \(P\) and \(Q\)<sup>[4]</sup>.
+                <li>Relative Entropy (Kullback-Leibler (KL) Divergence) measures the difference between two probability distributions \(P\) and \(Q\)<sup>[4]</sup>. 
                 \[
-                D_{KL}(P||Q) = \sum_{x \in X} P(x)\log_2 \frac{P(x)}{Q(x)}
+                D_{KL}(P||Q) = \sum_{x \in X} P(x) \log_2 \left( \frac{P(x)}{Q(x)} \right)
+                \]
                 </li>
-                <li>Cross-Entropy quantifies the difference between two probability distributions given the true probability \(L\), and predicted probability \(K\),
+                <li>Cross-Entropy quantifies the difference between two probability distributions given the true probability \(L\), and predicted probability \(K\), 
                 \[
-                H(P, Q) = -\sum_{i=1}^{N} L(x)\log_2K(x)
+                H(P, Q) = -\sum_{i=1}^{N} L(x) \log_2 K(x)
+                \]
                 </li>
             </ol>
             <h3>Toy Experiments with a Convex Criterion</h3>
@@ -148,24 +150,29 @@
             Intuitively, we can think about a new difference term that \(d_s = f(s_w) - f(s)\), \(d_s \in [0, 1] \forall s\) represents how good our sequence of words is compared to the candidate window. Averaged about the set of training word sequences we obtain,
             \[
             C_{s, w} = \frac{1}{|D|} \max (0, 1 - d_s)
+            \]
             </p>
             <p>This brings the question: how do we define such a scoring function \(f(s)\)? First, the authors index each word in the input text sequence as,
             \[
-            s(1), s(2), s(3), ..., s(|s|)
+            s(1), s(2), s(3), \ldots, s(|s|)
+            \]
             </p>
             <p>From here, they use a lookup table that maps each index into a \(d\)-dimensional embedding vector, resulting in matrix \(W \in \mathbb{R}^{d \times |D|}\). This means that the resulting embedding matrix is the size of the dimensionality of the embeddings (for each row) and the size of the vocabulary (which make up the columns).</p>
             <p>Such an embedding matrix is then concatenated into a single long vector \(x_{cat}\). The concatenated long vector is fed into a linear layer that transforms it into a lower-dimensional vector. For a weight \(W_{lin}\) and bias \(b_{lin}\), this linear layer output can be described as,
             \[
             y_{lin} = W_{lin} x_{cat} + b_{lin}
+            \]
             </p>
             <p>It’s now a good time to discuss the dimensionality of linear transformations. Recall that we already established our embedding vector dimensionality as \(d\). For a target dimension of \(d_t\), it is necessary for weight matrix \(W \in \mathbb{R}^{d_t \times d}\) and the bias vector \(b \in \mathbb{R}^{d_t}\).</p>
             <p>After reducing our dimensionality, the authors pass the output of the linear layer \(y_{lin}\) through a \(\tanh\) activation function, inducing nonlinearity into the model. Recall that,
             \[
             y_{act} = \tanh (y_{lin}) = \frac{e^{y_{lin}} - e^{-y_{lin}}}{e^{y_{lin}} + e^{-y_{lin}}}
+            \]
             </p>
             <p>This transformed vector is then passed into another linear layer to produce a single scalar score \(f(s)\). For a weight \(W_{score} \in \mathbb{R}^{1 \times d_t}\) and bias \(b_{score} \in \mathbb{R}^{1}\), the scalar score becomes,
             \[
             f(s) = W_{score} y_{act} + b_{score}
+            \]
             </p>
             <p>It’s important to note that the learnable parameters during training are the embedding matrix \(W\), the first linear weights and biases \(W_{lin}, b_{lin}\), and the score-producing linear weights and biases \(W_{score}, b_{score}\).</p>
             <p>To recap the architecture, we first index the words and embed them into a lookup table. From there we apply a linear transformation followed by a nonlinearity. Lastly, we apply another linear transformation to attain the score for a given sequence. Using SGD, we optimize the embedding matrix and linear transformations to capture the semantic and syntactic relationship for the most likely word. The authors provide the figure below to describe this,</p>
