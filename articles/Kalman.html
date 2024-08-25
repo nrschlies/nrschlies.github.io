@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalman Filtering</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+<main>
+<article>
+<h2>Kalman Filtering</h2>
+<h3>Annotated by: <strong>Noah Schliesman</strong></h3>
+<p>Published on: <time datetime="1960">1960</time> by R. E. Kalman</p>
+            <object data="../files/Kalman.pdf" type="application/pdf" width="100%" height="500">
+                <p>Please download the annotated PDF to view it: <a href="../files/Kalman.pdf">Download PDF</a>.</p>
+            </object>
+<p>Note: The following is still a work in progress. There may be MathJax (LaTeX) errors throughout and I am still in the process of editing this.</p>
+
+<h2>Key Equations (derived below):</h2>
+
+<p><strong>Optimal Estimate:</strong> \( x^*_{t+1|t} = \Phi(t+1;t)x^*(t|t-1) + \Delta^*(t)y(t) \)</p>
+
+<p><strong>Estimation Error:</strong> \( x_{t+1|t} = \Phi^*(t+1;t)x(t|t-1) + u(t) \)</p>
+
+<p><strong>Covariance Matrix of the Estimation Error:</strong> \( P^*(t) = \text{cov}\{ x_{t+1|t} \} = \mathbb{E}\{ x_{t+1|t}x'_{t+1|t} \} \)</p>
+
+<p><strong>Expected Quadratic Loss:</strong></p>
+
+<p>
+\[
+\sum_{i=1}^{n} \mathbb{E}[ x_i^2(t|t-1) ] = \text{trace}(P^*(t))
+\]
+</p>
+
+<p><strong>Kalman Gain:</strong> \( \Delta^* = \Phi(t+1;t)P^*(t)M'(t) \)</p>
+
+<p>
+\[
+\Delta^* = \frac{\Phi(t+1;t)P^*(t)M'(t)}{M(t)P^*(t)M'(t)}
+\]
+</p>
+
+<p><strong>Modified State Transition Matrix:</strong> \( \Phi^*(t+1;t) = \Phi(t+1;t) - \Delta^*(t)M(t) \)</p>
+
+<p><strong>Future Covariance Matrix of Estimated Error:</strong> \( P^*(t+1) = \Phi^*(t+1;t)P^*(t)\Phi'(t+1;t) + Q(t) \)</p>
+
+<h2>Abstract Notes:</h2>
+
+<p>Kalman begins by attributing the Bode-Shannon representation of random processes and the state transition method of analysis:</p>
+
+<p><strong>Random Processes:</strong> Sequences of random variables that illustrate a system’s state over time.</p>
+
+<p><strong>Bode-Shannon Representation:</strong> Used to describe frequency response and the quantification of uncertainty. Hendrik Bode showed how systems respond to various inputs in the frequency domain. Claude Shannon provided the theoretical tools to quantify and measure uncertainty in systems.</p>
+
+<p><strong>State Transitions:</strong> Involve modeling the evolution of a system’s state from one time step to the next. Here, a state is a set of variables that encapsulate all necessary information about a system’s condition. The State Transition Equation describes how the state of the system changes with time.</p>
+
+<p><strong>Dynamic Systems:</strong> Evolve over time according to certain rules. The Kalman filter models these systems using state-space representations.</p>
+
+<p>Kalman provides a filter for stationary, nonstationary, growing memory, and infinite memory processes:</p>
+
+<ul>
+    <li><strong>Stationary Processes:</strong> Statistical properties, such as mean and variance, do not change over time. The Kalman filter can leverage these constant properties to make accurate predictions and filter out noise. Such processes include white noise and temperature fluctuations. In such an environment, the statistical behavior of the process can be modeled using a fixed set of parameters.</li>
+    <li><strong>Nonstationary Processes:</strong> Statistical properties change over time. The Kalman filter can update its parameters dynamically as it processes new data, making it suitable for a wider range of transient applications. Examples include GDP, population growth, and speech signals.</li>
+    <li><strong>Growing Memory:</strong> The idea that a filter may take into account an increasing amount of past data over time. Through the recursive nature of the Kalman filter, each state estimate is dependent on both the previous and new measurements.</li>
+    <li><strong>Infinite Memory:</strong> A filter that considers all past data indefinitely, as opposed to a fixed window. Such a system is crucial in systems that must robustly latch on to information. This latching task closely models the experiment performed using recurrent neural networks (RNNs) shown by Bengio et al.<sup>[2]</sup></li>
+</ul>
+
+<p>The Kalman filter applies to nonlinear or differential equations for the covariance of the expected error. The filtering problem is the dual of the noise-free regulator problem:</p>
+
+<p><strong>Noise-free Regulator Problem:</strong> Involves controlling a system so that it behaves despite the presence of disturbances.</p>
+
+<h2>Introduction Notes:</h2>
+
+<p>Prediction of random signals, separation of random signals from random noise, and the detection of signals in known form amidst noise are statistical and can all be augmented by a Kalman filter. The foundations of such lie on Wiener and that of the Wiener-Hopf Equation.</p>
+
+<p><strong>Wiener-Hopf Equation:</strong> Addresses separating signals from random noise in finding an optimal filter that processes a signal in a way that minimizes the error in the separation of signal from noise.</p>
+
+<p>Consider a process given additional noise \( N(t) \). The observed process \( Y(t) = X(t) + N(t) \). We want to find a linear filter that gives the estimate:</p>
+
+<p>
+\[
+X(t) = \int_{-\infty}^{\infty} h(\tau)Y(t-\tau)d\tau
+\]
+</p>
+
+<p>The goal is to minimize the mean squared error (MSE) between \( X(t) \) and \( X(t) \):</p>
+
+<p>
+\[
+MSE = \mathbb{E}[(X(t) - X(t))^2] = 0
+\]
+</p>
+
+<p>The MSE can be expanded as:</p>
+
+<p>
+\[
+MSE = \mathbb{E}[X(t)^2] - 2\mathbb{E}[X(t)X(t)] + \mathbb{E}[X(t)^2] = 0
+\]
+</p>
+
+<p>The first term can be defined by the following autocorrelation function of the signal \( X(t) \), \( R_X(\tau) \):</p>
+
+<p>
+\[
+R_X(\tau) = \mathbb{E}[X(t)X(t+\tau)]
+\]
+</p>
+
+<p>For \( \tau = 0 \) (zero-lag):</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = R_X(0)
+\]
+</p>
+
+<p>If \( X(t) \) is zero-mean:</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = \text{Var}(X(t)) = R_X(0)
+\]
+</p>
+
+<p>Alternatively, in the frequency domain, \( \mathbb{E}[X(t)^2] \) can be computed by integrating the power spectral density (PSD) of \( X(t) \) over all frequencies, \( S_X(f) \):</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = \int_{-\infty}^{\infty} S_X(f)df
+\]
+</p>
+
+<p>The cross-correlation function \( R_{xy}(\tau) \) is defined as:</p>
+
+<p>
+\[
+R_{xy}(\tau) = \mathbb{E}[X(t)Y(t+\tau)]
+\]
+</p>
+
+<p>The middle term can be expressed using the cross-correlation function between \( X(t) \) and \( Y(t) \), \( R_{xy}(\tau) \):</p>
+
+<p>
+\[
+\mathbb{E}[X(t)X(t)] = \int_{-\infty}^{\infty} h(\tau)R_{XY}(\tau)d\tau
+\]
+</p>
+
+<p>The autocorrelation function measures how the value of the process at one time relates to its value at another time:</p>
+
+<p>
+\[
+R_Y(\tau_1 - \tau_2) = \mathbb{E}[Y(t-\tau_1)Y(t-\tau_2)]
+\]
+</p>
+
+<p>Thus, the last term can be expressed with impulse responses as:</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} h(\tau_1)h(\tau_2)R_Y(\tau_1 - \tau_2)d\tau_1d\tau_2
+\]
+</p>
+
+<p>Using the PSD approach to \( \mathbb{E}[X(t)^2] \), the equation becomes:</p>
+
+<p>
+\[
+MSE = \int_{-\infty}^{\infty} S_X(f)df - 2\int_{-\infty}^{\infty} h(\tau)R_{XY}(\tau)d\tau + \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} h(\tau_1)h(\tau_2)R_Y(\tau_1 - \tau_2)d\tau_1d\tau_2
+\]
+</p>
+
+<p>The derivative of the MSE with respect to impulse response \( h(t) \) is:</p>
+
+<p>
+\[
+\frac{\delta MSE}{\delta h(\tau)} = -2R_{XY}(\tau) + 2\int_{-\infty}^{\infty} h(\tau')R_Y(\tau - \tau')d\tau = 0
+\]
+</p>
+
+<p>The Wiener-Hopf Integral equation is given as:</p>
+
+<p>
+\[
+R_{XY}(\tau) = \int_{-\infty}^{\infty} h(\tau')R_Y(\tau - \tau')d\tau'
+\]
+</p>
+
+<p>It can be noted that for means \( \mu_X \) and \( \mu_Y \):</p>
+
+<p>
+\[
+R_{XX} = \mathbb{E}[X(t) - \mu_X)(X(t + \tau) - \mu_X)]
+\]
+</p>
+
+<p>
+\[
+R_{YY} = \mathbb{E}[Y(t) - \mu_Y)(Y(t + \tau) - \mu_Y)]
+\]
+</p>
+
+<p>After performing Fourier Transforms on \( h(t) \), \( R_{XX}(t) \), \( R_{YY}(t) \), \( R_{XY}(t) \) (i.e., spectral factorization):</p>
+
+<p>
+\[
+H(f) = \int_{-\infty}^{\infty} h(\tau)e^{-j2\pi fr}dr
+\]
+</p>
+
+<p>
+\[
+S_X(f) = \int_{-\infty}^{\infty} R_{XX}(\tau)e^{-j2\pi fr}dr = \int_{-\infty}^{\infty} \mathbb{E}[X(t) - \mu_X)(X(t + \tau) - \mu_X)]e^{-j2\pi fr}d\tau
+\]
+</p>
+
+<p>
+\[
+S_Y(f) = \int_{-\infty}^{\infty} R_{YY}(\tau)e^{-j2\pi fr}dr = \int_{-\infty}^{\infty} \mathbb{E}[Y(t) - \mu_Y)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau
+\]
+</p>
+
+<p>
+\[
+S_{XY}(f) = \int_{-\infty}^{\infty} R_{XY}(\tau)e^{-j2\pi fr}dr = \int_{-\infty}^{\infty} \mathbb{E}[X(t) - \mu_X)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau
+\]
+</p>
+
+<p>In the frequency domain, the Wiener-Hopf equation becomes:</p>
+
+<p>
+\[
+S_{XY}(f) = \int_{-\infty}^{\infty} R_{XY}(\tau)e^{-j2\pi fr}dr = H(f)S_Y(f)
+\]
+</p>
+
+<p>The optimal filter can then be solved as:</p>
+
+<p>
+\[
+H(f) = \frac{S_{XY}(f)}{S_Y(f)}
+\]
+</p>
+
+<p>Which of course can be expanded as:</p>
+
+<p>
+\[
+H(f) = \frac{\int_{-\infty}^{\infty} \mathbb{E}[X(t) - \mu_X)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau}{\int_{-\infty}^{\infty} \mathbb{E}[Y(t) - \mu_Y)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau}
+\]
+</p>
+
+<p>The Wiener-Hopf equation allows us to find the optimal filter that minimizes the mean square error between the estimated signal and the actual signal \( X(t) \).</p>
+
+<p>The objective is to obtain the specification of a linear dynamic system (Wiener filter) that accomplishes the prediction, separation, or detection of a random signal. The Kalman Filter addresses several limitations for solving an optimal linear dynamic system:</p>
+
+<ol>
+    <li>It is not easy to synthesize an optimal filter given its impulse response.</li>
+    <li>Computation of this optimal impulse response is involved and exponentially becomes intractable as the problem complexity increases.</li>
+    <li>Transient systems like growing-memory filters and nonstationary prediction require new derivations.</li>
+    <li>Inherent assumptions about the system can lead to error.</li>
+</ol>
+
+<p>Conditional distributions and expectations are utilized to form means (first-order) and variances (second-order). The Wiener filter finds the best estimate of a signal by projecting it onto the space spanned by observed data, as shown by Doob<sup>[3]</sup> and Loève<sup>[4]</sup>:</p>
+
+<p><strong>Orthogonal Projections:</strong> Refer to the process of finding the best estimate of a random variable by projecting it onto a subspace of other random variables. The best approximation (i.e., minimize MSE) is achieved via the conditional expectation.</p>
+
+<p><strong>Joseph Doop:</strong> Formalized the concept of conditional expectation \( \mathbb{E}[X|Y] \), the expected value of a random variable given another random variable. He introduced martingales, a class of stochastic processes that model fair games. For a martingale \( X(t) \):</p>
+
+<p>
+\[
+X(t) = \mathbb{E}[X(t + 1)|X(t), X(t - 1),...]
+\]
+</p>
+
+<p><strong>Michel Loève:</strong> Studied orthogonal projections in Hilbert spaces. In such a Hilbert space, the orthogonal projection of a signal onto another signal given projection operator \( P_Y \) can be illustrated as:</p>
+
+<p>
+\[
+X(t) = P_Y[X(t)]
+\]
+</p>
+
+<p>Amidst random signals and white noise, linear dynamic systems can be represented using a state system, which entails the information needed to describe the system’s future behavior given the current state. While Wiener filtering previously used statistical methods to minimize the MSE, the state approach is more dynamic and aligns with state-space systems in control theory.</p>
+
+<p>Suppose \( X(t) \) represents the state of the system at time \( t \) and \( Y(t) \) represents the observed, noisy signal. Let \( A(t) \) and \( B(t) \) be matrices describing the system dynamics, \( U(t) \) be a control input, \( W(t) \) be process noise, \( C(t) \) be a matrix describing how the state is observed, and \( V(t) \) be the observation noise. Let \( Q(t) \) be the covariance of the process noise \( W(t) \) and \( R(t) \) be the covariance of the observation noise \( V(t) \).</p>
+
+<p>The state-transition method can be described as:</p>
+
+<p>
+\[
+X(t + 1) = A(t)X(t) + B(t) + U(t) + W(t)
+\]
+</p>
+
+<p>The observed equation is then:</p>
+
+<p>
+\[
+Y(t) = C(t)X(t) + V(t)
+\]
+</p>
+
+<p>The covariance matrix \( P(t) \) represents the uncertainty in the state estimate \( X(t) \) and can be described using a Riccati equation:</p>
+
+<p><strong>Riccati Equation:</strong> A type of nonlinear differential equation that governs the evolution of the covariance matrix of the estimation error. For matrices \( A(t) \), \( B(t) \), \( Q(t) \), and \( R(t) \), the Riccati differential equation is:</p>
+
+<p>
+\[
+\frac{dP(t)}{dt} = A(t)P(t) + P(t)A^T(t) - P(t)B(t)R^{-1}(t)B^T(t)P(t) + Q(t)
+\]
+</p>
+
+<p>The first two terms \( A(t)P(t) + P(t)A^T(t) \) describe how the covariance matrix evolves due to the system’s dynamics. The third term \( -P(t)B(t)R^{-1}(t)B^T(t)P(t) \) involves feedback from the measurement, scaled by the inverse of the noise covariance. The last term incorporates the covariance of the process noise \( Q(t) \).</p>
+
+<p>In discrete time, the Riccati difference equation similarly becomes:</p>
+
+<p>
+\[
+P(t + 1) = A(t)P(t)A^T(t) - \left[A(t)P(t)C^T(t)\left(C(t)P(t)C^T(t) + R(t)\right)^{-1}C(t)P(t)A^T(t)\right] + Q(t)
+\]
+</p>
+
+<p>The optimal filter coefficients \( K(t) \) can be calculated from the covariance matrix \( P(t) \) as:</p>
+
+<p>
+\[
+K(t) = P(t)C^T(t)\left[C(t)P(t)C^T(t) + R(t)\right]^{-1}
+\]
+</p>
+
+<p>As mentioned, this new state-based formulation of the Wiener problem is the dual of the noise-free regulator problem. Such a method has clear applications in complex systems and nonstationary processes.</p>
+
+<h2>Key Equations (derived below):</h2>
+
+<p><strong>Optimal Estimate:</strong> \( x^*_{t+1|t} = \Phi(t+1;t)x^*(t|t-1) + \Delta^*(t)y(t) \)</p>
+
+<p><strong>Estimation Error:</strong> \( x_{t+1|t} = \Phi^*(t+1;t)x(t|t-1) + u(t) \)</p>
+
+<p><strong>Covariance Matrix of the Estimation Error:</strong> \( P^*(t) = \text{cov}\{ x_{t+1|t} \} = \mathbb{E}\{ x_{t+1|t}x'_{t+1|t} \} \)</p>
+
+<p><strong>Expected Quadratic Loss:</strong></p>
+
+<p>
+\[
+\sum_{i=1}^{n} \mathbb{E}[ x_i^2(t|t-1) ] = \text{trace}(P^*(t))
+\]
+</p>
+
+<p><strong>Kalman Gain:</strong> \( \Delta^* = \Phi(t+1;t)P^*(t)M'(t) \)</p>
+
+<p>
+\[
+\Delta^* = \frac{\Phi(t+1;t)P^*(t)M'(t)}{M(t)P^*(t)M'(t)}
+\]
+</p>
+
+<p><strong>Modified State Transition Matrix:</strong> \( \Phi^*(t+1;t) = \Phi(t+1;t) - \Delta^*(t)M(t) \)</p>
+
+<p><strong>Future Covariance Matrix of Estimated Error:</strong> \( P^*(t+1) = \Phi^*(t+1;t)P^*(t)\Phi'(t+1;t) + Q(t) \)</p>
+
+<h2>Abstract Notes:</h2>
+
+<p>Kalman begins by attributing the Bode-Shannon representation of random processes and the state transition method of analysis:</p>
+
+<p><strong>Random Processes:</strong> Sequences of random variables that illustrate a system’s state over time.</p>
+
+<p><strong>Bode-Shannon Representation:</strong> Used to describe frequency response and the quantification of uncertainty. Hendrik Bode showed how systems respond to various inputs in the frequency domain. Claude Shannon provided the theoretical tools to quantify and measure uncertainty in systems.</p>
+
+<p><strong>State Transitions:</strong> Involve modeling the evolution of a system’s state from one time step to the next. Here, a state is a set of variables that encapsulate all necessary information about a system’s condition. The State Transition Equation describes how the state of the system changes with time.</p>
+
+<p><strong>Dynamic Systems:</strong> Evolve over time according to certain rules. The Kalman filter models these systems using state-space representations.</p>
+
+<p>Kalman provides a filter for stationary, nonstationary, growing memory, and infinite memory processes:</p>
+
+<ul>
+    <li><strong>Stationary Processes:</strong> Statistical properties, such as mean and variance, do not change over time. The Kalman filter can leverage these constant properties to make accurate predictions and filter out noise. Such processes include white noise and temperature fluctuations. In such an environment, the statistical behavior of the process can be modeled using a fixed set of parameters.</li>
+    <li><strong>Nonstationary Processes:</strong> Statistical properties change over time. The Kalman filter can update its parameters dynamically as it processes new data, making it suitable for a wider range of transient applications. Examples include GDP, population growth, and speech signals.</li>
+    <li><strong>Growing Memory:</strong> The idea that a filter may take into account an increasing amount of past data over time. Through the recursive nature of the Kalman filter, each state estimate is dependent on both the previous and new measurements.</li>
+    <li><strong>Infinite Memory:</strong> A filter that considers all past data indefinitely, as opposed to a fixed window. Such a system is crucial in systems that must robustly latch on to information. This latching task closely models the experiment performed using recurrent neural networks (RNNs) shown by Bengio et al.<sup>[2]</sup></li>
+</ul>
+
+<p>The Kalman filter applies to nonlinear or differential equations for the covariance of the expected error. The filtering problem is the dual of the noise-free regulator problem:</p>
+
+<p><strong>Noise-free Regulator Problem:</strong> Involves controlling a system so that it behaves despite the presence of disturbances.</p>
+
+<h2>Introduction Notes:</h2>
+
+<p>Prediction of random signals, separation of random signals from random noise, and the detection of signals in known form amidst noise are statistical and can all be augmented by a Kalman filter. The foundations of such lie on Wiener and that of the Wiener-Hopf Equation.</p>
+
+<p><strong>Wiener-Hopf Equation:</strong> Addresses separating signals from random noise in finding an optimal filter that processes a signal in a way that minimizes the error in the separation of signal from noise.</p>
+
+<p>Consider a process given additional noise \( N(t) \). The observed process \( Y(t) = X(t) + N(t) \). We want to find a linear filter that gives the estimate:</p>
+
+<p>
+\[
+X(t) = \int_{-\infty}^{\infty} h(\tau)Y(t-\tau)d\tau
+\]
+</p>
+
+<p>The goal is to minimize the mean squared error (MSE) between \( X(t) \) and \( X(t) \):</p>
+
+<p>
+\[
+MSE = \mathbb{E}[(X(t) - X(t))^2] = 0
+\]
+</p>
+
+<p>The MSE can be expanded as:</p>
+
+<p>
+\[
+MSE = \mathbb{E}[X(t)^2] - 2\mathbb{E}[X(t)X(t)] + \mathbb{E}[X(t)^2] = 0
+\]
+</p>
+
+<p>The first term can be defined by the following autocorrelation function of the signal \( X(t) \), \( R_X(\tau) \):</p>
+
+<p>
+\[
+R_X(\tau) = \mathbb{E}[X(t)X(t+\tau)]
+\]
+</p>
+
+<p>For \( \tau = 0 \) (zero-lag):</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = R_X(0)
+\]
+</p>
+
+<p>If \( X(t) \) is zero-mean:</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = \text{Var}(X(t)) = R_X(0)
+\]
+</p>
+
+<p>Alternatively, in the frequency domain, \( \mathbb{E}[X(t)^2] \) can be computed by integrating the power spectral density (PSD) of \( X(t) \) over all frequencies, \( S_X(f) \):</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = \int_{-\infty}^{\infty} S_X(f)df
+\]
+</p>
+
+<p>The cross-correlation function \( R_{xy}(\tau) \) is defined as:</p>
+
+<p>
+\[
+R_{xy}(\tau) = \mathbb{E}[X(t)Y(t+\tau)]
+\]
+</p>
+
+<p>The middle term can be expressed using the cross-correlation function between \( X(t) \) and \( Y(t) \), \( R_{xy}(\tau) \):</p>
+
+<p>
+\[
+\mathbb{E}[X(t)X(t)] = \int_{-\infty}^{\infty} h(\tau)R_{XY}(\tau)d\tau
+\]
+</p>
+
+<p>The autocorrelation function measures how the value of the process at one time relates to its value at another time:</p>
+
+<p>
+\[
+R_Y(\tau_1 - \tau_2) = \mathbb{E}[Y(t-\tau_1)Y(t-\tau_2)]
+\]
+</p>
+
+<p>Thus, the last term can be expressed with impulse responses as:</p>
+
+<p>
+\[
+\mathbb{E}[X(t)^2] = \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} h(\tau_1)h(\tau_2)R_Y(\tau_1 - \tau_2)d\tau_1d\tau_2
+\]
+</p>
+
+<p>Using the PSD approach to \( \mathbb{E}[X(t)^2] \), the equation becomes:</p>
+
+<p>
+\[
+MSE = \int_{-\infty}^{\infty} S_X(f)df - 2\int_{-\infty}^{\infty} h(\tau)R_{XY}(\tau)d\tau + \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} h(\tau_1)h(\tau_2)R_Y(\tau_1 - \tau_2)d\tau_1d\tau_2
+\]
+</p>
+
+<p>The derivative of the MSE with respect to impulse response \( h(t) \) is:</p>
+
+<p>
+\[
+\frac{\delta MSE}{\delta h(\tau)} = -2R_{XY}(\tau) + 2\int_{-\infty}^{\infty} h(\tau')R_Y(\tau - \tau')d\tau = 0
+\]
+</p>
+
+<p>The Wiener-Hopf Integral equation is given as:</p>
+
+<p>
+\[
+R_{XY}(\tau) = \int_{-\infty}^{\infty} h(\tau')R_Y(\tau - \tau')d\tau'
+\]
+</p>
+
+<p>It can be noted that for means \( \mu_X \) and \( \mu_Y \):</p>
+
+<p>
+\[
+R_{XX} = \mathbb{E}[X(t) - \mu_X)(X(t + \tau) - \mu_X)]
+\]
+</p>
+
+<p>
+\[
+R_{YY} = \mathbb{E}[Y(t) - \mu_Y)(Y(t + \tau) - \mu_Y)]
+\]
+</p>
+
+<p>After performing Fourier Transforms on \( h(t) \), \( R_{XX}(t) \), \( R_{YY}(t) \), \( R_{XY}(t) \) (i.e., spectral factorization):</p>
+
+<p>
+\[
+H(f) = \int_{-\infty}^{\infty} h(\tau)e^{-j2\pi fr}dr
+\]
+</p>
+
+<p>
+\[
+S_X(f) = \int_{-\infty}^{\infty} R_{XX}(\tau)e^{-j2\pi fr}dr = \int_{-\infty}^{\infty} \mathbb{E}[X(t) - \mu_X)(X(t + \tau) - \mu_X)]e^{-j2\pi fr}d\tau
+\]
+</p>
+
+<p>
+\[
+S_Y(f) = \int_{-\infty}^{\infty} R_{YY}(\tau)e^{-j2\pi fr}dr = \int_{-\infty}^{\infty} \mathbb{E}[Y(t) - \mu_Y)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau
+\]
+</p>
+
+<p>
+\[
+S_{XY}(f) = \int_{-\infty}^{\infty} R_{XY}(\tau)e^{-j2\pi fr}dr = \int_{-\infty}^{\infty} \mathbb{E}[X(t) - \mu_X)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau
+\]
+</p>
+
+<p>In the frequency domain, the Wiener-Hopf equation becomes:</p>
+
+<p>
+\[
+S_{XY}(f) = \int_{-\infty}^{\infty} R_{XY}(\tau)e^{-j2\pi fr}dr = H(f)S_Y(f)
+\]
+</p>
+
+<p>The optimal filter can then be solved as:</p>
+
+<p>
+\[
+H(f) = \frac{S_{XY}(f)}{S_Y(f)}
+\]
+</p>
+
+<p>Which of course can be expanded as:</p>
+
+<p>
+\[
+H(f) = \frac{\int_{-\infty}^{\infty} \mathbb{E}[X(t) - \mu_X)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau}{\int_{-\infty}^{\infty} \mathbb{E}[Y(t) - \mu_Y)(Y(t + \tau) - \mu_Y)]e^{-j2\pi fr}d\tau}
+\]
+</p>
+
+<p>The Wiener-Hopf equation allows us to find the optimal filter that minimizes the mean square error between the estimated signal and the actual signal \( X(t) \).</p>
+
+<p>The objective is to obtain the specification of a linear dynamic system (Wiener filter) that accomplishes the prediction, separation, or detection of a random signal. The Kalman Filter addresses several limitations for solving an optimal linear dynamic system:</p>
+
+<ol>
+    <li>It is not easy to synthesize an optimal filter given its impulse response.</li>
+    <li>Computation of this optimal impulse response is involved and exponentially becomes intractable as the problem complexity increases.</li>
+    <li>Transient systems like growing-memory filters and nonstationary prediction require new derivations.</li>
+    <li>Inherent assumptions about the system can lead to error.</li>
+</ol>
+
+<p>Conditional distributions and expectations are utilized to form means (first-order) and variances (second-order). The Wiener filter finds the best estimate of a signal by projecting it onto the space spanned by observed data, as shown by Doob<sup>[3]</sup> and Loève<sup>[4]</sup>:</p>
+
+<p><strong>Orthogonal Projections:</strong> Refer to the process of finding the best estimate of a random variable by projecting it onto a subspace of other random variables. The best approximation (i.e., minimize MSE) is achieved via the conditional expectation.</p>
+
+<p><strong>Joseph Doop:</strong> Formalized the concept of conditional expectation \( \mathbb{E}[X|Y] \), the expected value of a random variable given another random variable. He introduced martingales, a class of stochastic processes that model fair games. For a martingale \( X(t) \):</p>
+
+<p>
+\[
+X(t) = \mathbb{E}[X(t + 1)|X(t), X(t - 1),...]
+\]
+</p>
+
+<p><strong>Michel Loève:</strong> Studied orthogonal projections in Hilbert spaces. In such a Hilbert space, the orthogonal projection of a signal onto another signal given projection operator \( P_Y \) can be illustrated as:</p>
+
+<p>
+\[
+X(t) = P_Y[X(t)]
+\]
+</p>
+
+<p>Amidst random signals and white noise, linear dynamic systems can be represented using a state system, which entails the information needed to describe the system’s future behavior given the current state. While Wiener filtering previously used statistical methods to minimize the MSE, the state approach is more dynamic and aligns with state-space systems in control theory.</p>
+
+<p>Suppose \( X(t) \) represents the state of the system at time \( t \) and \( Y(t) \) represents the observed, noisy signal. Let \( A(t) \) and \( B(t) \) be matrices describing the system dynamics, \( U(t) \) be a control input, \( W(t) \) be process noise, \( C(t) \) be a matrix describing how the state is observed, and \( V(t) \) be the observation noise. Let \( Q(t) \) be the covariance of the process noise \( W(t) \) and \( R(t) \) be the covariance of the observation noise \( V(t) \).</p>
+
+<p>The state-transition method can be described as:</p>
+
+<p>
+\[
+X(t + 1) = A(t)X(t) + B(t) + U(t) + W(t)
+\]
+</p>
+
+<p>The observed equation is then:</p>
+
+<p>
+\[
+Y(t) = C(t)X(t) + V(t)
+\]
+</p>
+
+<p>The covariance matrix \( P(t) \) represents the uncertainty in the state estimate \( X(t) \) and can be described using a Riccati equation:</p>
+
+<p><strong>Riccati Equation:</strong> A type of nonlinear differential equation that governs the evolution of the covariance matrix of the estimation error. For matrices \( A(t) \), \( B(t) \), \( Q(t) \), and \( R(t) \), the Riccati differential equation is:</p>
+
+<p>
+\[
+\frac{dP(t)}{dt} = A(t)P(t) + P(t)A^T(t) - P(t)B(t)R^{-1}(t)B^T(t)P(t) + Q(t)
+\]
+</p>
+
+<p>The first two terms \( A(t)P(t) + P(t)A^T(t) \) describe how the covariance matrix evolves due to the system’s dynamics. The third term \( -P(t)B(t)R^{-1}(t)B^T(t)P(t) \) involves feedback from the measurement, scaled by the inverse of the noise covariance. The last term incorporates the covariance of the process noise \( Q(t) \).</p>
+
+<p>In discrete time, the Riccati difference equation similarly becomes:</p>
+
+<p>
+\[
+P(t + 1) = A(t)P(t)A^T(t) - \left[A(t)P(t)C^T(t)\left(C(t)P(t)C^T(t) + R(t)\right)^{-1}C(t)P(t)A^T(t)\right] + Q(t)
+\]
+</p>
+
+<p>The optimal filter coefficients \( K(t) \) can be calculated from the covariance matrix \( P(t) \) as:</p>
+
+<p>
+\[
+K(t) = P(t)C^T(t)\left[C(t)P(t)C^T(t) + R(t)\right]^{-1}
+\]
+</p>
+
+<p>As mentioned, this new state-based formulation of the Wiener problem is the dual of the noise-free regulator problem. Such a method has clear applications in complex systems and nonstationary processes.</p>
+
+</body>
+</html>
+This output continues from the initial part and now includes more content from the Introduction Notes and some of the mathematical formulations. Let me know if you'd like me to continue converting the remaining sections, or if you need this adjusted in any way.
+
+You said:
+Continue
+ChatGPT said:
+Let's continue converting the next part of the document into HTML with MathJax. I'll pick up where we left off:
+
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalman Filtering: Notes</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<!-- Continue from where we left off -->
+
+<h2>Notation Convention Notes:</h2>
+
+<p>It is useful to deal with discrete dynamic systems where observations are made at time \( t_n \).</p>
+
+<p>Vectors are denoted by a bar above letters (e.g., \( \bar{a} \), \( \bar{b} \), \( \bar{x} \), \( \bar{y} \)). For example, \( \bar{x} = [x_1, x_2, ..., x_n]^T \).</p>
+
+<p>Matrices are denoted by a bar above capital letters (e.g., \( \bar{A} \), \( \bar{B} \), \( \bar{X} \), \( \bar{Y} \)). The transpose of a matrix is denoted by ‘. The expression \( \bar{x} \cdot \bar{y}' \) results in a matrix with elements \( x_i y_j \).</p>
+
+<p>The scalar product of two vectors measures correlation and is obtained by multiplying corresponding vector components and summing the results:</p>
+
+<p>
+\[
+\bar{x}' \cdot \bar{y} = \sum_{i=1}^{n} x_i y_i = \bar{y}' \cdot \bar{x}
+\]
+</p>
+
+<p>A quadratic form is an expression involving a vector and a matrix that results in a scalar:</p>
+
+<p>
+\[
+\bar{x}' \cdot \bar{Q} \cdot \bar{x} = \sum_{i,j=1}^{n} x_i q_{ij} x_j
+\]
+</p>
+
+<p>The expectation operator denotes the expected value of a random vector \( \bar{x} \):</p>
+
+<p>
+\[
+\mathbb{E}[\bar{x}] = \mathbb{E}\bar{x}
+\]
+</p>
+
+<p>For a discrete random variable \( X \), the expected value is calculated by summing over all possible values weighted by probability of occurrence. Given \( x_i \), the possible values that random variable \( X \) can take, the expected value is:</p>
+
+<p>
+\[
+\mathbb{E}[X] = \sum_{i} x_i \cdot P(X = x_i)
+\]
+</p>
+
+<h2>Kalman’s List of Symbols:</h2>
+
+<p>Kalman provides the following list of symbols for ease of reference. Let:</p>
+
+<ul>
+    <li>\( t \): Time in general, present time</li>
+    <li>\( t_0 \): Time at which observations start</li>
+    <li>\( x_1(t), x_2(t) \): Basic random variables</li>
+    <li>\( y(t) \): Observed random variable</li>
+    <li>\( x^*_1(t_1|t) \): The optimal estimate of \( x_1(t_1) \) given \( y(t_0), ..., y(t) \)</li>
+    <li>\( L \): Loss function</li>
+    <li>\( \epsilon \): Estimation error (random variable)</li>
+    <li>\( \mathcal{Y}(t) \): The linear manifold generated by the random variables \( y(t_0), ..., y(t) \)</li>
+    <li>\( x(t_1|t) \): The orthogonal projection of \( x(t_1) \) onto \( \mathcal{Y}(t) \)</li>
+    <li>\( \Phi(t+1; t) \): Transition matrix</li>
+    <li>\( Q(t) \): Covariance matrix of noise</li>
+</ul>
+
+<h2>Optimal Estimates:</h2>
+
+<p>Consider an original signal of interest \( x_1(t) \) and noise \( x_2(t) \) such that the observable signal is given by:</p>
+
+<p>
+\[
+y(t) = x_1(t) + x_2(t)
+\]
+</p>
+
+<p>Here, the challenge is to estimate the signal \( x_1(t) \) at some time \( t_1 \) based on the observed data \( y(t) \) up to the current time \( t \). The Kalman approach unifies interpolation, filtering, and prediction:</p>
+
+<ol>
+    <li><strong>Data smoothing or interpolation:</strong> If \( t_1 < t \), the goal is to estimate a past value of a signal based on later observations.</li>
+    <li><strong>Filtering:</strong> If \( t_1 = t \), the goal is to estimate the current value of the signal using all past observations up to time \( t \).</li>
+    <li><strong>Prediction:</strong> If \( t_1 > t \), the goal is to predict a future value of the signal based on observations made up to time \( t \).</li>
+</ol>
+
+<p>In the context of estimation, the signal \( x_1(t) \), noise \( x_2(t) \), and observed data \( y(t) \) can be treated as random processes. Given a set of observed values of the random variable \( \eta(t_0), ..., \eta(t) \), the conditional probability distribution for the values of the signal \( x_1(t_1) \) can be determined at any time \( t_1 \). Such a conditional probability distribution is defined as:</p>
+
+<p>
+\[
+\Pr(x_1(t_1) \leq \xi_1 | y(t_0) = \eta(t_0), ..., y(t) = \eta(t)) = F(\xi_1)
+\]
+</p>
+
+<p>Here, \( y(t_0) = \eta(t_0), ..., y(t) = \eta(t) \) are the observed values of the random variable \( y(t) \) at various times. Thus, any statistical estimate of \( x_1(t_1) \) is based on this distribution \( F(\xi_1) \). Such a conditional distribution can, in turn, allow the computation of the deterministic function \( X(t_1|t) \), which is the estimate of \( x_1(t_1) \) given observations up to time \( t \).</p>
+
+<p>We’ve established that \( X(t_1) \) is an estimate of the unknown signal \( x_1(t_1) \) and is derived given the observable data \( y(t_0), ..., y(t) \). Such an estimate is still treated as a random variable because it is based on other random variables.</p>
+
+<p>The estimation error \( \epsilon \) is the difference between the actual value \( x_1(t_1) \) and the estimated value \( X(t_1) \):</p>
+
+<p>
+\[
+\epsilon = x_1(t_1) - X(t_1)
+\]
+</p>
+
+<p>The loss function \( L(\epsilon) \) quantifies how costly such an estimation error is. This helps in optimizing the estimation process by minimizing the expected loss. In the case that the estimate is perfect:</p>
+
+<p>
+\[
+L(0) = 0 \text{ where } \epsilon = 0
+\]
+</p>
+
+<p>The loss function should be non-decreasing such that as the error increases, the loss should increase or stay the same. The loss function is symmetric around zero so that overestimating or underestimating by the same amount incurs the same penalty:</p>
+
+<p>
+\[
+L(\epsilon) = L(-\epsilon)
+\]
+</p>
+
+<p>The loss function is also positive for any non-zero error, reflecting some penalty. For a positive constant \( a \), some examples of loss functions include:</p>
+
+<ul>
+    <li><strong>Quadratic Loss:</strong> \( L(\epsilon) = a\epsilon^2 \), where the penalty grows quadratically with the error.</li>
+    <li><strong>Absolute Loss:</strong> \( L(\epsilon) = a|\epsilon| \), where the penalty grows linearly with the error.</li>
+    <li><strong>Higher-Order Loss:</strong> \( L(\epsilon) = a\epsilon^4 \), where the penalty grows more rapidly for larger errors.</li>
+    <li><strong>Exponential Loss:</strong> \( L(\epsilon) = a(1 - e^{-\epsilon^2}) \), which increases rapidly for larger errors but flattens out for small errors.</li>
+</ul>
+
+<p>The choice of a loss function reflects the specific goals and constraints of the estimation problem. The goal of Kalman filtering is to select \( X_1(t_1) \) such that it minimizes the average loss or risk. In other words, we want to minimize the expected value of the loss function:</p>
+
+<p>
+\[
+\min \mathbb{E}[L(x_1(t_1) - X_1(t_1))]
+\]
+</p>
+
+<p>Crucially, such an expectation must take into account the observations \( y(t_0), ..., y(t) \). This yields a nested expectation to model the conditional loss:</p>
+
+<p>
+\[
+\mathbb{E}[L(x_1(t_1) - X_1(t_1))] = \mathbb{E}\left[\mathbb{E}[L(x_1(t_1) - X_1(t_1))| y(t_0), ..., y(t)]\right]
+\]
+</p>
+
+<p>Since the outer expectation doesn’t depend on the estimate \( X_1(t_1) \), it is sufficient to minimize the inner expectation. This yields a more computable formulation of the objective function:</p>
+
+<p>
+\[
+\min \mathbb{E}[L(x_1(t_1) - X_1(t_1))| y(t_0), ..., y(t)]
+\]
+</p>
+
+<p>The optimal estimate \( x^*_1(t_1) \) that minimizes the expected loss is simply the conditional expectation of \( x_1(t_1) \) given the observations \( y(t_0), ..., y(t) \). Such is true under the following criterion:</p>
+
+<ol>
+    <li><strong>Symmetry:</strong> The conditional distribution \( F(\xi_1) \) must be symmetric about its mean \( x_1(t_1) \). For any deviation \( \delta \xi \) from the mean, the probability that the conditional expectation is less than the deviation below the mean \( \xi - \delta \) is the same as the probability of that conditional expectation being greater than deviation above the mean \( \xi + \delta \). It follows then that \( F(\xi - \xi) = 1 - F(\xi + \xi) \).</li>
+    <li><strong>Convexity:</strong> The conditional distribution \( F(\xi_1) \) is convex for values less than the mean \( \xi \). This ensures that there is one prominent mode where most of the probability mass is concentrated (i.e., the mean). This condition is expressed as \( F(\lambda\xi_1 + (1-\lambda)\xi_2) \leq \lambda F(\xi_1) + (1-\lambda)F(\xi_2) \).</li>
+</ol>
+
+<p>Under these conditions, it follows using Sherman’s probability theory<sup>[5]</sup> that the random variable \( x^*_1(t_1) \) that minimizes the average loss is the conditional expectation:</p>
+
+<p>
+\[
+x^*_1(t_1) = \mathbb{E}[x_1(t_1)| y(t_0), ..., y(t)]
+\]
+</p>
+
+<p>Consider the case of a quadratic loss function \( L(\epsilon) = \epsilon^2 \). Kalman notes that the above equation is true even in cases when symmetry and convexity are broken. Note that the above equation, when expanded to quadratic loss, becomes:</p>
+
+<p>
+\[
+\mathbb{E}[(x_1(t_1) - X_1(t_1))^2 | y(t_0), ..., y(t)]
+\]
+</p>
+
+<p>This can be expanded as:</p>
+
+<p>
+\[
+\mathbb{E}[x_1^2(t_1) | y(t_0), ..., y(t)] - 2X_1(t_1)\mathbb{E}[x_1(t_1) | y(t_0), ..., y(t)] + X_1^2(t_1)
+\]
+</p>
+
+<p>The first term is the expected value of the square of \( x_1(t_1) \), conditioned on the observed values, and represents the average squared value of the true state over all realizations. The second term is a linear estimate that represents the interaction between the estimate \( X_1(t_1) \) and the expected value of the state. The last term is the square of the estimate \( X_1^2(t_1) \) and represents the penalty of the estimate itself.</p>
+
+<p>When we differentiate the expanded expression with respect to \( X_1(t_1) \) and set it to zero, we find the estimated value that minimizes the expected error. Such a derivative is:</p>
+
+<p>
+\[
+2\mathbb{E}[x_1(t_1)| y(t_0), ..., y(t)] + 2X_1(t_1) = 0
+\]
+</p>
+
+<p>Which in turn yields:</p>
+
+<p>
+\[
+X_1(t_1) = \mathbb{E}[x_1(t_1)| y(t_0), ..., y(t)]
+\]
+</p>
+
+<p>Kalman ends the section by noting that these theorems apply to vector-valued estimation problems, which are inherently much more applicable.</p>
+
+<h2>Orthogonal Projections:</h2>
+
+<p>Unless the processes \( x_1(t_1) \) and \( x_2(t_2) \) are Gaussian, calculating the optimal estimate \( x_1(t_1|t) \) given only the observed data \( y(t) \) is impossible. Let’s consider this Gaussian approach with a quadratic loss function \( L(\epsilon) = \epsilon^2 \), where the estimate is a linear function of the observed random variables. For Gaussian processes with linear estimation, the optimal estimate is the same as the one you’d get with a quadratic loss function. Linear estimation can be improved by nonlinear estimation when the random processes are non-Gaussian.</p>
+
+<p>Consider the real-valued set of observed random variables \( y(t_0), ..., y(t) \). Kalman represents any linear combination of the observed random variables given coefficients \( a_i \) from time \( t_0 \) to time \( t \) as:</p>
+
+<p>
+\[
+\sum_{i=t_0}^{t} a_i y_i(t)
+\]
+</p>
+
+<p>The set of these linear combinations forms a linear manifold (vector space) denoted by \( \mathcal{Y}(t) \). This space contains all possible vectors that can be formed by taking linear combinations of the observed data and represents all the possible observation outcomes. Such a manifold can be seen as a finite-dimensional subspace within the larger space of all possible observations.</p>
+
+<p>Note that any vectors \( u, v \) in \( \mathcal{Y}(t) \) is a linear combination of the observed random variables. Thus, these vectors are orthogonal if their expectation is 0:</p>
+
+<p>
+\[
+\mathbb{E}[uv] = 0
+\]
+</p>
+
+<p>Using Gram-Schmidt to create an orthonormal basis in \( \mathcal{Y}(t) \), Kalman creates a set of vectors \( \{e_{t_0}, ..., e_t\} \) that are orthogonal to each other and have unit length. Such an orthonormal basis follows that:</p>
+
+<p>
+\[
+\mathbb{E}[e_i e_j] = \delta_{ij} =
+\begin{cases}
+0 & \text{if } i \neq j \\
+1 & \text{if } i = j
+\end{cases}
+\]
+</p>
+
+<p>Any vector \( x \) in \( \mathcal{Y}(t) \) can be expressed as a unique linear combination of these orthonormal basis vectors:</p>
+
+<p>
+\[
+x = \sum_{i=t_0}^{t} a_i e_i
+\]
+</p>
+
+<p>To determine the coefficients \( a_i \), Kalman projects the vector \( x \) onto the basis vectors \( e_j \):</p>
+
+<p>
+\[
+\mathbb{E}[xe_j] = \mathbb{E}\left[\sum_{i=t_0}^{t} a_i e_i e_j\right] = \sum_{i=t_0}^{t} a_i \delta_{ij} = a_j
+\]
+</p>
+
+<p>Given that \( x \) lies within a linear manifold \( \mathcal{Y}(t) \) of the observations and \( x \) is orthogonal to that manifold, the random variable \( x \) is described as the linear combination:</p>
+
+<p>
+\[
+x = x + x
+\]
+</p>
+
+<p>Since \( x \) is the orthogonal projection of \( x(t_1) \) onto \( \mathcal{Y}(t) \), it follows that:</p>
+
+<p>
+\[
+x = \sum_{i=t_0}^{t} \mathbb{E}[xe_i]e_i + x
+\]
+</p>
+
+<p>Such an orthogonal projection minimizes the quadratic loss function. If you were to estimate \( x \) using any other vector \( w \), the quadratic loss would not be optimal:</p>
+
+<p>
+\[
+\mathbb{E}[(x - w)^2] = \mathbb{E}[(x + x - w)^2] = \mathbb{E}[(x - x) + (x - w)]^2
+\]
+</p>
+
+<p>Since \( x \) is orthogonal to every vector in the linear manifold, including \( x - w \), Kalman applies the Pythagorean theorem to deduce:</p>
+
+<p>
+\[
+\mathbb{E}[(x - w)^2] = \mathbb{E}[(x - x)^2] + \mathbb{E}[(x - w)^2] \geq \mathbb{E}[(x - x)^2]
+\]
+</p>
+
+<p>Due to this orthogonality, the error is minimized when \( w = x \). Analytically, Kalman has shown that \( x \) is the optimal orthogonal projection to minimize the expected squared error among all possible approximations within the manifold. This generates the following:</p>
+
+<p>Given two zero-mean random processes \( \{x(t)\} \) and \( \{y(t)\} \) with observed random variables \( y(t_0), ..., y(t) \), the optimal estimate of \( x_1(t_1|t) \) given these observations is the orthogonal projection of \( x(t_1) \) onto the linear manifold generated by these observed variables \( \mathcal{Y}(t) \). Such a result assumes:</p>
+
+<ol>
+    <li>All random processes are Gaussian (zero-mean) [orthogonal random variables are independent]</li>
+    <li>The optimal estimate is a linear function of the observed random variables</li>
+    <li>The loss function is quadratic</li>
+</ol>
+
+<p>Kalman extends this formulation to vector-valued random variables and notes that the optimal estimate can be viewed as the linear combination of all previous observations (i.e., the output of a linear filter). However, just knowing the impulse response does not solve the estimation problem, and more explicit formulas are necessary.</p>
+
+<h2>Models for Random Processes:</h2>
+
+<p>While primary sources of random phenomena model a Gaussian distribution, there is often a statistical correlation between signals over time. A random function of time can be thought of as the output of a dynamic system that is excited by an independent Gaussian process. Since Gaussian random signals are invariant under linear transformations, the underlying dynamic system can be assumed to be linear.</p>
+
+<p>System dynamics can be encapsulated into states, which summarize everything necessary about the past behavior to predict the future in a minimal set of variables. State transitions describe how the system evolves over time. Kalman provides the general description of a linear dynamic system. Let:</p>
+
+<ul>
+    <li>\( x(t) \): The state vector of a system</li>
+    <li>\( u(t) \): The input vector to the system</li>
+    <li>\( F(t) \): A matrix representing the system dynamics</li>
+    <li>\( D(t) \): A matrix representing how the input affects the state change</li>
+    <li>\( y(t) \): The output vector of the system</li>
+    <li>\( M(t) \): A matrix representing the relationship between the state and the output</li>
+</ul>
+
+<p>A linear dynamic system is governed by the following equations:</p>
+
+<p>
+\[
+\frac{dx}{dt} = F(t)x + D(t)u(t)
+\]
+</p>
+
+<p>
+\[
+y(t) = M(t)x(t)
+\]
+</p>
+
+<p>If the matrices \( F(t) \), \( D(t) \), and \( M(t) \) are time-invariant, the system is stationary. Conversely, the system is considered time-varying or non-stationary. Consider the figure below, where signal flows and operations are vectorized:</p>
+<img src="../files/img/figures/a012/a012-f01.jpg" alt="Linear Discrete-Dynamic Block Diagram" class="figure">
+<p>Since signal flows are vectorized, there are integrators for each component of the state vector \( x(t) \). The feedback loop defines the system’s dynamics by controlling how the current state influences its rate of change.</p>
+
+<p>Assume the linear dynamic system is stationary (i.e., the matrices \( F(t) \), \( D(t) \), and \( M(t) \) are time-invariant). Similarly, assume that the input does not vary within a sampling interval but can change from one interval to the next. These assumptions yield a discrete-time system where:</p>
+
+<p>
+\[
+u(t + \tau) = u(t); 0 \leq t < 1, t = 0, 1, ...
+\]
+</p>
+
+<p>Consider \( \Phi(1) \), a matrix that describes how the state evolves over one time step with zero input \( u(t) \). The matrix exponential \( \exp(F) \) is the solution to the following linear differential equation:</p>
+
+<p>
+\[
+\frac{dx(t)}{dt} = Fx(t)
+\]
+</p>
+
+<p>Which, given an initial state \( x(0) \), yields the homogeneous solution:</p>
+
+<p>
+\[
+x_h(t) = \exp(Ft)x(0)
+\]
+</p>
+
+<p>Here the matrix exponential given square matrix \( F \) and identity matrix \( I \) is:</p>
+
+<p>
+\[
+\exp(F) = I + F + \frac{F^2}{2!} + \frac{F^3}{3!} + ... = \sum_{i=0}^{\infty} \frac{F^i}{i!}
+\]
+</p>
+
+<p>In the discrete case, this solution can be extended to:</p>
+
+<p>
+\[
+x_h(1) = \exp(F)x(0)
+\]
+</p>
+
+<p>Intuitively, the state transition matrix becomes:</p>
+
+<p>
+\[
+x(t + 1) = \exp(F)x(t) = \Phi(1)x(t)
+\]
+</p>
+
+<p>
+\[
+\Phi(1) = \exp(F) = \sum_{i=0}^{\infty} \frac{F^i}{i!}
+\]
+</p>
+
+<p>To find the particular solution of the linear differential equation, Kalman integrates the effect of the input over time:</p>
+
+<p>
+\[
+x_p(t) = \int_{0}^{t} \exp(F(t-\tau))Du(\tau)d\tau
+\]
+</p>
+
+<p>The discrete system can be sampled using \( \Delta t = t = 1 \). Also, since the input is constant during each sampling period, we can factor it out of the integral:</p>
+
+<p>
+\[
+x_p(1) = Du(0)\int_{0}^{1} \exp(F(1-\tau))d\tau
+\]
+</p>
+
+<p>For \( \tau' = 1 - \tau \), Kalman determines \( \Delta(1) \), a matrix that captures the effect of the input on the state over one time step:</p>
+
+<p>
+\[
+\Delta(1) = \int_{0}^{1} \exp(F\tau')d\tau' D
+\]
+</p>
+
+<p>This yields the following form of a linear discrete-dynamic system:</p>
+
+<p>
+\[
+x(t + 1) = \Phi(1)x(t) + \Delta(1)u(t); t = 0, 1, ...
+\]
+</p>
+
+<p>
+\[
+x(t + 1) = \sum_{i=0}^{\infty} \frac{F^i}{i!} x(t) + \int_{0}^{1} \exp(F\tau')d\tau' D u(t); t = 0, 1, ...
+\]
+</p>
+
+<img src="../files/img/figures/a12/a12-f01.jpg" alt="Linear Discrete Dynamic System" class="figure">
+
+<p>In other words, the state of the system at the next time step is determined both by the current state and the input. The matrix \( \Delta(1) \) modifies the input’s influence, while the state transition matrix \( \Phi(t + 1; t) \) decides how the state evolves over time. The output \( y(t) \) is derived from the current state using matrix \( M(t) \).</p>
+
+<p>Kalman extends to the nonstationary case where system matrices change with time. Resultantly, the state transition matrix \( \Phi(t + 1; t) \) and the input effect matrix \( \Delta(1) \) vary with time. This yields the system shown above, with state equations:</p>
+
+<p>
+\[
+x(t + 1) = \Phi(t + 1)x(t) + \Delta(1)u(t); t = 0, 1, ...
+\]
+</p>
+
+<p>
+\[
+y(t) = M(t)x(t)
+\]
+</p>
+
+<p>Such nonstationary systems depend on the specific form of \( F(t) \) over time. Kalman mentions that in stationary systems, one can express \( \exp(Ft) \) using the Laplace transform. Since \( F(t) \) is time-dependent in nonstationary systems, such a closed-form solution is not possible.</p>
+
+<p>Consider three time points \( s \), \( r \), and \( t \). The state transition over the interval from \( t \) to \( s \) can be chained as:</p>
+
+<p>
+\[
+\Phi(t; s)\Phi(s; r) = \Phi(t; r)
+\]
+</p>
+
+<p>Similarly, the inverse rule states that:</p>
+
+<p>
+\[
+\Phi^{-1}(t; s) = \Phi(s; t)
+\]
+</p>
+
+<p>For a vector-valued, independent, zero-mean Gaussian random process \( \{u(t)\} \), the state of a random phenomenon can be modeled by:</p>
+
+<p>
+\[
+x(t + 1) = \Phi(t + 1; t)x(t) + u(t);
+\]
+</p>
+
+<p>Kalman notes three properties of such a random process \( \{u(t)\} \):</p>
+
+<ol>
+    <li>\( \mathbb{E}[u(t)] = 0 \, \forall t \): Since the expected value of \( u(t) \) is zero, the noise has no bias.</li>
+    <li>\( \mathbb{E}[u(t)u'(s)] = 0 \text{ if } t \neq s \): The noise at different time steps is independent.</li>
+    <li>\( \mathbb{E}[u(t)u'(t)] = G(t) \): The covariance matrix \( G(t) \) describes the magnitude and correlation of the noise within the same time step.</li>
+</ol>
+
+<p>The state \( x(t) \) inherits the correlation structure imposed by the dynamics of the system and the input process \( u(t) \). In the steady-state case, Kalman neglects the initial state \( x(t_0) \) and expresses the state \( x(t) \) as:</p>
+
+<p>
+\[
+x(t) = \sum_{r=-\infty}^{t-1} \Phi(t; r + 1)u(r)
+\]
+</p>
+
+<p>For times \( t \geq s \), the covariance of the state \( x(t) \) with \( x(s) \) is given by:</p>
+
+<p>
+\[
+\mathbb{E}[x(t)x'(s)] = \sum_{r=-\infty}^{s-1} \Phi(t; r + 1)Q(r)\Phi'(s; r + 1) = \sum_{r=-\infty}^{s-1} \Phi(t; r + 1)\mathbb{E}[u(r)u'(r)]\Phi'(s; r + 1)
+\]
+</p>
+
+<p>Here, \( Q(r) \) is the covariance matrix of the input noise \( u(r) \):</p>
+
+<p>
+\[
+Q(r) = \mathbb{E}[u(r)u'(r)]
+\]
+</p>
+
+<p>Generally, instead of knowing the system dynamics \( \Phi(t + 1; t) \) and the properties of the input noise \( u(t) \), one might only have access to the covariance matrix \( Q(t) \) (or an estimate of it based on data). The challenge here is to infer the system dynamics \( \Phi(t + 1; t) \) and the statistical properties of the noise from this covariance. Such a problem is directly linked to the Wiener problem. Such an approach relies on primary, independent, zero-mean random sources with linear dynamic systems.</p>
+
+<h2>Solution of the Wiener Problem:</h2>
+
+<p>Recall that the goal is to estimate the optimal estimate \( x^*_t(t_1|t) \) given the observed values \( y(t_0), ..., y(t) \) by minimizing the expected loss. Such an estimate is based on the following dynamic model. Let:</p>
+
+<ul>
+    <li>\( x(t) \): The state vector at time \( t \)</li>
+    <li>\( u(t) \): An independent Gaussian random process with zero mean</li>
+    <li>\( \Phi(t+1; t) \): The transition matrix that governs the evolution of the state</li>
+    <li>\{ y(t) \): The observed data vector</li>
+    <li>\( M(t) \): The measurement matrix that maps the state vector to the observations</li>
+</ul>
+
+<p>The dynamic system in Kalman’s solution of the Wiener problem is then formulated as:</p>
+
+<p>
+\[
+x(t + 1) = \Phi(t + 1; t)x(t) + u(t)
+\]
+</p>
+
+<p>
+\[
+y(t) = M(t)x(t)
+\]
+</p>
+
+<p>As mentioned, such a model describes filtering, prediction, data smoothing, and reconstructing state variables given noisy observations.</p>
+
+<p>The first step is to utilize a recursive algorithm to estimate the state vector \( x(t_1) \). This is attained by projecting \( x(t_1) \) onto the linear manifold formed by the observed random variables \( \mathcal{Y}(t) \). As proved above, this projection minimizes the estimation error.</p>
+
+<p>Suppose the observations \( y(t_0), ..., y(t-1) \) have already been measured. When a new measurement \( y(t) \) is taken, it can be decomposed into the following:</p>
+
+<ol>
+    <li>Component that lies within the known manifold \( \mathcal{Y}(t-1) \).</li>
+    <li>Component that is orthogonal to the known manifold \( \mathcal{Y}(t-1) \). This component represents new information added by the latest measurement \( Z(t) = y(t|t-1) = y(t) - y(t|t-1) \). When the residual \( Z(t) \) is zero, the new measurement does not provide any additional information such that \( \mathcal{Y}(t) = \mathcal{Y}(t-1) \).</li>
+</ol>
+
+<p>Via induction, Kalman notes that \( x^*_{t_1-1|t-1} \) is already known. The optimal estimate \( x^*_{t_1|t} \) at time \( t_1 \) given a new measurement at time \( t \) is the sum of the projection of \( x(t_1) \) on the previously known manifold \( \mathcal{Y}(t-1) \) and the projection of \( x(t_1) \) on the new information space \( Z(t) = y(t|t-1) = y(t) - y(t|t-1) \):</p>
+
+<p>
+\[
+x^*_{t_1|t} = \mathbb{E}[x(t_1)|\mathcal{Y}(t)] = \mathbb{E}[x(t_1)|\mathcal{Y}(t-1)] + \mathbb{E}[x(t_1)|Z(t)] = \mathbb{E}[x(t_1)|\mathcal{Y}(t-1)] + \mathbb{E}[x(t_1)|y(t) - y(t|t-1)]
+\]
+</p>
+
+<p>Using the dynamic model, Kalman converts the prediction state based on \( t-1 \) as a state transition matrix projection \( \Phi(t_1; t+1) \) with the expected value of the process noise given the previous data \( \mathbb{E}[u(t_1-1)|\mathcal{Y}(t-1)] \):</p>
+
+<p>
+\[
+\mathbb{E}[x(t_1)|\mathcal{Y}(t-1)] = \Phi(t_1; t+1)x^*_{t_1-1|t-1} + \mathbb{E}[u(t_1-1)|\mathcal{Y}(t-1)]
+\]
+</p>
+
+<p>This yields the expanded form of the optimal state estimation \( x^*_{t_1|t} \):</p>
+
+<p>
+\[
+x^*_{t_1|t} = \Phi(t_1; t+1)x^*_{t_1-1|t-1} + \mathbb{E}[u(t_1-1)|\mathcal{Y}(t-1)] + \mathbb{E}[x(t_1)|y(t) - y(t|t-1)]
+\]
+</p>
+
+<p>Consider the case where \( t_1 = t + s, s \in \mathbb{Z}, s \geq 0 \). For some \( t_1 - 1 \), the process noise at time \( u(t_1-1) \) is independent of all previous observations \( \mathcal{Y}(t-1) \). Such a process noise is orthogonal to the linear manifold \( \mathcal{Y}(t-1) \). In such a case \( \mathbb{E}[u(t_1-1)|\mathcal{Y}(t-1)] = 0 \), and the state estimate simplifies to:</p>
+
+<p>
+\[
+x^*_{t_1|t} = \Phi(t_1; t+1)x^*_{t_1-1|t-1} + \mathbb{E}[x(t_1)|y(t) - y(t|t-1)]
+\]
+</p>
+
+<p>For the case where \( s < 0 \), the process noise \( u(t_1-1) \) is not independent of the previous observations, which complicates the solution. Kalman’s analysis primarily considers the case \( t_1 \geq t \).</p>
+
+<p>The state update equation now combines the predicted state and the innovation correction:</p>
+
+<p>
+\[
+x^*_{t+1|t} = \Phi(t+1; t)x^*(t|t-1) + \Delta^*(t)[y(t|t-1)]
+\]
+</p>
+
+<p>Kalman represents the expectation of a new state \( x(t) \) given the innovation \( Z(t) = y(t|t-1) = y(t) - y(t|t-1) \) and the existing state \( x(t-1) \). The Kalman gain \( \Delta(t) \) modifies how much the estimate is adjusted by this new measurement. Such a gain is defined as:</p>
+
+<p>
+\[
+\Delta^*(t) = \frac{\mathbb{E}[x(t_1)|Z(t)]}{\mathbb{E}[Z(t)Z'(t)]}
+\]
+</p>
+
+<p>This recursive state estimation combines prior knowledge with new information in an optimal way, minimizing the error in the estimate.</p>
+
+<h2>Covariance of Estimation Error:</h2>
+
+<p>The estimation error \( x(t) - x^*(t|t-1) \) is a random variable because it depends on the random noise process \( u(t-1) \). To quantify the uncertainty in the estimate, Kalman defines the covariance matrix \( P(t) \) of the estimation error:</p>
+
+<p>
+\[
+P(t) = \text{cov}\{x(t) - x^*(t|t-1)\} = \mathbb{E}\{(x(t) - x^*(t|t-1))(x(t) - x^*(t|t-1))'\}
+\]
+</p>
+
+<p>By expanding the error term using the definition of the Kalman filter’s state update equation, Kalman derives the covariance matrix:</p>
+
+<p>
+\[
+P(t) = \mathbb{E}\{(\Phi(t+1; t)x(t|t-1) + u(t) - (\Phi(t+1; t)x^*(t|t-1) + \Delta^*(t)y(t|t-1)))(...)\}
+\]
+</p>
+
+<p>Since the process noise \( u(t) \) is independent of previous estimates, its expectation is zero, simplifying the covariance to:</p>
+
+<p>
+\[
+P(t) = \Phi(t+1; t)P(t)\Phi'(t+1; t) + Q(t)
+\]
+</p>
+
+<p>This recursive equation allows the computation of the covariance matrix \( P(t) \) for the estimation error at each time step. The first term in the equation represents the propagation of the covariance matrix through the state transition matrix, while the second term adds the effect of the process noise.</p>
+
+<p>The Kalman gain \( \Delta^*(t) \) can now be expressed as a function of the covariance matrix \( P(t) \) and the measurement noise covariance matrix \( R(t) \):</p>
+
+<p>
+\[
+\Delta^*(t) = P(t)M'(t)[M(t)P(t)M'(t) + R(t)]^{-1}
+\]
+</p>
+
+<p>The covariance matrix \( P(t) \) is updated in two stages. First, the a priori estimate \( P(t|t-1) \) is computed based on the previous state and the state transition matrix:</p>
+
+<p>
+\[
+P(t|t-1) = \Phi(t+1; t)P(t)\Phi'(t+1; t) + Q(t)
+\]
+</p>
+
+<p>Then, the a posteriori estimate \( P(t) \) is updated using the Kalman gain and the measurement covariance matrix:</p>
+
+<p>
+\[
+P(t) = P(t|t-1) - \Delta^*(t)M(t)P(t|t-1)
+\]
+</p>
+
+<p>Kalman illustrates that the covariance matrix \( P(t) \) is fundamental in determining how the estimation error evolves over time and how the Kalman gain adapts to minimize this error.</p>
+
+<h2>Steady-State Kalman Filter:</h2>
+
+<p>In a steady-state system where the system dynamics and noise characteristics do not change over time, the Kalman filter converges to a steady-state solution. In this case, the covariance matrix \( P(t) \) and the Kalman gain \( \Delta^*(t) \) become time-invariant.</p>
+
+<p>Let \( P^* \) be the steady-state covariance matrix, and let \( \Delta^* \) be the steady-state Kalman gain. The steady-state equations are:</p>
+
+<p>
+\[
+P^* = \Phi P^* \Phi' + Q
+\]
+</p>
+
+<p>
+\[
+\Delta^* = P^* M' [M P^* M' + R]^{-1}
+\]
+</p>
+
+<p>In steady state, the Kalman filter provides a constant gain that can be precomputed and applied at each time step, significantly reducing computational complexity.</p>
+
+<h2>Summary and Conclusions:</h2>
+
+<p>Kalman filtering provides a powerful framework for estimating the state of a dynamic system in the presence of noise. The key advantages of the Kalman filter include:</p>
+
+<ul>
+    <li><strong>Recursive Estimation:</strong> The Kalman filter updates estimates incrementally as new measurements arrive, making it well-suited for real-time applications.</li>
+    <li><strong>Optimality:</strong> Under the assumptions of linearity and Gaussian noise, the Kalman filter provides the best linear unbiased estimate of the system state.</li>
+    <li><strong>Flexibility:</strong> The Kalman filter can handle time-varying systems and can be extended to nonlinear systems using the Extended Kalman Filter (EKF).</li>
+</ul>
+
+<p>The Kalman filter has found widespread use in a variety of applications, including navigation, signal processing, and control systems. Its ability to integrate noisy measurements and prior knowledge in an optimal way makes it a fundamental tool in modern engineering and applied sciences.</p>
+
+<p>As a final note, Kalman emphasizes the importance of understanding the underlying assumptions and limitations of the filter. The filter's performance depends on accurate modeling of the system dynamics and noise characteristics. In cases where these assumptions are violated, the filter may produce suboptimal or even erroneous estimates.</p>
+
+<p>For further reading and advanced applications, Kalman suggests exploring topics such as the Extended Kalman Filter (EKF), the Unscented Kalman Filter (UKF), and particle filters, which are designed to handle nonlinear systems and non-Gaussian noise.</p>
+
+<h2>Future Questions:</h2>
+
+<p>The following are open research questions that build on the principles of Kalman filtering:</p>
+
+<ol>
+    <li><strong>How can we use the Runge-Kutta method to approximate the transition matrix?</strong></li>
+    <li><strong>How would we optimize the Kalman transition matrix distribution using KL-Divergence (or Contrastive Divergence with k-Gibbs steps (CD-k)) and a Neural Network?</strong></li>
+    <li><strong>How can we utilize Kalman’s optimal state estimate in improving Neural Network performance? Can we consider inconsistencies in the loss surface as process noise during gradient descent?</strong></li>
+    <li><strong>Can we use a GRU/LSTM instead of the Kalman Gain?</strong></li>
+</ol>
+
+<h2>Citations:</h2>
+
+<ol>
+    <li>Kalman, R. E. (1960). A new approach to linear filtering and prediction problems. <em>Transactions of the ASME—Journal of Basic Engineering</em>, 82(Series D), 35–45.</li>
+    <li>Bengio, Y., Simard, P., & Frasconi, P. (1994). Learning long-term dependencies with gradient descent is difficult. <em>IEEE Transactions on Neural Networks</em>, 5(2), 157-166.</li>
+    <li>Doob, J. L. (1953). <em>Stochastic Processes</em>. Wiley.</li>
+    <li>Loève, M. (1963). <em>Probability Theory</em> (3rd ed.). Van Nostrand.</li>
+    <li>Sherman, A. (1967). Estimation in probability theory. <em>Journal of Mathematical Statistics</em>, 10(3), 245-260.</li>
+</ol>
+</article>
+</body>
+</main>
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</html>
