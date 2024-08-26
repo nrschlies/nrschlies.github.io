@@ -667,30 +667,6 @@ K(t) = P(t)C^T(t)\left[C(t)P(t)C^T(t) + R(t)\right]^{-1}
 
 <p>As mentioned, this new state-based formulation of the Wiener problem is the dual of the noise-free regulator problem. Such a method has clear applications in complex systems and nonstationary processes.</p>
 
-</body>
-</html>
-This output continues from the initial part and now includes more content from the Introduction Notes and some of the mathematical formulations. Let me know if you'd like me to continue converting the remaining sections, or if you need this adjusted in any way.
-
-You said:
-Continue
-ChatGPT said:
-Let's continue converting the next part of the document into HTML with MathJax. I'll pick up where we left off:
-
-html
-Copy code
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalman Filtering: Notes</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-</head>
-<body>
-
-<!-- Continue from where we left off -->
-
 <h2>Notation Convention Notes:</h2>
 
 <p>It is useful to deal with discrete dynamic systems where observations are made at time \( t_n \).</p>
@@ -1011,7 +987,7 @@ y(t) = M(t)x(t)
 </p>
 
 <p>If the matrices \( F(t) \), \( D(t) \), and \( M(t) \) are time-invariant, the system is stationary. Conversely, the system is considered time-varying or non-stationary. Consider the figure below, where signal flows and operations are vectorized:</p>
-<img src="../files/img/figures/a012/a012-f01.jpg" alt="Linear Discrete-Dynamic Block Diagram" class="figure">
+<img src="../files/img/figures/a012/a12-f01.jpg" alt="Linear Discrete-Dynamic Block Diagram" class="figure">
 <p>Since signal flows are vectorized, there are integrators for each component of the state vector \( x(t) \). The feedback loop defines the system’s dynamics by controlling how the current state influences its rate of change.</p>
 
 <p>Assume the linear dynamic system is stationary (i.e., the matrices \( F(t) \), \( D(t) \), and \( M(t) \) are time-invariant). Similarly, assume that the input does not vary within a sampling interval but can change from one interval to the next. These assumptions yield a discrete-time system where:</p>
