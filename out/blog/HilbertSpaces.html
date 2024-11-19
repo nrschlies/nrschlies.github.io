@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Primer on Hilbert Spaces</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Annotated Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+        <!-- <a href="contact.html">Contact Me</a> TODO: Implement Firebase -->
+    </div>
+
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
+    <header>
+        <h1>A Primer on Hilbert Spaces</h1>
+        <p>By Noah Schliesman</p>
+    </header>
+    <main>
+        <section class="content">
+            <p>The concept of Hilbert spaces originated from David Hilbert’s studies on integral equations and his attempts to generalize the geometry of finite-dimensional Euclidean spaces to infinite dimensions. He was particularly interested in the spaces of square-integrable functions, which arose in boundary value problems and Fredholm’s theory of integral equations.</p>
+            <p>Boundary value problems (BVPs) are central to the study of differential equations, where solutions are sought that satisfy both a differential equation and boundary conditions. These problems arise naturally in physics and engineering, describing steady-state processes such as heat conduction or electrostatics. Consider the factors of a BVP, where,</p>
+            <ul>
+                <li>\( \mathcal{L} \) is a differential operator (e.g., \( \frac{d^2}{dx^2} + q(x) \)),</li>
+                <li>\( \Omega \) is the domain of interest,</li>
+                <li>\( B \) represents boundary constraints on \( \partial\Omega \),</li>
+                <li>\( f(x) \) and \( g \) are given functions,</li>
+            </ul>
+            <p>A BVP can often be expressed as,</p>
+            <p>\[ \mathcal{L}[y](x) = f(x), \quad x \in \Omega \]</p>
+            <p>with boundary conditions</p>
+            <p>\[ B[y] = g, \quad x \in \partial\Omega \]</p>
+            <p>A common example of BVPs is that of the Sturm-Liouville Problem, a class of second-order linear differential equations with boundary conditions, fundamental in mathematical physics and applied mathematics. It is named after Jacques Charles François Sturm and Joseph Liouville, who studied these problems in the 19th century. This framework generalized eigenvalue problems to differential operators and provides solutions that form orthogonal function systems, widely used in Fourier series, quantum mechanics, and vibration analysis. In such a problem,</p>
+            <ul>
+                <li>\( y(x) \) is the unknown function (eigenfunction),</li>
+                <li>\( \lambda \) is the eigenvalue parameter,</li>
+                <li>\( q(x) \) is the potential function, analogous to potential energy,</li>
+                <li>\( p(x) \) is the weighting factor for the derivative,</li>
+                <li>\( w(x) \) is the weight function for the eigenvalue problem, and,</li>
+                <li>\( \alpha_1, \alpha_2, \beta_1, \beta_2 \) are boundary parameters.</li>
+            </ul>
+            <p>The Sturm-Liouville problem is written as,</p>
+            <p>\[ \frac{d}{dx}\left( p(x) \frac{dy}{dx} \right) + [\lambda w(x) - q(x)] y = 0, \quad a < x < b \]</p>
+            <p>with boundary conditions</p>
+            <p>\[ \alpha_1 y(a) + \alpha_2 y'(a) = 0, \quad \beta_1 y(b) + \beta_2 y'(b) = 0 \]</p>
+            <p>The problem has a discrete spectrum of eigenvalues, where each eigenvalue corresponds to a unique eigenfunction,</p>
+            <p>\[ \lambda_1 < \lambda_2 < \lambda_3 < \dots \]</p>
+            <p>Fredholm’s theory provides a framework for understanding the existence and uniqueness of the solutions for linear operator equations. Integral equations transform BVPs into equations involving integral operators, where solutions to the equations provide insight into the original problem. The Fredholm integral equation is described such that,</p>
+            <ul>
+                <li>\( f(x) \) is a known function</li>
+                <li>\( K(x,t) \) is the kernel of the integral operator</li>
+                <li>\( \lambda \) is a scalar parameter.</li>
+            </ul>
+            <p>It is described as,</p>
+            <p>\[ y(x) = f(x) + \lambda \int_a^b K(x,t) y(t) dt \]</p>
+            <p>The existence of solutions depends on the eigenvalues of \( \lambda \) relative to the kernel \( K(x,t) \). Solutions can often be expressed as a series expansion involving eigenfunctions of \( K(x,t) \). A compact integral kernel operator \( K \) is compact if it maps bounded sets to relatively compact sets (sets whose closure is compact).</p>
+            <p>To analyze the equation, the Fredholm determinant \( D(\lambda) \) is used,</p>
+            <p>\[ D(\lambda) = \det(I - \lambda K) \]</p>
+            <p>The resolvent kernel \( R(x,t;\lambda) \) is defined as,</p>
+            <p>\[ R(x,t;\lambda) = K(x,t) + \lambda \int_a^b K(x,s) R(s,t;\lambda) ds \]</p>
+            <p>Fredholm’s theory naturally connects to Hilbert spaces, where the integral operator \( K \) acts on functions in \( L^2(a,b) \),</p>
+            <p>\[ \int_a^b |y(t)|^2 dt < \infty \]</p>
+            <p>In this framework, compact operators like \( K \) are studied using spectral theory. Eigenfunctions of \( K \) form an orthonormal basis for \( L^2(a,b) \).</p>
+            <p>Hilbert introduced the idea of an inner product to generalize the notions of distance and orthogonality from Euclidean spaces to the spaces of functions. This led to the development of tools like orthonormal bases and projections.</p>
+            <p>Frigyes Riesz and Maurice Fréchet extended Hilbert’s ideas, providing more formal definitions of linear functionals and the concept of completeness. Riesz’s representation theorem showed that every bounded linear functional on a Hilbert space corresponds to an element of the space, a cornerstone of functional analysis. Stefan Banach introduced the broader concept of Banach spaces, which generalize Hilbert spaces by relaxing the inner product structures to a norm. Hilbert spaces became a special case of Banach spaces where the norm is induced by an inner product.</p>
+            <p><b>Linear functionals</b> provide a bridge between vector spaces and their dual spaces. A linear functional is a map that assigns a scalar to each vector in a vector space, satisfying linearity properties. Formally, a linear functional \( f: V \rightarrow \mathbb{R} \) (or \( \mathbb{C} \)) is a function defined on a vector space such that for all vectors \( x, y \in V \) and scalars \( \alpha, \beta \),</p>
+            <p>\[ f(\alpha x + \beta y) = \alpha f(x) + \beta f(y) \]</p>
+            <p>A common example in \( \mathbb{R}^n \) is the dot product \( f(x) = a \cdot x \) for a fixed vector \( a \), which defines a linear functional. The set of all linear functionals on a vector space \( V \) forms the dual space \( V^* \). If \( V \) is finite-dimensional, \( V^* \) is isomorphic to \( V \). For infinite-dimensional spaces, the structure of \( V^* \) is more complex and is beyond the scope of this primer.</p>
+            <p>For a Hilbert space \( H \), the Riesz Representation Theorem states for inner product \( \langle y, x \rangle \),</p>
+            <p>\[ f(x) = \langle y, x \rangle \quad \text{for some unique } y \in H \]</p>
+            <p>Linear functionals are used to define objective functions in optimization, such as the Hahn-Banach theorem, which allows the extension of linear functionals defined on a subspace of a vector space to the entire space while preserving boundedness. Linear functionals also help describe eigenvectors and eigenvalues in operator theory.</p>
+            <p><b>Completeness</b> is a property of metric spaces (or normed spaces) that ensures the convergence of certain sequences. In the context of functional analysis, completeness guarantees that the limits of Cauchy sequences remain within the space.</p>
+            <p>A Cauchy sequence is one in a metric space where the terms of the sequence become arbitrarily close to each other as the sequence progresses. Formally, a sequence \( \{ x_n \} \) in a metric space \( (M, d) \) is called a Cauchy sequence if,</p>
+            <p>\[ \forall \epsilon > 0, \exists N \in \mathbb{N} \text{ such that } d(x_n, x_m) < \epsilon \text{ for all } n, m > N \]</p>
+            <p>A normed space \( V \) is complete if every Cauchy sequence \( \{ x_n \} \subset V \) satisfies,</p>
+            <p>\[ \forall \epsilon > 0, \exists N \in \mathbb{N} \text{ such that } \| x_n - x_m \| < \epsilon \text{ for all } n, m > N \text{ and } \exists x \in V \text{ such that } x_n \rightarrow x \text{ as } n \rightarrow \infty \]</p>
+            <p>A Banach space is a normed vector space that is complete. Completeness ensures the robustness of the space for analysis and is crucial for solving differential equations and integral equations. The space \( L^p(a, b) \) for \( 1 \leq p \leq \infty \) is a Banach space.</p>
+            <p>A Hilbert space is a complete inner product space. The inner product induces a norm, and the completeness ensures that every sequence of functions with vanishing error terms (Cauchy sequences) converges to a limit within the space. The Orthogonal Projection Theorem states that in a Hilbert space \( H \), every element \( x \) can be uniquely decomposed as \( x = y + z \), where \( y \in M \) (a closed subspace) and \( z \in M^\perp \) (the orthogonal complement).</p>
+            <p>Completeness ensures that the solution spaces for equations (e.g., differential or integral equations) are well defined. It allows the expansion of functions in terms of orthonormal bases, as in the Fourier series. Many results in operator theory rely on the completeness of the underlying space.</p>
+            <p>John von Neumann rigorously formalized quantum mechanics using Hilbert spaces. He showed that the states of a quantum system could be represented as vectors in a complex Hilbert space, while observables correspond to linear operators on these spaces. This work solidified Hilbert spaces as the mathematical backbone of quantum theory.</p>
+            <p>Hilbert spaces played a crucial role in spectral theory, which describes how operators on these spaces (especially self-adjoint operators) can be decomposed. This has direct applications in quantum mechanics for understanding energy levels and wavefunctions.</p>
+            <p>A self-adjoint operator (or Hermitian operator) is central to the mathematical formulation of quantum mechanics and functional analysis. In the context of Hilbert spaces, self-adjoint operators have well-defined spectral properties, making them ideal for representing physical observables like position, momentum, and energy. The decomposition of such operators enables the understanding of their action through eigenvalues and eigenvectors. Formally, an operator \( A \) on a Hilbert space \( \mathcal{H} \) is self-adjoint if,</p>
+            <p>\[ \langle A\phi, \psi \rangle = \langle \phi, A\psi \rangle \quad \forall \phi, \psi \in \mathcal{H} \]</p>
+            <p>It’s important to note that the eigenvalues of a self-adjoint operator are real. Its eigenvectors corresponding to distinct eigenvalues are orthogonal. Self-adjoint operators are associated with physical observables in quantum mechanics. Consider,</p>
+            <ul>
+                <li>\( \sigma(A) \) as the spectrum of \( A \) (the set of eigenvalues and continuous spectrum components),</li>
+                <li>\( E(\lambda) \) is a projection-valued measure that partitions \( \mathcal{H} \) into subspaces associated with different parts of \( \sigma(A) \).</li>
+            </ul>
+            <p>The spectral theorem states that any self–adjoint operator \( A \) on a Hilbert space \( \mathcal{H} \) can be decomposed as,</p>
+            <p>\[ A = \int_{\sigma} \lambda \, dE(\lambda) \]</p>
+            <p>The 20th century saw applications of Hilbert spaces in Fourier analysis and signal processing. The Hilbert transform, which is integral to analytic signals, owes its name to the framework. The Hilbert transform is a linear operator that plays a crucial role in signal processing, harmonic analysis, and analytic function theory. It is used to reconstruct the analytic signal and analyze the instantaneous amplitude and phase of real-valued signals. The Hilbert transform is a type of convolution operator, closely related to the Fourier transform.</p>
+            <p><b>Cauchy Principal Value</b></p>
+            <p>The Cauchy principal value assigns a finite value to an otherwise divergent improper integral. An improper integral involves finding a singularity at a point that cannot be evaluated because it diverges. The Cauchy principal value of an improper integral is defined by symmetrically approaching the singularity,</p>
+            <p>\[ \text{p.v.} \int_a^b f(x) \, dx = \lim_{\epsilon \to 0^+} \left( \int_a^{c-\epsilon} f(x) \, dx + \int_{c+\epsilon}^b f(x) \, dx \right) \]</p>
+            <p>The Hilbert transform of a real-valued function \( f(t) \) is defined as,</p>
+            <p>\[ \mathcal{H}f(t) = \frac{1}{\pi} \, \text{p.v.} \int_{-\infty}^{\infty} \frac{f(\tau)}{t - \tau} \, d\tau \]</p>
+            <p>This operator shifts the phase of each frequency component of \( f(t) \) by \( \pi/2 \) (a quarter cycle), resulting in a quadrature signal. The Hilbert transform operates naturally in the \( L^2 \) space of square-integrable functions, which is a Hilbert space. It preserves the norm and maps functions in \( L^2 \) to other functions in \( L^2 \), making it a bounded operator. This property ensures its compatibility with the inner product structure,</p>
+            <p>\[ \langle \mathcal{H}[f], g \rangle = -\langle f, \mathcal{H}[g] \rangle \]</p>
+            <p>Hilbert spaces are used in stochastic processes and the theory of Gaussian measures. They provide a framework for modeling random variables and their distributions in infinite-dimensional settings.</p>
+            <p>The Hilbert space holds three key properties:</p>
+            <ol>
+                <li><b>Completeness:</b> Every Cauchy sequence in a Hilbert space converges, which is essential for solving differential and integral equations. Refer to the discussion on completeness above for more details.</li>
+                <li><b>Inner Product Structure:</b> Enables geometric interpretations, such as projections and orthogonality, which generalize to infinite dimensions. This entails linearity in the first argument, conjugate symmetry, and positive definiteness. The inner product induces a norm and defines the angle between two vectors. In a Hilbert space, every vector can be decomposed into two orthogonal complements.</li>
+                <li><b>Orthonormal Bases:</b> Functions in the space can be expressed as infinite series, generalizing finite-dimensional linear algebra.</li>
+            </ol>
+            <h2>Citations</h2>
+            <ol>
+                <li>Evans, L.C. (2010). <i>Partial Differential Equations</i>. Chapter 5.</li>
+                <li>Kress, R. (1999). <i>Linear Integral Equations</i>. Chapter 4.</li>
+                <li>Courant, R., &amp; Hilbert, D. (1989). <i>Methods of Mathematical Physics</i>. Volume 1, Chapter 3.</li>
+                <li>Rudin, W. (1991). <i>Functional Analysis</i>. Chapters 2, 10.</li>
+                <li>Kreyszig, E. (1978). <i>Introductory Functional Analysis with Applications</i>. Chapters 2, 3.</li>
+                <li>Rudin, W. (1976). <i>Principles of Mathematical Analysis</i>. Chapter 3.</li>
+                <li>Reed, M., &amp; Simon, B. (1972). <i>Methods of Modern Mathematical Physics, Vol. 1: Functional Analysis</i>.</li>
+                <li>Bracewell, R. (2000). <i>The Fourier Transform and Its Applications</i>. Chapter 13.</li>
+                <li>Rudin, W. (1987). <i>Real and Complex Analysis</i>. Chapters 10, 11.</li>
+                <li>Al-Gwaiz, M. A. (2008). <i>Sturm-Liouville Theory and its Applications</i>. Chapter 1.</li>
+            </ol>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+</html>
