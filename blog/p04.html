@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A primer on DeepSeek-R1 and its unique objectives in machine intelligence testing and evaluation.">
+    <title>A Primer on DeepSeek-R1</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>A Primer on DeepSeek-R1</h1>
+        <p>By Noah Schliesman, IEEE Member</p>
+    </header>
+    <main>
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>In 1950, in a piece entitled <em>COMPUTING MACHINERY AND INTELLIGENCE</em>, Alan Turing formed the basis for digital computers.<sup>[1]</sup> Here, Turing proposes the idea of digital computing with a broader philosophical approach to a definition of intelligence; in order to create intelligent systems, we must first explicitly define what it means to be intelligent. The Turing Test evaluates intelligence with a human baseline—if the machine performs indiscernible relative to a human, it is deemed intelligent. His work closely mimics modern philosopher John Danaher, who argued in 2020 that robots can attain moral status on the basis of performative equivalence, rooted in ethical behaviorism.<sup>[2]</sup> If a robot exhibits behavior equivalent to that of a human being, then it should be granted moral status regardless of internal constitution. Yet, this definition of intelligence troubles many scholars.</p>
+            <p>While ethicality may be granted on the basis of behavioral equivalence, intelligence may better come from precision in a myriad of subjects. This discussion is fruitful due to the emphasis of language models (LMs) like <em>OpenAI's GPT σ1</em>, <em>DeepSeek's R1</em>, <em>Google DeepMind's Gemini 2.0</em>, <em>Meta’s Llama 3.1</em>, <em>Anthropic’s Claude 2.1</em>, and <em>Mistral’s 7B</em> being evaluated as, “How well can this model answer my question?” instead of, “How does this model mimic the behavior of a human”. Machine intelligence is formed given an objective function—what are we trying to maximize, and what are we trying to minimize. In the case of LMs, we aim to maximize the probability of predicting the most accurate sequence of words given a question. In helicopters, we minimize the probability of system instability using main/tail rotor actuators. In the age of exponential compute, objectives dictate machine learning.</p>
+            <p>While most papers begin with the approach and experimentation, I’d like to explore the objectives in which <em>DeepSeek-R1</em> is tested on. Then, I’ll explain what makes <em>DeepSeek-R1</em> stand out from other models, especially at such a small scale.</p>
+        </section>
+        <section id="datasets-results">
+            <h2>Datasets and Results</h2>
+            <p>The American Invitational Mathematics Examination (AIME) is a well-known competition for mathematical reasoning and problem-solving skills. The exam has been administered by the Mathematical Association of America (MAA) from 1983 to 2024.<sup>[3]</sup> Assuming that these questions were not in a LM’s training set, AIME is an excellent evaluator for creativity and attention to mathematical patterns. While <em>OpenAI’s</em> previous state-of-the-art <em>σ1</em> model achieves <strong>79.2%</strong> accuracy on AIME 2024, <em>DeepSeek-R1</em> attains <strong>79.8%</strong> accuracy.</p>
+            <p>Codeforces is a competitive programming platform created in 2009 involving contests, a vast collection of algorithmic problems, and an elo-based rating system where users are ranked based on skill level.<sup>[4]</sup> It is an excellent resource for LM testing because the questions are published after the date of training and show a model’s performance relative to real, talented programmers who are competing to rank up. Using Division 2 problems, <em>DeepSeek-R1</em> attains a ranking percentile of <strong>96.3%</strong> relative to human programmers in the competition. For reference, <em>OpenAI’s σ1</em> achieves a superior <strong>96.6%</strong> accuracy.</p>
+            <p>The Graduate-Level Google-Proof Q&A (GPQA) Benchmark is a challenging set of 448 graduate-level multiple-choice questions in biology, chemistry, and physics. Developed by NYU, Cohere, and Anthropic, the benchmark aims to reduce hallucinations and guide AI-driven research systems.<sup>[5]</sup> <em>DeepSeek-R1</em> performs considerably worse, with an accuracy of <strong>71.5%</strong> compared to <em>σ1’s</em> <strong>75.7%</strong>.</p>
+            <p>The MATH-500 dataset is a curated subset of 500 problems from the MATH dataset, developed by researchers at UC Berkeley in 2021. MATH comprises 12,500 competition-level mathematics problems, of which span seven subjects, each with a difficulty (1 to 5): Pre-Algebra, Algebra, Number Theory, Counting and Probability, Geometry, Intermediate Algebra, Precalculus.<sup>[6]</sup> Of these problems, the HuggingFaceH4 organization curated 500 of these problems to create a more focused benchmark for evaluating mathematical reasoning. For this task, <em>DeepSeek-R1</em> achieves <strong>97.3%</strong> accuracy over <em>σ1’s</em> <strong>96.4%</strong>.</p>
+            <p>Measuring Massive Multitask Language Understanding (MMLU) is a benchmark from research at UC Berkeley that contains 16,000 multiple-choice questions spanning 57 subjects in the humanities, social sciences, STEM, and other fields. The benchmark tests declarative knowledge (facts/information) and procedural knowledge (how to apply concepts) in a diverse field of areas.<sup>[7]</sup> 
+    <strong>DeepSeek-R1</strong> again underperforms, with a score of <strong>90.8%</strong> accuracy as opposed to o1’s <strong>91.8%</strong>.
+  </p>
+  <p>
+    SWE-BENCH is a framework developed by researchers at Princeton University and the University of Chicago that tasks LMs with resolving issues from GitHub repositories. Each task requires analyzing an issue, understanding potentially large repositories, and resolving issues. The dataset contains 2,294 curated task instances from 12 popular Python repositories. 
+    <strong>DeepSeek-R1</strong> achieves <strong>49.2%</strong> accuracy as opposed to o1’s <strong>48.9%</strong>.
+  </p>
+  <figure>
+    <img src="../files/img/figures/p04/chart-placeholder.jpg" alt="Bar chart comparing the accuracy of DeepSeek-R1 and other models across various benchmarks" />
+    <figcaption>
+      Comparison of DeepSeek-R1, OpenAI models, and others on various benchmarks such as AIME 2024, Codeforces, GPQA Diamond, MATH-500, MMLU, and SWE-bench Verified.
+    </figcaption>
+  </figure>
+  <p>
+    On paper, <strong>DeepSeek-R1</strong> performs roughly equivalent to <em>openAI’s o1</em>. 
+    <strong>DeepSeek-R1</strong>’s popularity, however, triumphs that of o1 due to its ability to convert its reasoning capabilities into smaller models in a process known as distillation.
+  </p>
+  <p>
+    The DeepSeek-R1-Distill-Quen-1.5B model requires 3.5 GB of VRAM, of which can run on an NVIDIA RTX3060 12GB GPU.<sup>[7]</sup>  It is remarkable that such a small model can achieve competitive results—not quite as good as LLMs, but good enough for many applications. This is mind-blowingly state-of-the-art for smaller models and cheap compute.
+  </p>
+  <h3>3.2. Distilled Model Evaluation</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>AIME 2024<br>pass@1</th>
+        <th>cons@64</th>
+        <th>MATH-500<br>pass@1</th>
+        <th>GPQA Diamond<br>pass@1</th>
+        <th>LiveCode Bench<br>pass@1</th>
+        <th>CodeForces<br>rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GPT-4o-0513</td>
+        <td>9.3</td>
+        <td>13.4</td>
+        <td>74.6</td>
+        <td>49.9</td>
+        <td>32.9</td>
+        <td>759</td>
+      </tr>
+      <tr>
+        <td>Claude-3.5-Sonnet-1022</td>
+        <td>16.0</td>
+        <td>26.7</td>
+        <td>78.3</td>
+        <td>65.0</td>
+        <td>38.9</td>
+        <td>717</td>
+      </tr>
+      <tr>
+        <td>OpenAI-o1-mini</td>
+        <td>63.6</td>
+        <td>80.0</td>
+        <td>90.0</td>
+        <td>60.0</td>
+        <td>53.8</td>
+        <td>1820</td>
+      </tr>
+      <tr>
+        <td>QwQ-32B-Preview</td>
+        <td>50.0</td>
+        <td>60.0</td>
+        <td>90.6</td>
+        <td>54.5</td>
+        <td>41.9</td>
+        <td>1316</td>
+      </tr>
+      <tr>
+        <td>DeepSeek-R1-Distill-Quen-1.5B</td>
+        <td>28.9</td>
+        <td>52.7</td>
+        <td>83.9</td>
+        <td>33.8</td>
+        <td>16.9</td>
+        <td>954</td>
+      </tr>
+      <tr>
+        <td>DeepSeek-R1-Distill-Quen-7B</td>
+        <td>55.5</td>
+        <td>83.3</td>
+        <td>92.8</td>
+        <td>49.1</td>
+        <td>37.6</td>
+        <td>1189</td>
+      </tr>
+      <tr>
+        <td>DeepSeek-R1-Distill-Quen-14B</td>
+        <td>69.7</td>
+        <td>80.0</td>
+        <td>93.9</td>
+        <td>59.1</td>
+        <td>53.1</td>
+        <td>1481</td>
+      </tr>
+      <tr>
+        <td>DeepSeek-R1-Distill-Quen-32B</td>
+        <td>72.6</td>
+        <td>83.3</td>
+        <td>94.3</td>
+        <td>62.1</td>
+        <td>57.2</td>
+        <td>1691</td>
+      </tr>
+      <tr>
+        <td>DeepSeek-R1-Distill-Llama-8B</td>
+        <td>50.4</td>
+        <td>80.0</td>
+        <td>89.1</td>
+        <td>49.0</td>
+        <td>39.6</td>
+        <td>1205</td>
+      </tr>
+      <tr>
+        <td>DeepSeek-R1-Distill-Llama-70B</td>
+        <td>70.0</td>
+        <td>86.7</td>
+        <td>94.5</td>
+        <td>65.2</td>
+        <td>57.5</td>
+        <td>1633</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Table 5</strong>: Comparison of DeepSeek-R1 distilled models and other comparable models on reasoning-related benchmarks.
+  </p>
+  <p>
+    <strong>DeepSeek-R1</strong> accomplishes this through Group Relative Policy Optimization (GRPO) and the Cold-Start Fine-Tuning process. I’ll go into each of these below.
+  </p>
+</section>
+  <h4>Group Relative Policy Optimization</h4>
+  <p>
+    Typically, LMs benefit from policy optimization, a process in which the policy is the probability distribution that the model uses to generate outputs given inputs. Proximal Policy Optimization (PPO) is a reinforcement learning (RL) algorithm. The policy ratio measures the relative change in probability of selecting an action under the new policy π<sub>θ</sub> compared to the old policy π<sub>θ<sub>old</sub></sub>. Consider π<sub>θ</sub>(o|q) as the probability of generating output o given input q under the current policy and π<sub>θ<sub>old</sub></sub>(o|q) be the same under the old policy. Such a policy would emphasize how much we want to emphasize the advantage function A(o, q) of an action. The policy ratio is,
+  </p>
+  <p>
+    <math>
+      r(o, q, Θ) = 
+      <mfrac>
+        <mi>π<sub>θ</sub>(o|q)</mi>
+        <mi>π<sub>θ<sub>old</sub></sub>(o|q)</mi>
+      </mfrac>
+    </math>
+  </p>
+  <p>
+    If the policy ratio r(o, q, Θ) changes too often, exploding gradients, overfitting to rewards, and oscillation can occur. This induces the need for a clipping parameter ε.
+  </p>
+</section>
+
+<section id="grpo">
+    <p>The clipping parameter \(\epsilon\) (typically 0.1–0.2) limits how far the policy can deviate from 1. It restricts the policy ratio \(r(o, q, \Theta)\) to the range \([1 - \epsilon, 1 + \epsilon]\):</p>
+    <p>
+        \[
+        \text{clip}(r, 1 - \epsilon, 1 + \epsilon) = 
+        \begin{cases} 
+        1 - \epsilon, & \text{if } r < 1 - \epsilon \\ 
+        r, & \text{if } 1 - \epsilon \leq r \leq 1 + \epsilon \\ 
+        1 + \epsilon, & \text{if } r > 1 + \epsilon 
+        \end{cases}
+        \]
+    </p>
+    <p>
+        The advantage function \(A(o, q)\) measures how much better or worse taking an action \(o\) in a given state (or query) \(q\) is compared to the average action. It prioritizes actions that lead to higher rewards and is a rich field of study, beyond the scope of this overview. The advantage-scaled policy ratio \(r(o, q, \Theta)\) and the clipped policy ratio \(\text{clip}(r(o, q, \Theta), 1 - \epsilon, 1 + \epsilon)\) are minimized to ensure the contribution of the policy ratio to the loss function remains within the clipping range. This minimization affects the clipping of the policy-loss contribution.
+    </p>
+    <p>
+        The expectation of this minimized policy is taken by sampling \(q\) from the query distribution \(P(q)\) and \(o\) from the old policy \(\pi_{\Theta_\text{old}}\)(o|q). This yields the objective of PPO:
+    </p>
+    <p>
+        \[
+        J_\text{PPO} = \mathbb{E}_{q \sim P(q), o \sim \pi_{\Theta_\text{old}}(o|q)}
+        \left[
+        \min\big(r(o, q, \Theta)A(o, q), \text{clip}(r, 1 - \epsilon, 1 + \epsilon)A(o, q)\big)
+        \right]
+        \]
+    </p>
+    <p>
+        Rather than computing the advantage for a single output, Group Relative Policy Optimization (GRPO) uses normalized group rewards to remove the dependence on a critic model. In this policy objective algorithm, we sample from the policy group \(\{i_j\}^G_j \sim \pi_{\Theta_\text{old}}\)(o|q). Here, \(G\) is a policy group hyperparameter. GRPO reduces compute and memory by removing the need for a separate critic network by using group-based advantage normalization:
+    </p>
+    <p>
+        \[
+        A_i = \frac{r_i - \text{mean}(r_{i^{'}, x^{'}, r^{'}, q})}
+        {\text{std}(r_{i^{'}, x^{'}, r^{'}, q})}
+        \]
+    </p>
+    <p>
+        GRPO takes the average of the difference between the new clipped objective and the KL divergence of the old \(\pi_{\Theta_\text{old}}\) and current \(\pi_{\text{ref}}\) policies:
+    </p>
+    <p>
+        \[
+        J_\text{GRPO} = \mathbb{E}_{q \sim P(q), \{i_j\}^G_j \sim \pi_{\Theta_\text{old}}(o|q)}
+        \left[
+        \frac{1}{G} \sum_{i=1}^G
+        \big(\min(r(o, q, \Theta)A_i, \text{clip}(r, 1 - \epsilon, 1 + \epsilon)A_i) 
+        - \beta D_\text{KL}(\pi_{\Theta_\text{old}} || \pi_{\text{ref}})\big)
+        \right]
+        \]
+    </p>
+</section>
+
+<section id="training-process">
+    <h3>Training Process</h3>
+    <p>
+        Researchers trained DeepSeek-R1-Zero using reinforcement learning (RL) without supervised fine-tuning (SFT). It’s important to note that DeepSeek-R1 starts with a pre-trained base model, DeepSeek-V3-Base, which has already extensively undergone unsupervised pretraining on a large corpus of text. DeepSeek-V3 is a Mixture-of-Experts (MoE) model that utilizes Multi-Head Latent Attention (MLA), Auxiliary-Loss-free Load Balancing, Multi-Token Prediction (MTP), FP8 Mixed Precision Training, amongst other computational and cost-effective improvements. The scope of DeepSeek-V3 is beyond this primer, but I’m in the process of an annotated paper write-up, so feel free to check if it’s up yet.
+    </p>
+    <p>
+        While DeepSeek-R1-Zero developed reasoning behaviors and problem-solving skills, it faced poor readability, language mixing, and a lack of structured responses. To enhance readability and reduce RL-induced instability, DeepSeek-R1 introduces a small amount of supervised fine-tuning data (Cold-Start Data) before RL.
+    </p>
+    <p>
+        Data is collected using few-shot prompting with high-quality Chain of Thought (CoT) examples, model-generated reasoning responses, and human post-processing. The model undergoes fine-tuning with thousands of high-quality long-CoT examples. These initial SFT tags summarize the reasoning at the end of responses and remove mixed-language errors.
+    </p>
+    <p>
+        Since SFT suffers from limited generalization and overfitting, RL is employed. The fine-tuned model is then trained using GRPO with language consistency rewards, format rewards, and accuracy-based rewards. In the advantage function \(A_i\) of GRPO described above, the actual reward \(r_i\) is a weighted sum:
+    </p>
+    <p>
+        \[
+        r_i = \lambda_1 r_\text{acc} + \lambda_2 r_\text{format} + \lambda_3 r_\text{lang} + \lambda_4 r_\text{alignment}
+        \]
+    </p>
+    <p>
+        Given this reward in the advantage function, DeepSeek-R1 was trained until convergence on reasoning tasks. Given a series of prompts, the RL-trained model generates multiple outputs. Each output is scored based on rule-based metrics and generative reward models, with only the highest-quality outputs being retained for the dataset. This rejection sampling process generated 800K training samples, which were fine-tuned using human-aligned data in a final SFT stage.
+    </p>
+</section>
+
+    <p>
+        Thus, the total process consists of an initial SFT on a base model using CoT and GRPO stage, a rejection sampling stage, and a final SFT stage. As mentioned, these models distill into incredibly accurate lightweight LMs that outperform σ1 and other freeware competitors. Such a distillation shows that while the best models are still compute-dependent, distilled models could be “good enough” for most everyday tasks.
+    </p>
+</section>
+<footer>
+    <h3>References</h3>
+    <ol>
+        <li>
+            A. M. Turing (1950) Computing Machinery and Intelligence. Mind 49: 433-460.
+        </li>
+        <li>
+            Danaher, John. "Welcoming Robots into the Moral Circle: A Defence of Ethical Behaviourism." Science and Engineering Ethics, vol. 26, no. 4, 2020, pp. 2023–2049.
+        </li>
+        <li>
+            Veeraboina, Hemish. AIME Problem Set: 1983-2024. Kaggle, 9 months ago, 
+            <a href="https://www.kaggle.com/datasets/hemishveeraboina/aime-problem-set-1983-2024" target="_blank">
+                www.kaggle.com/datasets/hemishveeraboina/aime-problem-set-1983-2024
+            </a>.
+        </li>
+        <li>
+            Mirzayanov, Mikhail. <em>Codeforces</em>. ITMO University, 2009, 
+            <a href="https://codeforces.com" target="_blank">https://codeforces.com</a>. Accessed 27 Jan. 2025.
+        </li>
+        <li>
+            Rein, David, et al. "GPQA: A Graduate-Level Google-Proof Q&A Benchmark." arXiv, 20 Nov. 2023, 
+            <a href="https://arxiv.org/abs/2311.12022" target="_blank">arxiv.org/abs/2311.12022</a>. Accessed 27 Jan. 2025.
+        </li>
+        <li>
+            Hendrycks, Dan, et al. "Measuring Mathematical Problem Solving with the MATH Dataset." 
+            <em>Proceedings of the 35th Conference on Neural Information Processing Systems (NeurIPS) Track on Datasets and Benchmarks</em>, 2021, 
+            <a href="https://arxiv.org/abs/2103.03874" target="_blank">arXiv:2103.03874</a>. Accessed 27 Jan. 2025.
+        </li>
+        <li>
+            DeepSeek-AI. "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning." 
+            <em>arXiv</em>, 22 Jan. 2025, 
+            <a href="https://arxiv.org/abs/2501.12948" target="_blank">arXiv:2501.12948</a>. Accessed 29 Jan. 2025.
+        </li>
+    </ol>
+</footer>
+</body>
+</html>
