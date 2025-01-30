@@ -13,6 +13,17 @@
     <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
 </head>
 <body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Annotated Articles</a>
+        <a href="../blog.html">Blog</a>
+    </div>
+
+    <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+        &#9776;
+    </button>
+    
     <header>
         <h1>A Primer on DeepSeek-R1</h1>
         <p>By Noah Schliesman, IEEE Member</p>
@@ -50,115 +61,7 @@
   <p>
     The DeepSeek-R1-Distill-Quen-1.5B model requires 3.5 GB of VRAM, of which can run on an NVIDIA RTX3060 12GB GPU.<sup>[7]</sup>  It is remarkable that such a small model can achieve competitive results—not quite as good as LLMs, but good enough for many applications. This is mind-blowingly state-of-the-art for smaller models and cheap compute.
   </p>
-  <h3>3.2. Distilled Model Evaluation</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Model</th>
-        <th>AIME 2024<br>pass@1</th>
-        <th>cons@64</th>
-        <th>MATH-500<br>pass@1</th>
-        <th>GPQA Diamond<br>pass@1</th>
-        <th>LiveCode Bench<br>pass@1</th>
-        <th>CodeForces<br>rating</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>GPT-4o-0513</td>
-        <td>9.3</td>
-        <td>13.4</td>
-        <td>74.6</td>
-        <td>49.9</td>
-        <td>32.9</td>
-        <td>759</td>
-      </tr>
-      <tr>
-        <td>Claude-3.5-Sonnet-1022</td>
-        <td>16.0</td>
-        <td>26.7</td>
-        <td>78.3</td>
-        <td>65.0</td>
-        <td>38.9</td>
-        <td>717</td>
-      </tr>
-      <tr>
-        <td>OpenAI-o1-mini</td>
-        <td>63.6</td>
-        <td>80.0</td>
-        <td>90.0</td>
-        <td>60.0</td>
-        <td>53.8</td>
-        <td>1820</td>
-      </tr>
-      <tr>
-        <td>QwQ-32B-Preview</td>
-        <td>50.0</td>
-        <td>60.0</td>
-        <td>90.6</td>
-        <td>54.5</td>
-        <td>41.9</td>
-        <td>1316</td>
-      </tr>
-      <tr>
-        <td>DeepSeek-R1-Distill-Quen-1.5B</td>
-        <td>28.9</td>
-        <td>52.7</td>
-        <td>83.9</td>
-        <td>33.8</td>
-        <td>16.9</td>
-        <td>954</td>
-      </tr>
-      <tr>
-        <td>DeepSeek-R1-Distill-Quen-7B</td>
-        <td>55.5</td>
-        <td>83.3</td>
-        <td>92.8</td>
-        <td>49.1</td>
-        <td>37.6</td>
-        <td>1189</td>
-      </tr>
-      <tr>
-        <td>DeepSeek-R1-Distill-Quen-14B</td>
-        <td>69.7</td>
-        <td>80.0</td>
-        <td>93.9</td>
-        <td>59.1</td>
-        <td>53.1</td>
-        <td>1481</td>
-      </tr>
-      <tr>
-        <td>DeepSeek-R1-Distill-Quen-32B</td>
-        <td>72.6</td>
-        <td>83.3</td>
-        <td>94.3</td>
-        <td>62.1</td>
-        <td>57.2</td>
-        <td>1691</td>
-      </tr>
-      <tr>
-        <td>DeepSeek-R1-Distill-Llama-8B</td>
-        <td>50.4</td>
-        <td>80.0</td>
-        <td>89.1</td>
-        <td>49.0</td>
-        <td>39.6</td>
-        <td>1205</td>
-      </tr>
-      <tr>
-        <td>DeepSeek-R1-Distill-Llama-70B</td>
-        <td>70.0</td>
-        <td>86.7</td>
-        <td>94.5</td>
-        <td>65.2</td>
-        <td>57.5</td>
-        <td>1633</td>
-      </tr>
-    </tbody>
-  </table>
-  <p>
-    <strong>Table 5</strong>: Comparison of DeepSeek-R1 distilled models and other comparable models on reasoning-related benchmarks.
-  </p>
+ <img src="../files/img/figures/p04/table-p04.jpg" alt="Bar chart comparing the accuracy of DeepSeek-R1 and other models across various benchmarks" />
   <p>
     <strong>DeepSeek-R1</strong> accomplishes this through Group Relative Policy Optimization (GRPO) and the Cold-Start Fine-Tuning process. I’ll go into each of these below.
   </p>
@@ -167,15 +70,9 @@
   <p>
     Typically, LMs benefit from policy optimization, a process in which the policy is the probability distribution that the model uses to generate outputs given inputs. Proximal Policy Optimization (PPO) is a reinforcement learning (RL) algorithm. The policy ratio measures the relative change in probability of selecting an action under the new policy π<sub>θ</sub> compared to the old policy π<sub>θ<sub>old</sub></sub>. Consider π<sub>θ</sub>(o|q) as the probability of generating output o given input q under the current policy and π<sub>θ<sub>old</sub></sub>(o|q) be the same under the old policy. Such a policy would emphasize how much we want to emphasize the advantage function A(o, q) of an action. The policy ratio is,
   </p>
-  <p>
-    <math>
-      r(o, q, Θ) = 
-      <mfrac>
-        <mi>π<sub>θ</sub>(o|q)</mi>
-        <mi>π<sub>θ<sub>old</sub></sub>(o|q)</mi>
-      </mfrac>
-    </math>
-  </p>
+    <p>
+        \( r(o, q, \Theta) = \frac{\pi_{\theta}(o|q)}{\pi_{\theta_{\text{old}}}(o|q)} \)
+    </p>
   <p>
     If the policy ratio r(o, q, Θ) changes too often, exploding gradients, overfitting to rewards, and oscillation can occur. This induces the need for a clipping parameter ε.
   </p>
@@ -263,13 +160,14 @@
     <h3>References</h3>
     <ol>
         <li>
-            A. M. Turing (1950) Computing Machinery and Intelligence. Mind 49: 433-460.
+            Turing, A. M. "Computing Machinery and Intelligence." <em>Mind</em>, vol. 49, 1950, pp. 433–460.
         </li>
         <li>
-            Danaher, John. "Welcoming Robots into the Moral Circle: A Defence of Ethical Behaviourism." Science and Engineering Ethics, vol. 26, no. 4, 2020, pp. 2023–2049.
+            Danaher, John. "Welcoming Robots into the Moral Circle: A Defence of Ethical Behaviourism." 
+            <em>Science and Engineering Ethics</em>, vol. 26, no. 4, 2020, pp. 2023–2049.
         </li>
         <li>
-            Veeraboina, Hemish. AIME Problem Set: 1983-2024. Kaggle, 9 months ago, 
+            Veeraboina, Hemish. <em>AIME Problem Set: 1983–2024</em>. Kaggle, 9 months ago, 
             <a href="https://www.kaggle.com/datasets/hemishveeraboina/aime-problem-set-1983-2024" target="_blank">
                 www.kaggle.com/datasets/hemishveeraboina/aime-problem-set-1983-2024
             </a>.
@@ -279,8 +177,8 @@
             <a href="https://codeforces.com" target="_blank">https://codeforces.com</a>. Accessed 27 Jan. 2025.
         </li>
         <li>
-            Rein, David, et al. "GPQA: A Graduate-Level Google-Proof Q&A Benchmark." arXiv, 20 Nov. 2023, 
-            <a href="https://arxiv.org/abs/2311.12022" target="_blank">arxiv.org/abs/2311.12022</a>. Accessed 27 Jan. 2025.
+            Rein, David, et al. "GPQA: A Graduate-Level Google-Proof Q&A Benchmark." <em>arXiv</em>, 20 Nov. 2023, 
+            <a href="https://arxiv.org/abs/2311.12022" target="_blank">arXiv:2311.12022</a>. Accessed 27 Jan. 2025.
         </li>
         <li>
             Hendrycks, Dan, et al. "Measuring Mathematical Problem Solving with the MATH Dataset." 
