@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimation of Probabilities from Sparse Data</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/script.js" defer></script>
+    <link rel="icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../files/img/icon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="mySidenav" class="nav-menu">
+        <button class="closebtn" onclick="closeNav()">&times;</button>
+        <a href="../index.html">Home</a>
+        <a href="../articles.html">Articles</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../animations.html">Animations</a>
+    </div>
+
+    <aside>
+        <button class="hamburger" onclick="openNav()" aria-label="Open navigation menu" onKeyDown="handleKeyPress(event)">
+            &#9776;
+        </button>
+    </aside>
+
+    <main>
+        <article>
+            <h2>Estimation of Probabilities from Sparse Data for the Language Model Component of a Speech Recognizer</h2>
+            <h3>Author: <strong>Slava M. Katz</strong></h3>
+            <blockquote>
+                “Some changes look negative on the surface but you will soon realize that space is being created in your life for something new to emerge”<br>
+                <em>~Eckhart Tolle</em>
+            </blockquote>
+
+            <h3>Abstract</h3>
+            <p><i>m</i>-grams are word sequences of length <i>m</i> which are used in language modeling and speech recognition. Since many possible sequences appear rarely, it is difficult to accurately estimate their probabilities using standard methods like Maximum Likelihood Estimation (MLE), as it assigns zero probability to unseen sequences. Katz introduces a novel computationally and memory-efficient language model that uses a nonlinear recursive procedure to estimate probabilities amidst sparse data.<sup>[1]</sup></p>
+
+            <h3>Introduction</h3>
+            <p>MLE is unfit to estimate <i>m</i>-gram probabilities that are not in the training set. Similarly, many sequences known as <i>singletons</i> only appear once, making estimation unreliable. In MLE, the probability of an event is calculated based on its observed frequency. If an event never appears in the dataset, MLE assigns it a probability of zero—which is obviously problematic.</p>
+
+            <p>Katz takes some probability mass from observed events (especially singletons) and reallocates it to unseen events using <i>renormalized Turing's estimates</i>. Instead of directly using training frequency counts, Turing's estimate adjusts the counts based on patterns observed in low-frequency words. If an <i>m</i>-gram only appears once or a few times, its frequency is reduced and the freed probability mass is given to unseen <i>m</i>-grams.</p>
+
+            <h3>Mathematical Basis</h3>
+            <p>Let's start with a few variable definitions, where,</p>
+            <ul>
+                <li><i>N</i> is the total number of words (or <i>m</i>-grams) in a sample text</li>
+                <li><i>n<sub>r</sub></i> is the number of unique <i>m</i>-grams that appeared <i>r</i> times</li>
+            </ul>
+            <p>The total number of words is just the summation of unique <i>m</i>-grams and their frequency,</p>
+            <p>\[ N = \sum_r r n_r \]</p>
+            <p>We now want to adjust the observed counts to compensate for underrepresented words using Turing discounting. First, let's find the relationship \( \alpha \) between how often <i>m</i>-grams occurring \( r \) times will occur again in unseen data,</p>
+            <p>\[ \alpha = \frac{n_{r+1}}{n_r} \]</p>
+
+            <p>The adjusted frequency \( r^* \) will utilize this ratio \( \alpha \) in predicting the unseen occurrence (\( r + 1 \)),</p>
+            <p>\[ r^* = \alpha(r + 1) = \frac{n_{r+1}}{n_r}(r + 1) \]</p>
+
+            <p>To find the probability \( P_T \) of an <i>m</i>-gram appearing \( r \) times, divide this frequency count \( r^* \) by the total count of <i>m</i>-grams \( N \),</p>
+            <p>\[ P_T = \frac{r^*}{N} = \frac{n_{r+1}}{n_r N}(r + 1) \]</p>
+
+            <p>Now, we are concerned with discounting—the process of replacing raw frequency counts \( r \) with adjusted counts \( r^* \). The discount coefficient \( d_r \) scales down high-frequency words and redistributes mass to rare words,</p>
+            <p>\[ d_r = \frac{r^*}{r} \]</p>
+
+            <p>The MLE formula for estimating the probability of an <i>m</i>-gram \( w_1^m \) is the count of that specific <i>m</i>-gram \( c(w_1^m) \) normalized by the total number of observed <i>m</i>-grams,</p>
+            <p>\[ P_{ML} = \frac{c(w_1^m)}{N} \]</p>
+
+            <p>It's more useful to use the newly derived adjusted frequency \( r^* \) to produce a better potential estimate. We've been using \( r \) to refer to frequency-based probability adjustments, but without loss of generality Katz uses counts of a specific <i>m</i>-gram \( c(x) \) to denote individual counts. By the same reasoning above, the generalization ratio \( \alpha_c \) and Turing adjusted count \( c^*(x) \) is,</p>
+            <p>\[ \alpha_c = \frac{n_{c(x)+1}}{n_{c(x)}} \]</p>
+            <p>\[ c^*(x) = \alpha_c(c(x) + 1) = \frac{n_{c(x)+1}}{n_{c(x)}}(c(x) + 1) \]</p>
+            <p>The total probability assigned to <i>m</i>-grams is slightly less than 1, with freed probability mass \( \frac{n_1}{N} \). This is intentionally left unassigned for unseen <i>m</i>-grams. Here, \( n_1 \) represents the number of singletons,</p>
+            <p>\[ \sum_{w_1^m : c(w_1^m) > 0} P_T(w_1^m) = 1 - \frac{n_1}{N} \]</p>
+
+            <p>Conversely, the estimated probabilities for all unseen <i>m</i>-grams is set to the freed probability mass,</p>
+            <p>\[ \sum_{w_1^m : c(w_1^m) = 0} P_T(w_1^m) = \frac{n_1}{N} \]</p>
+
+            <p>This can also be shown through the difference between MLE and Turing's estimate for observed <i>m</i>-grams. The discount correction \( \delta_c \) defines how much probability is removed from each observed <i>m</i>-gram,</p>
+            <p>\[ \delta_c = \frac{c}{N} - \frac{c^*}{N} = (1 - d_c) \frac{c}{N} \]</p>
+
+            <p>Katz notes that the total difference between the two estimates is,</p>
+            <p>\[ \sum_{w_1^m : c(w_1^m) > 0} \left[ P_{ML}(w_1^m) - P_T(w_1^m) \right] = \sum_{w_1^m : c(w_1^m) > 0} \delta_c = \sum_{r > 0} n_r \left(1 - d_r\right) \frac{r}{N} = \frac{n_1}{N} \]</p>
+
+            <p>\[ \sum_{w_1^m : c(w_1^m) > 0} \delta_c = \sum_{w_1^m : c(w_1^m) = 0} P_T(w_1^m) \]</p>
+
+            <p>Katz notes that the conditional case holds a similar form,</p>
+            <p>\[ \delta^{(cond)}(c(w_1^m)) = \left(1 - d_c^{(w_1^m)}\right) \frac{c(w_1^m)}{c(w_1^{m-1})} \]</p>
+            <p>The conditional probability of a word \( w_m \) given a context of preceding words \( w_1^{m-1} \) that has been observed in the training data (i.e. \( c(w_1^m) > 0 \)) can be estimated using the discount coefficient \( d_{c(w_1^m)} \) and the maximum likelihood estimate MLE ratio,</p>
+            <p>\[ d_{c(w_1^m)} = \frac{c(w_1^m)}{c(w_1^{m-1})} \]</p>
+            <p>\[ P_s(w_m | w_1^{m-1}) = d \frac{c(w_1^m)}{c(w_1^{m-1})} \]</p>
+
+            <p>Katz estimates the sum of the conditional probabilities of all words \( w_m \) for unseen <i>m</i>-grams as,</p>
+            <p>\[ \beta(w_1^{m-1}) = \sum_{w_m : c(w_1^m) > 0} \delta^{(cond)}(w_1^m) = 1 - \sum_{w_m : c(w_1^m) > 0} d \frac{c(w_1^m)}{c(w_1^{m-1})} \]</p>
+
+            <p>The conditional probability of \( w_m \) such that the context leading up to \( w_m \) has not been observed in the data can be estimated by the product of a scaling factor \( \alpha \) and the conditional probability given the lower-order context leading up to \( w_m \). Mathematically, this relationship is,</p>
+            <p>\[ P_s(w_m | w_1^{m-1}) = \alpha P_s(w_m | w_2^{m-1}) \]</p>
+
+            <p>Such a scaling factor must balance the lower-order probabilities \( P_s(w_m | w_1^{m-1}) \) so the total probability for unobserved \( w_m \) sums correctly. The scaling factor \( \alpha \) is then,</p>
+            <p>\[ \alpha(w_1^{m-1}) = \frac{\beta(w_1^{m-1})}{\sum_{w_m : c(w_1^m) = 0} P_s(w_m | w_2^{m-1})} = \frac{1 - \sum_{w_m : c(w_1^m) > 0} P_s(w_m | w_1^{m-1})}{1 - \sum_{w_m : c(w_1^m) > 0} P_s(w_m | w_2^{m-1})} \]</p>
+
+            <p>If the higher-order context \( w_1^{m-1} \) has never been observed, the model uses the lower-order estimate \( P_s(w_m | w_2^{m-1}) \) without scaling,</p>
+            <p>\[ P_s(w_m | w_1^{m-1}) = P_s(w_m | w_2^{m-1}) \]</p>
+
+            <p>Consider an indicator function \( \theta \) which determines whether to include the leftover probability mass assigned to unobserved <i>m</i>-grams \( \beta \),</p>
+            <p>\[
+            \theta(x) =
+            \begin{cases}
+            1, & \text{if } x = 0 \\
+            0, & \text{otherwise.}
+            \end{cases}
+            \]</p>
+            <p>When this indicator function is leveraged, the modified MLE becomes,</p>
+            <p>\[ P_s(w_m | w_1^{m-1}) = \hat{P}(w_m | w_1^{m-1}) + \theta(\hat{P}(w_m | w_1^{m-1})) \alpha(w_1^{m-1}) P_s(w_m | w_2^{m-1}) \]</p>
+
+            <p>In the case where the full <i>m</i>-gram is not observed (\( c(w_1^m) = 0 \)), the higher-order term is zero and the lower-order term is scaled by unity,</p>
+            <p>\[ P_s(w_m | w_1^{m-1}) = 0 \]</p>
+            <p>\[ \beta(w_1^{m-1}) = 1 \]</p>
+
+            <p>Katz then extends the discussion to include scenarios in which <i>m</i>-grams with higher counts \( c > k \) are reliable and do not need to be discounted,</p>
+            <p>\[ d_r = 1, \text{ for } r > k \]</p>
+
+            <p>In this case, the total contribution of observed <i>m</i>-grams is similarly,</p>
+            <p>\[ \sum_{w_m : c(w_1^m) > 0} \delta_c(w_1^m) = \sum_{1 \leq r \leq k} n_r \left(1 - d_r\right) \frac{r}{N} = \frac{n_1}{N} \]</p>
+
+            <p>For a constant \( \mu \), the adjustment of probability mass is written as,</p>
+            <p>\[ (1 - d_r) = \mu \left(1 - \frac{r'}{r}\right) \]</p>
+
+            <p>Consider a parameter \( k \) that determines the cutoff for reliable counts. For such a parameter, the discount factor balances the probability mass and is described as,</p>
+            <p>\[ d_r = \frac{(k + 1)n_{k+1}}{n_1} \cdot \frac{r}{r'} = \frac{(k + 1)n_{k+1}}{n_1}, \text{ for } 1 \leq r \leq k. \]</p>
+            <p>The normalization constant \( \alpha \) can be precomputed. Using these procedures, a 3-gram model was built as a language component in the Real-Time Speech Recognizer. The experiments showed that setting \( d_1 = 0 \) discarded all singletons and did not degrade model performance.</p>
+
+            <p>Katz then built a compact language model for PC-based speech recognizers. At the time, compute was extremely limited so this optimization was a huge milestone in sparse Bayesian language modeling.</p>
+
+            <p>Perplexity is a metric used to evaluate the quality of LMs, with lower scores indicating better performance. Consider a model where,</p>
+            <ul>
+                <li>\( L \) is the length of the test sequence,</li>
+                <li>\( m \) is the size of an <i>m</i>-gram,</li>
+                <li>\( w_t \) is the \( t \)-th word in the test sequence, and,</li>
+                <li>\( P(w_t | w_{t-m+1}^{t-1}) \) is the conditional probability of the word given context.</li>
+            </ul>
+            <p>Perplexity is described as,</p>
+            <p>\[ H = -\frac{1}{L-m+1} \sum_{t=m}^{L} \log_2 P(w_t | w_{t-m+1}^{t-1}) \]</p>
+
+            <p>Katz trained on a large corpus of 750K words and tested on 100 sentences. The results show that their back-off model was on-par with SOTA at the time while being easier to construct and use.</p>
+
+            <table>
+                <caption>TABLE I: Perplexity Results on 100 Test Sentences</caption>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2-gram</td>
+                        <td>118</td>
+                        <td>119</td>
+                        <td>117</td>
+                    </tr>
+                    <tr>
+                        <td>3-gram</td>
+                        <td>89</td>
+                        <td>91</td>
+                        <td>88</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>References</h3>
+            <ul>
+                <li>[1] Katz, Slava M. "Estimation of Probabilities from Sparse Data for the Language Model Component of a Speech Recognizer." <i>IEEE Transactions on Acoustics, Speech, and Signal Processing</i>, vol. 35, no. 3, Mar. 1987, pp. 400–401.</li>
+            </ul>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pay Attention. All rights reserved.</p>
+    </footer>
+</body>
+</html>
