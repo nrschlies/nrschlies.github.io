@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import readingList from '../data/readingList.json';
+import ReviewDetail from './ReviewDetail'; // Import the new component
 
 function Reading() {
-  const handlePaperClick = (link) => {
-    if (link) {
-      window.open(link, '_blank', 'noopener,noreferrer');
-    }
-  };
+  const [selectedPaper, setSelectedPaper] = useState(null);
 
+  // If a paper is selected, show the Detail View
+  if (selectedPaper) {
+    return (
+      <section className="reading-section">
+        <ReviewDetail 
+          paper={selectedPaper} 
+          onBack={() => setSelectedPaper(null)} 
+        />
+      </section>
+    );
+  }
+
+  // Otherwise, show the List View
   return (
     <section className="reading-section">
       <h2>Reading & Reviews</h2>
@@ -20,11 +30,11 @@ function Reading() {
           <article 
             key={paper.id} 
             className="paper-stub" 
-            onClick={() => handlePaperClick(paper.link)}
+            onClick={() => setSelectedPaper(paper)} // Set state on click
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') handlePaperClick(paper.link);
+              if (e.key === 'Enter' || e.key === ' ') setSelectedPaper(paper);
             }}
           >
             <div className="stub-header">
@@ -38,8 +48,7 @@ function Reading() {
             <p className="paper-summary">{paper.summary}</p>
             
             <div className="stub-footer">
-              {/* Changed text to indicate this opens the source material */}
-              <span className="read-more">Access Paper &rarr;</span>
+              <span className="read-more">Read Review &rarr;</span>
               <span className="paper-venue">{paper.venue}</span>
             </div>
           </article>
