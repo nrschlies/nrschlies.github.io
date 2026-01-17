@@ -5,6 +5,7 @@ import Overview from './sections/Overview';
 import Reading from './sections/Reading';
 import Projects from './sections/Projects';
 import Simulations from './sections/Simulations';
+import './App.css';
 
 function App() {
   const [section, setSection] = useState('overview');
@@ -17,9 +18,20 @@ function App() {
 
   return (
     <>
-      <Header />
-      <Nav onSelect={setSection} />
-      <main>{content}</main>
+      {/* Sticky Wrapper */}
+      <div className="top-bar-container">
+        <div className="top-bar-inner">
+          <Header />
+          <Nav onSelect={setSection} activeSection={section} />
+        </div>
+      </div>
+
+      <main>
+        {/* The Glass Panel Wrapper */}
+        <div className="glass-panel">
+          {content}
+        </div>
+      </main>
     </>
   );
 }
