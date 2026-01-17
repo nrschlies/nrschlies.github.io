@@ -2,7 +2,7 @@ function Projects() {
   return (
     <section>
       <h2>Projects</h2>
-      <p>Eventually: brief summaries of your ongoing and past research projects.</p>
+      <p>This site is currently under a major overhaul. Projects will be ported in the coming weeks.</p>
     </section>
   );
 }

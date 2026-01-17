@@ -2,7 +2,7 @@ function Reading() {
   return (
     <section>
       <h2>Reading</h2>
-      <p>Eventually: list of papers you are reading, have read, and plan to read.</p>
+      <p>This site is currently under a major overhaul. Readings will be ported in the coming weeks.</p>
     </section>
   );
 }

@@ -2,7 +2,7 @@ function Simulations() {
   return (
     <section>
       <h2>Simulations</h2>
-      <p>Eventually: interactive demos of DSP / RF / imaging simulations.</p>
+      <p>This site is currently under a major overhaul. Readings will be ported in the coming weeks.</p>
     </section>
   );
 }
