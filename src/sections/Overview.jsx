@@ -8,7 +8,7 @@ function Overview() {
       </div>
       <h2>Overview</h2>
       <p>
-        I'm Noah Schliesman, a MSEE student at SDSU aiming to specialize in Signal Processing. 
+        I'm Noah Schliesman, a Master's in Electrical Engineering student at SDSU aiming to specialize in Signal Processing. 
         I recently graduated from the University of San Diego in EE with minors in Computer Science and Math.
       </p>
       <p>
