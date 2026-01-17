@@ -22,7 +22,7 @@ function Reading() {
     <section className="reading-section">
       <h2>Reading & Reviews</h2>
       <p className="section-intro">
-        Discography of research papers I recommend. 
+        Discography of research papers I recommend. This site is currently under a major overhaul. Readings will be ported in the coming weeks.
       </p>
 
       <div className="reading-grid">
