@@ -1,7 +1,12 @@
+import headshot from '../assets/headshot.jpg';
+
 function Overview() {
   return (
-    <section className="fade-in"> 
-      <h2 style={{ marginBottom: '1.5rem', borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>Overview</h2>
+    <section>
+      <div className="headshot-container">
+        <img src={headshot} alt="Noah Schliesman" className="headshot" />
+      </div>
+      <h2>Overview</h2>
       <p>
         I'm Noah Schliesman, a MSEE student at SDSU aiming to specialize in Signal Processing. 
         I recently graduated from the University of San Diego in EE with minors in Computer Science and Math.
