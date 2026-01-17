@@ -1,17 +1,19 @@
 import React from 'react';
+import reviewRegistry from '../reviews/index'; // Import the registry
 
 function ReviewDetail({ paper, onBack }) {
   if (!paper) return null;
 
+  // Find the specific component for this paper ID
+  const ReviewContent = reviewRegistry[paper.id];
+
   return (
     <div className="review-detail-container">
-      {/* Back Navigation */}
       <button onClick={onBack} className="back-button">
         &larr; Back to Reading List
       </button>
 
       <article className="review-content">
-        {/* Header Metadata */}
         <header className="review-header">
           <div className="review-meta">
             <span className="paper-tag">{paper.tag}</span>
@@ -23,7 +25,6 @@ function ReviewDetail({ paper, onBack }) {
 
         <hr className="divider" />
 
-        {/* Action Bar */}
         <div className="review-actions">
           <a 
             href={paper.link} 
@@ -35,19 +36,41 @@ function ReviewDetail({ paper, onBack }) {
           </a>
         </div>
 
-        {/* Review Body Stub */}
         <div className="review-body">
-          <h3>Abstract / Summary</h3>
+          <h3>Abstract</h3>
           <p>{paper.summary}</p>
 
           <h3>Notes & Analysis</h3>
-          <div className="placeholder-block">
-            <p><em>Review content, mathematical derivation, and simulation notes will go here...</em></p>
-          </div>
+          {/* DYNAMIC CONTENT SWITCHER */}
+          {ReviewContent ? (
+            <ReviewContent />
+          ) : (
+            <div className="placeholder-block">
+              <p><em>Review content for this paper is coming soon.</em></p>
+            </div>
+          )}
         </div>
       </article>
 
       <style>{`
+        /* ... (Keep all your previous styles) ... */
+        
+        /* Add style for the math block used in the example */
+        .math-block {
+          background: rgba(0,0,0,0.3);
+          padding: 1rem;
+          border-left: 3px solid var(--color-accent-gold);
+          font-family: monospace;
+          margin: 1rem 0;
+          color: #eee;
+        }
+        .review-text-content h4 {
+           color: var(--color-accent-blue);
+           margin-top: 1.5rem;
+           margin-bottom: 0.5rem;
+        }
+        /* ... */
+        
         .review-detail-container {
           animation: fadeIn 0.4s ease;
         }
@@ -128,6 +151,20 @@ function ReviewDetail({ paper, onBack }) {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        .math-wrapper {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-left: 3px solid var(--color-accent-gold);
+            border-radius: 4px;
+            margin: 1.5rem 0;
+            overflow-x: auto; /* Handle long equations on mobile */
+            }
+
+            /* Force KaTeX to look good on dark backgrounds */
+            .katex {
+            font-size: 1.1em;
+            color: #e0e0e0; /* Light gray text for math */
+            }
       `}</style>
     </div>
   );

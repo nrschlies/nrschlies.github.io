@@ -22,7 +22,7 @@ function Reading() {
     <section className="reading-section">
       <h2>Reading & Reviews</h2>
       <p className="section-intro">
-        Selected research papers and texts I am currently analyzing. 
+        Discography of research papers I recommend. 
       </p>
 
       <div className="reading-grid">

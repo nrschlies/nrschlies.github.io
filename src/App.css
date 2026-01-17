@@ -43,8 +43,12 @@ header p {
 header .sub-tagline {
   font-size: 0.9rem;
   margin-top: 0.15rem;
-  color: var(--color-accent-blue);
   font-weight: 500;
+  color: var(--color-text-muted); 
+}
+
+header .sub-tagline .topic {
+  color: var(--color-accent-blue);
 }
 
 /* Nav Styling */
@@ -223,4 +227,22 @@ nav button.active {
   color: var(--color-text-muted);
   font-size: 0.75rem;
   opacity: 0.6;
+}
+
+.katex-mathml {
+  display: none !important; 
+}
+
+.highlight-link {
+  color: #fff;       /* White text by default */
+  font-weight: 700;  /* Bold */
+  text-decoration: none;
+  border-bottom: none; 
+  transition: all 0.3s ease;
+}
+
+.highlight-link:hover {
+  color: var(--color-accent-blue); 
+  text-shadow: 0 0 8px rgba(14, 165, 233, 0.6); 
+  cursor: pointer;
 }
