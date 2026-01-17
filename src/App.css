@@ -1,12 +1,13 @@
-/* Top Bar Container */
+/* src/App.css */
+/* Sticky Top Bar Container */
 .top-bar-container {
-  position: sticky; /* sticky */
+  position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(243, 245, 248, 0.9); /* Matches bg (translucent) */
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  padding: 1rem 0;
+  background: rgba(10, 10, 10, 0.8); /* Dark, translucent background */
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem 0;
 }
 
 .top-bar-inner {
@@ -15,47 +16,41 @@
   padding: 0 1.5rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* Align to top */
 }
 
-/* Header */
+/* Header Styling */
 header {
-  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 header h1 {
-  font-size: 1.25rem;
-  margin: 0;
-  z-index: 2; /* Above signal */
-  position: relative;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 0 10px rgba(14, 165, 233, 0.3); /* Subtle glow on name */
 }
 
 header p {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
+  font-size: 1rem;
   margin: 0;
+  color: var(--color-text-muted);
+}
+
+header .sub-tagline {
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  color: var(--color-accent-blue); /* Highlight the interests */
   font-weight: 500;
-  z-index: 2;
-  position: relative;
 }
 
-/* Signal positioning in header */
-header .signal-container {
-  /* For header context */
-  top: 50%;
-  transform: translateY(-50%);
-  height: 60px;
-  opacity: 0.4;
-  mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
-}
-
-/* Nav */
+/* Nav Styling */
 nav {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  background: rgba(255,255,255,0.03);
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 nav button {
@@ -63,37 +58,36 @@ nav button {
   border: none;
   font-family: var(--font-body);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-muted);
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 nav button:hover {
   color: var(--color-text-main);
-  background-color: rgba(0,0,0,0.03);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 nav button.active {
-  color: var(--color-accent);
+  color: var(--color-accent-blue);
   background-color: var(--color-accent-dim);
-  font-weight: 600;
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.2); /* Glow on active button */
 }
 
-/* Mobile */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .top-bar-inner {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    gap: 1.5rem;
+    align-items: center;
+    text-align: center;
   }
-  
   nav {
     width: 100%;
-    justify-content: flex-start;
-    overflow-x: auto; /* For mobile */
-    padding-bottom: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 }

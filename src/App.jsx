@@ -5,6 +5,7 @@ import Overview from './sections/Overview';
 import Reading from './sections/Reading';
 import Projects from './sections/Projects';
 import Simulations from './sections/Simulations';
+import SignalWave from './components/SignalWave'; // Import the new signal component
 import './App.css';
 
 function App() {
@@ -18,7 +19,6 @@ function App() {
 
   return (
     <>
-      {/* Sticky Wrapper */}
       <div className="top-bar-container">
         <div className="top-bar-inner">
           <Header />
@@ -27,11 +27,13 @@ function App() {
       </div>
 
       <main>
-        {/* The Glass Panel Wrapper */}
         <div className="glass-panel">
           {content}
         </div>
       </main>
+
+      {/* The large signal animation at the bottom */}
+      <SignalWave />
     </>
   );
 }

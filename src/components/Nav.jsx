@@ -1,10 +1,17 @@
-function Nav({ onSelect }) {
+function Nav({ onSelect, activeSection }) {
+  const links = ['overview', 'reading', 'projects', 'simulations'];
+
   return (
     <nav>
-      <button onClick={() => onSelect('overview')}>Overview</button>
-      <button onClick={() => onSelect('reading')}>Reading</button>
-      <button onClick={() => onSelect('projects')}>Projects</button>
-      <button onClick={() => onSelect('simulations')}>Simulations</button>
+      {links.map((link) => (
+        <button 
+          key={link}
+          onClick={() => onSelect(link)}
+          className={activeSection === link ? 'active' : ''}
+        >
+          {link.charAt(0).toUpperCase() + link.slice(1)}
+        </button>
+      ))}
     </nav>
   );
 }

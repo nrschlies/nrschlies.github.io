@@ -1,23 +1,32 @@
+/* src/index.css */
 :root {
-  /* Color palette */
-  --color-bg: #f3f5f8; /* Silver */
-  --color-surface: rgba(255, 255, 255, 0.75); /* Glass */
-  --color-surface-border: rgba(255, 255, 255, 0.6);
+  /* --- Palette: Dark Lab --- */
+  --color-bg-main: #0a0a0a; /* Deep black background */
+  --color-bg-secondary: #111111; /* Slightly lighter for contrast */
   
-  --color-text-main: #1f2937; /* Near Black */
-  --color-text-muted: #6b7280; /* Grey for text */
-  
-  --color-accent: #0ea5e9; /* Blue for signal */
+  /* --- Glassmorphism Surface --- */
+  --color-surface: rgba(20, 20, 30, 0.7); /* Dark, blue-tinted glass */
+  --color-surface-border: rgba(100, 149, 237, 0.2); /* Subtle blue border */
+  --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.15), inset 0 0 20px rgba(14, 165, 233, 0.05);
+
+  /* --- Typography & Text --- */
+  --color-text-main: #e5e7eb; /* Off-white for readability */
+  --color-text-muted: #9ca3af; /* Muted gray */
+  --color-text-highlight: #ffffff; /* Pure white for titles */
+
+  /* --- Accents (Signal Glow) --- */
+  --color-accent-blue: #0ea5e9; /* Electric Blue */
+  --color-accent-gold: #fbbf24; /* Warm Gold for contrast */
   --color-accent-dim: rgba(14, 165, 233, 0.1);
 
-  /* Typography */
+  /* --- Typography Fonts --- */
   --font-heading: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  /* Spacing/layout */
+  /* --- Layout & Spacing --- */
   --max-width: 900px;
-  --header-height: 70px;
-  --radius: 12px;
+  --header-height: auto;
+  --radius: 16px;
 }
 
 * {
@@ -27,92 +36,93 @@
 }
 
 body {
-  font-family: --font-body;
-  background-color: var(--color-bg);
-  /* Mesh grad bg */
+  font-family: var(--font-body);
+  background-color: var(--color-bg-main);
+  /* Subtle dark gradient background */
   background-image: 
-    radial-gradient(at 0% 0%, hsla(210, 20%, 90%, 1) 0, transparent 50%), 
-    radial-gradient(at 100% 100%, hsla(210, 20%, 85%, 1) 0, transparent 50%);
+    radial-gradient(at 50% 0%, rgba(30, 58, 138, 0.1) 0, transparent 70%),
+    radial-gradient(at 50% 100%, rgba(30, 58, 138, 0.05) 0, transparent 70%);
   color: var(--color-text-main);
-  line-height: 1.6;
+  line-height: 1.7;
   min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scroll from animation */
 }
 
-/* Typography defaults */
 h1, h2, h3 {
   font-family: var(--font-heading);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--color-text-main);
+  letter-spacing: -0.01em;
+  color: var(--color-text-highlight);
 }
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 1.75rem; }
 
 p {
-  font-family: var(--font-body);
-  color: var(--color-text-main);
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  color: var(--color-text-muted);
 }
 
-/* Utils */
+/* --- Layout Utilities --- */
 #root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
 }
 
 main {
   flex: 1;
   width: 100%;
   max-width: var(--max-width);
-  margin: 2rem auto;
+  margin: 2rem auto 8rem; /* Added bottom margin for signal space */
   padding: 0 1.5rem;
+  position: relative;
+  z-index: 10;
 }
 
-/* Main Wrapper */
+/* --- The Glowing Glass Card --- */
 .glass-panel {
   background: var(--color-surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius);
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.02), 
-    0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-glow);
   padding: 3rem;
-  transition: transform 0.2s ease;
 }
 
-/* Signal Styles for Animation */
-.signal-container {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* --- Headshot Styling --- */
+.headshot-container {
+  float: right;
+  margin: 0 0 1.5rem 2rem;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  padding: 4px; /* Space for the glowing border */
+  /* Glowing border effect */
+  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-gold));
+  box-shadow: 0 0 25px rgba(14, 165, 233, 0.3);
+}
+
+.headshot {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-.signal-svg {
-  width: 200%; /* x2 width for sliding */
-  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--color-bg-main); /* Inner border to separate image from glow */
   display: block;
 }
 
-.signal-path {
-  /* signal animation */
-  animation: signal-flow 4s linear infinite;
-}
-
-@keyframes signal-flow {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } /* 100% of container */
-}
-
-/* Reduce motion */
-@media (prefers-reduced-motion: reduce) {
-  .signal-path {
-    animation: none;
+/* Clearfix for floated image on smaller screens */
+@media (max-width: 640px) {
+  .headshot-container {
+    float: none;
+    margin: 0 auto 2rem;
+    display: block;
+  }
+  .glass-panel {
+    padding: 2rem;
   }
 }
