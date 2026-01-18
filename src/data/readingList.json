@@ -8,5 +8,15 @@
     "tag": "Neural Networks",
     "summary": "The seminal paper introducing the Perceptron. Rosenblatt proposes a probabilistic model for information storage in the brain, laying the mathematical foundation for modern artificial neural networks.",
     "link": "https://www.ling.upenn.edu/courses/cogs501/Rosenblatt1958.pdf"
+  },
+  {
+    "id": 2,
+    "title": "A New Approach to Linear Filtering and Prediction Problems",
+    "authors": "R. E. Kalman",
+    "venue": "Transactions of the ASME",
+    "date": "Mar 1960",
+    "tag": "Signal Processing",
+    "summary": "The landmark paper introducing the Kalman Filter. Kalman presents a recursive solution to the discrete-data linear filtering problem, utilizing state-space methods to handle non-stationary processes—a major departure from classical Wiener filtering.",
+    "link": "https://courses.cs.duke.edu/compsci527/cps274/fall11/papers/Kalman60.pdf"
   }
 ]
