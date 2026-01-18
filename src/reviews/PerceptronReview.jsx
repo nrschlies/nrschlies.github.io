@@ -21,7 +21,7 @@ const PerceptronReview = () => {
       <p>
         The inception of modern Neural Network theory is largely due to this paper, written by Frank Rosenblatt in 1958 at Cornell Aeronautical Laboratory. 
         Rosenblatt takes a connectionist approach towards neural modeling, with the advent of a perceptron including a <strong>retina</strong> (input stimulus), 
-        <strong>projection area</strong>, <strong>association area</strong>, and <strong>responses</strong> (output). 
+        <strong> projection area</strong>, <strong>association area</strong>, and <strong>responses</strong> (output). 
       </p>
       <p>
         He examines the characteristics and performance of an uncompensated gain system, constant feed system, and parasitic gain system in the context of a 
