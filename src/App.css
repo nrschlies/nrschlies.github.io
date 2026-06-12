@@ -122,11 +122,82 @@ nav button.active {
   --cat-glow: rgba(34, 211, 238, 0.28);
 }
 
-/* --- Folders --- */
-.reading-folders {
+/* --- Folder picker (click a folder to open it) --- */
+.folder-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.75rem;
+  margin-top: 0.5rem;
+}
+
+.folder-card {
   display: flex;
   flex-direction: column;
-  gap: 2.75rem;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  padding: 2.75rem 1.5rem 2.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+}
+
+.folder-card:hover,
+.folder-card:focus-visible {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--cat-border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 28px var(--cat-glow);
+  outline: none;
+}
+
+.folder-art {
+  filter: drop-shadow(0 6px 16px var(--cat-glow));
+  margin-bottom: 0.85rem;
+  transition: transform 0.3s ease;
+}
+
+.folder-card:hover .folder-art {
+  transform: translateY(-4px) scale(1.04);
+}
+
+.folder-name {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.folder-card-blurb {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0.35rem 0 0;
+  max-width: 26ch;
+  line-height: 1.5;
+}
+
+/* --- Open folder contents --- */
+.folder-contents .back-button {
+  background: transparent;
+  border: none;
+  color: var(--cat, var(--color-accent-blue));
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.folder-contents .back-button:hover {
+  text-decoration: underline;
 }
 
 .folder-header {
