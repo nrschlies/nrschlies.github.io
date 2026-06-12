@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import reviewRegistry from '../reviews/index'; // Import the registry
 
 function ReviewDetail({ paper, onBack }) {
   if (!paper) return null;
+
+  // Load MathJax for equation rendering
+  useEffect(() => {
+    if (window.MathJax) {
+      window.MathJax.contentDocument = document;
+      window.MathJax.typesetPromise?.().catch(() => {});
+    }
+  }, [paper]);
 
   // Find the specific component for this paper ID
   const ReviewContent = reviewRegistry[paper.id];
@@ -139,6 +147,29 @@ function ReviewDetail({ paper, onBack }) {
         .review-body p {
           line-height: 1.6;
           color: var(--color-text-muted);
+        }
+        .review-body img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 6px;
+          margin: 1.5rem 0;
+          display: block;
+        }
+        .review-text-content img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 6px;
+          margin: 1.5rem 0;
+          display: block;
+        }
+        .review-text-content figure {
+          margin: 1.5rem 0;
+          text-align: center;
+        }
+        .review-text-content figcaption {
+          color: var(--color-text-muted);
+          font-size: 0.9rem;
+          margin-top: 0.5rem;
         }
         .placeholder-block {
           padding: 2rem;

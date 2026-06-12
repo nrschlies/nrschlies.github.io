@@ -6,27 +6,17 @@
     "venue": "Psychological Review",
     "date": "1958",
     "tag": "Neural Networks",
-    "summary": "See full review for details.",
+    "summary": "The seminal paper introducing the Perceptron, laying mathematical foundations for modern neural networks through probabilistic modeling.",
     "link": "/files/Perceptron.pdf"
   },
   {
-    "id": 2,
-    "title": "ImageNet Classification",
-    "authors": "Krizhevsky, Sutskever, Hinton",
-    "venue": "ILSVRC",
-    "date": "2012",
-    "tag": "Deep Learning",
-    "summary": "See full review for details.",
-    "link": "/files/ImageNet_Classification.pdf"
-  },
-  {
     "id": 3,
-    "title": "Kalman Filtering",
+    "title": "A New Approach to Linear Filtering and Prediction Problems",
     "authors": "R. E. Kalman",
     "venue": "Transactions of the ASME",
     "date": "1960",
     "tag": "Signal Processing",
-    "summary": "See full review for details.",
+    "summary": "Landmark introduction of the Kalman Filter providing recursive solutions to linear filtering problems using state-space methods.",
     "link": "/files/Kalman.pdf"
   },
   {
@@ -36,67 +26,137 @@
     "venue": "Nature",
     "date": "1986",
     "tag": "Neural Networks",
-    "summary": "See full review for details.",
+    "summary": "Establishment of backpropagation as the fundamental method for training multi-layer neural networks via gradient descent.",
     "link": "/files/Backpropagation.pdf"
+  },
+  {
+    "id": 17,
+    "title": "Estimation of Probabilities from Sparse Data for the Language Model Component of a Speech Recognizer",
+    "authors": "Slava M. Katz",
+    "venue": "IEEE Transactions on Acoustics, Speech, and Signal Processing",
+    "date": "1987",
+    "tag": "NLP",
+    "summary": "Development of Turing discounting for probability redistribution of unseen n-grams in language modeling.",
+    "link": "/files/m-grams.pdf"
   },
   {
     "id": 5,
     "title": "A Theoretical Framework for Back-Propagation",
     "authors": "Yann LeCun",
-    "venue": "JMLR",
+    "venue": "Journal of Machine Learning Research",
     "date": "1988",
     "tag": "Neural Networks",
-    "summary": "See full review for details.",
+    "summary": "Theoretical formalization of backpropagation using Lagrangian analysis from optimal control theory.",
     "link": "/files/Backprop_via_Lagrangians.pdf"
   },
   {
     "id": 6,
     "title": "Optimal Brain Damage",
     "authors": "LeCun, Denker, Solla",
-    "venue": "NIPS",
+    "venue": "Advances in Neural Information Processing Systems",
     "date": "1989",
     "tag": "Deep Learning",
-    "summary": "See full review for details.",
+    "summary": "Parameter pruning via second-order derivative analysis to reduce network complexity without sacrificing performance.",
     "link": "/files/Optimal_Brain_Damage.pdf"
   },
   {
     "id": 7,
     "title": "Learning Long-Term Dependencies with Gradient Descent is Difficult",
     "authors": "Bengio, Simard, Frasconi",
-    "venue": "IEEE TNN",
+    "venue": "IEEE Transactions on Neural Networks",
     "date": "1994",
     "tag": "RNN",
-    "summary": "See full review for details.",
+    "summary": "Formalization of the vanishing gradient problem in recurrent networks with proposed solution approaches.",
     "link": "/files/Vanishing_Gradient.pdf"
   },
   {
     "id": 8,
-    "title": "Support Vector Networks",
+    "title": "Support-Vector Networks",
     "authors": "Cortes, Vapnik",
-    "venue": "ML Journal",
+    "venue": "Machine Learning",
     "date": "1995",
     "tag": "SVM",
-    "summary": "See full review for details.",
+    "summary": "Introduction of support vector machines enabling non-linear classification through kernel methods.",
     "link": "/files/Support_Vector_Networks.pdf"
   },
   {
     "id": 9,
     "title": "Bidirectional Recurrent Neural Networks",
     "authors": "Schuster, Paliwal",
-    "venue": "IEEE",
+    "venue": "IEEE Transactions on Signal Processing",
     "date": "1997",
     "tag": "RNN",
-    "summary": "See full review for details.",
+    "summary": "Enhancement of RNNs by processing sequences in both directions for improved context understanding.",
     "link": "/files/BRNNs.pdf"
+  },
+  {
+    "id": 18,
+    "title": "Efficient Estimation of Word Representations in Vector Space",
+    "authors": "Mikolov, Chen, Corrado, Dean",
+    "venue": "International Conference on Learning Representations",
+    "date": "2013",
+    "tag": "NLP",
+    "summary": "Introduction of Word2Vec algorithms (Skip-gram and CBOW) for efficient word embedding learning.",
+    "link": "/files/word2vec.pdf"
+  },
+  {
+    "id": 2,
+    "title": "ImageNet Classification with Deep Convolutional Neural Networks",
+    "authors": "Krizhevsky, Sutskever, Hinton",
+    "venue": "Advances in Neural Information Processing Systems",
+    "date": "2012",
+    "tag": "Deep Learning",
+    "summary": "Breakthrough demonstration of deep CNN power on large-scale image classification using GPUs.",
+    "link": "/files/ImageNet_Classification.pdf"
+  },
+  {
+    "id": 13,
+    "title": "Neural Machine Translation by Jointly Learning to Align and Translate",
+    "authors": "Bahdanau, Cho, Bengio",
+    "venue": "Empirical Methods in Natural Language Processing",
+    "date": "2014",
+    "tag": "NLP",
+    "summary": "Introduction of attention mechanism enabling models to focus on relevant input parts for translation.",
+    "link": "/files/NMT_via_attention.pdf"
+  },
+  {
+    "id": 14,
+    "title": "Sequence to Sequence Learning with Neural Networks",
+    "authors": "Sutskever, Vinyals, Le",
+    "venue": "Advances in Neural Information Processing Systems",
+    "date": "2014",
+    "tag": "NLP",
+    "summary": "Foundational work on sequence-to-sequence models using LSTMs for machine translation and beyond.",
+    "link": "/files/Seq2Seq.pdf"
+  },
+  {
+    "id": 16,
+    "title": "Neural GPUs Learn Algorithms",
+    "authors": "Kaiser, Sutskever",
+    "venue": "International Conference on Learning Representations",
+    "date": "2015",
+    "tag": "Deep Learning",
+    "summary": "Demonstration of neural networks learning algorithmic tasks with generalization beyond training sequences.",
+    "link": "/files/Neural_GPU.pdf"
+  },
+  {
+    "id": 15,
+    "title": "Attention Is All You Need",
+    "authors": "Vaswani et al.",
+    "venue": "Advances in Neural Information Processing Systems",
+    "date": "2017",
+    "tag": "Transformers",
+    "summary": "Introduction of the Transformer architecture based purely on attention mechanisms, enabling efficient parallelization.",
+    "link": "/files/Transformer.pdf"
   },
   {
     "id": 10,
     "title": "Greedy Layer-Wise Training of Deep Networks",
-    "authors": "Bengio et al.",
-    "venue": "JMLR",
+    "authors": "Bengio, Lamblin, Popovici, Larochelle",
+    "venue": "Journal of Machine Learning Research",
     "date": "2006",
     "tag": "Deep Learning",
-    "summary": "See full review for details.",
+    "summary": "Layer-wise pre-training approach for deep networks enabling better weight initialization and convergence.",
     "link": "/files/Greedy_Unsupervised_Layerwise_Training.pdf"
   },
   {
@@ -106,27 +166,17 @@
     "venue": "Science",
     "date": "2006",
     "tag": "Autoencoders",
-    "summary": "See full review for details.",
+    "summary": "Deep autoencoders as powerful alternative to PCA for nonlinear dimensionality reduction.",
     "link": "/files/Autoencoders.pdf"
   },
   {
     "id": 12,
     "title": "Curriculum Learning",
     "authors": "Bengio, Louradour, Collobert, Weston",
-    "venue": "ICML",
+    "venue": "International Conference on Machine Learning",
     "date": "2009",
     "tag": "Learning",
-    "summary": "See full review for details.",
+    "summary": "Strategy of training neural networks by progressively increasing task difficulty for improved convergence.",
     "link": "/files/Curriculum_Learning.pdf"
-  },
-  {
-    "id": 13,
-    "title": "Neural Machine Translation by Jointly Learning to Align and Translate",
-    "authors": "Bahdanau, Cho, Bengio",
-    "venue": "EMNLP",
-    "date": "2014",
-    "tag": "NLP",
-    "summary": "See full review for details.",
-    "link": "/files/NMT_via_attention.pdf"
   }
 ]

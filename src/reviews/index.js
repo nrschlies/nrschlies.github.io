@@ -11,6 +11,11 @@ import ReviewContent10 from './ReviewContent10';
 import ReviewContent11 from './ReviewContent11';
 import ReviewContent12 from './ReviewContent12';
 import ReviewContent13 from './ReviewContent13';
+import ReviewContent14 from './ReviewContent14';
+import ReviewContent15 from './ReviewContent15';
+import ReviewContent16 from './ReviewContent16';
+import ReviewContent17 from './ReviewContent17';
+import ReviewContent18 from './ReviewContent18';
 
 // Map the "id" from your JSON file to the Component here
 const reviewRegistry = {
@@ -27,6 +32,11 @@ const reviewRegistry = {
   11: ReviewContent11,
   12: ReviewContent12,
   13: ReviewContent13,
+  14: ReviewContent14,
+  15: ReviewContent15,
+  16: ReviewContent16,
+  17: ReviewContent17,
+  18: ReviewContent18,
 };
 
 export default reviewRegistry;
