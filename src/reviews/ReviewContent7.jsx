@@ -12,7 +12,7 @@ export default function ReviewContent7() {
 
   return (
     <div className="review-text-content">
-      <div dangerouslySetInnerHTML={ __html: html } />
+      <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
