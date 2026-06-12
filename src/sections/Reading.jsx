@@ -26,11 +26,11 @@ function FolderArt() {
       fill="none"
       aria-hidden="true"
     >
-      {/* documents peeking out of the folder */}
+      {/* documents peeking out of the folder, tinted to the category color */}
       <rect x="17" y="4" width="22" height="18" rx="2.5"
-        fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.4)" strokeWidth="1.4" />
+        fill="var(--cat-dim)" stroke="var(--cat)" strokeOpacity="0.6" strokeWidth="1.4" />
       <rect x="25" y="1" width="22" height="18" rx="2.5" transform="rotate(4 36 10)"
-        fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.25)" strokeWidth="1.4" />
+        fill="var(--cat-dim)" stroke="var(--cat)" strokeOpacity="0.35" strokeWidth="1.4" />
       {/* folder back panel with tab */}
       <path
         d="M5 16a4 4 0 0 1 4-4h12.2a4 4 0 0 1 2.8 1.2l3.1 3.1a4 4 0 0 0 2.8 1.2H55a4 4 0 0 1 4 4v26a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"
@@ -137,7 +137,7 @@ function Reading() {
   // Level 1: folder picker.
   return (
     <section className="reading-section">
-      <h2>Reading &amp; Reviews</h2>
+      <h2>Readings</h2>
       <p className="section-intro">
         Curated collection of research papers and comprehensive reviews. Open a
         folder to browse the annotated papers in that field.
