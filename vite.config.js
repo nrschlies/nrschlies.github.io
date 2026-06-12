@@ -2,6 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/',      // keep this for a user site like nrschlies.github.io
+  base: '/',
   plugins: [react()],
+  server: {
+    port: parseInt(process.env.PORT) || 5173,
+    strictPort: false,
+  },
 })

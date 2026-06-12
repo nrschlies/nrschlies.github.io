@@ -20,8 +20,8 @@
   --color-accent-dim: rgba(14, 165, 233, 0.1);
 
   /* --- Typography Fonts --- */
-  --font-heading: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
 
   /* --- Layout & Spacing --- */
   --max-width: 900px;
@@ -96,14 +96,10 @@ main {
 .headshot-container {
   float: right;
   margin: 0 0 1.5rem 2rem;
-  position: relative;
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  padding: 4px; /* Space for the glowing border */
-  /* Glowing border effect */
-  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-gold));
-  box-shadow: 0 0 25px rgba(14, 165, 233, 0.3);
+  overflow: hidden;
 }
 
 .headshot {
@@ -111,7 +107,6 @@ main {
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
-  border: 3px solid var(--color-bg-main); /* Inner border to separate image from glow */
   display: block;
 }
 

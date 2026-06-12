@@ -9,37 +9,27 @@ function Overview() {
       <h2>Overview</h2>
       <p>
         I'm Noah Schliesman, a Master's student in Electrical Engineering at{' '}
-        <a 
-          href="https://electrical.sdsu.edu/research" 
-          target="_blank" 
-          rel="noopener noreferrer" 
+        <a
+          href="https://electrical.sdsu.edu/research"
+          target="_blank"
+          rel="noopener noreferrer"
           className="highlight-link"
         >
           San Diego State University
         </a>{' '}
-        aiming to specialize in Signal Processing. 
-        I recently graduated from the{' '}
-        <a 
-          href="https://www.sandiego.edu/engineering/undergraduate/electrical-engineering/" 
-          target="_blank" 
-          rel="noopener noreferrer" 
+        where I conduct research under the advisement of{' '}
+        <strong className="highlight-link">Professor Ashrafi</strong>.{' '}
+        My work focuses on graph signal processing for dynamic systems, with a particular interest in Graph Learning.
+        I received my BA/BS in Electrical Engineering from the{' '}
+        <a
+          href="https://www.sandiego.edu/engineering/undergraduate/electrical-engineering/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="highlight-link"
         >
           University of San Diego
         </a>{' '}
-        in Electrical Engineering (BA/BS) with minors in Computer Science and Math.
-      </p>
-      <p>
-        I currently work as a Data Annotator for{' '}
-        <a 
-          href="https://dataannotation.tech/" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="highlight-link"
-        >
-          Data Annotation
-        </a>, where I perform audits of major LLM 
-        responses for complex topics in mathematics, computer science, and other STEM fields.
+        with minors in Computer Science and Mathematics.
       </p>
     </section>
   );

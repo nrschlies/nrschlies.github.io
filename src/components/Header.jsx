@@ -8,7 +8,7 @@ function Header() {
       <p className="sub-tagline">
         Interested in <span className="topic">Graph Signal Processing</span>,{' '}
         <span className="topic">Dynamical Systems</span>, and{' '}
-        <span className="topic">Bioinformatics</span>.
+        <span className="topic">Graph Learning</span>.
       </p>
     </header>
   );
