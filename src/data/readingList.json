@@ -7,7 +7,8 @@
     "date": "1958",
     "tag": "Neural Networks",
     "summary": "The seminal paper introducing the Perceptron, laying mathematical foundations for modern neural networks through probabilistic modeling.",
-    "link": "/files/Perceptron.pdf"
+    "link": "/files/Perceptron.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 3,
@@ -17,7 +18,8 @@
     "date": "1960",
     "tag": "Signal Processing",
     "summary": "Landmark introduction of the Kalman Filter providing recursive solutions to linear filtering problems using state-space methods.",
-    "link": "/files/Kalman.pdf"
+    "link": "/files/Kalman.pdf",
+    "category": "Signal Processing"
   },
   {
     "id": 4,
@@ -27,7 +29,8 @@
     "date": "1986",
     "tag": "Neural Networks",
     "summary": "Establishment of backpropagation as the fundamental method for training multi-layer neural networks via gradient descent.",
-    "link": "/files/Backpropagation.pdf"
+    "link": "/files/Backpropagation.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 17,
@@ -37,7 +40,8 @@
     "date": "1987",
     "tag": "NLP",
     "summary": "Development of Turing discounting for probability redistribution of unseen n-grams in language modeling.",
-    "link": "/files/m-grams.pdf"
+    "link": "/files/m-grams.pdf",
+    "category": "Signal Processing"
   },
   {
     "id": 5,
@@ -47,7 +51,8 @@
     "date": "1988",
     "tag": "Neural Networks",
     "summary": "Theoretical formalization of backpropagation using Lagrangian analysis from optimal control theory.",
-    "link": "/files/Backprop_via_Lagrangians.pdf"
+    "link": "/files/Backprop_via_Lagrangians.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 6,
@@ -57,7 +62,8 @@
     "date": "1989",
     "tag": "Deep Learning",
     "summary": "Parameter pruning via second-order derivative analysis to reduce network complexity without sacrificing performance.",
-    "link": "/files/Optimal_Brain_Damage.pdf"
+    "link": "/files/Optimal_Brain_Damage.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 7,
@@ -67,7 +73,8 @@
     "date": "1994",
     "tag": "RNN",
     "summary": "Formalization of the vanishing gradient problem in recurrent networks with proposed solution approaches.",
-    "link": "/files/Vanishing_Gradient.pdf"
+    "link": "/files/Vanishing_Gradient.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 8,
@@ -77,7 +84,8 @@
     "date": "1995",
     "tag": "SVM",
     "summary": "Introduction of support vector machines enabling non-linear classification through kernel methods.",
-    "link": "/files/Support_Vector_Networks.pdf"
+    "link": "/files/Support_Vector_Networks.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 9,
@@ -87,7 +95,8 @@
     "date": "1997",
     "tag": "RNN",
     "summary": "Enhancement of RNNs by processing sequences in both directions for improved context understanding.",
-    "link": "/files/BRNNs.pdf"
+    "link": "/files/BRNNs.pdf",
+    "category": "Signal Processing"
   },
   {
     "id": 18,
@@ -97,7 +106,8 @@
     "date": "2013",
     "tag": "NLP",
     "summary": "Introduction of Word2Vec algorithms (Skip-gram and CBOW) for efficient word embedding learning.",
-    "link": "/files/word2vec.pdf"
+    "link": "/files/word2vec.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 2,
@@ -107,7 +117,8 @@
     "date": "2012",
     "tag": "Deep Learning",
     "summary": "Breakthrough demonstration of deep CNN power on large-scale image classification using GPUs.",
-    "link": "/files/ImageNet_Classification.pdf"
+    "link": "/files/ImageNet_Classification.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 13,
@@ -117,7 +128,8 @@
     "date": "2014",
     "tag": "NLP",
     "summary": "Introduction of attention mechanism enabling models to focus on relevant input parts for translation.",
-    "link": "/files/NMT_via_attention.pdf"
+    "link": "/files/NMT_via_attention.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 14,
@@ -127,7 +139,8 @@
     "date": "2014",
     "tag": "NLP",
     "summary": "Foundational work on sequence-to-sequence models using LSTMs for machine translation and beyond.",
-    "link": "/files/Seq2Seq.pdf"
+    "link": "/files/Seq2Seq.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 16,
@@ -137,7 +150,8 @@
     "date": "2015",
     "tag": "Deep Learning",
     "summary": "Demonstration of neural networks learning algorithmic tasks with generalization beyond training sequences.",
-    "link": "/files/Neural_GPU.pdf"
+    "link": "/files/Neural_GPU.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 15,
@@ -147,7 +161,8 @@
     "date": "2017",
     "tag": "Transformers",
     "summary": "Introduction of the Transformer architecture based purely on attention mechanisms, enabling efficient parallelization.",
-    "link": "/files/Transformer.pdf"
+    "link": "/files/Transformer.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 10,
@@ -157,7 +172,8 @@
     "date": "2006",
     "tag": "Deep Learning",
     "summary": "Layer-wise pre-training approach for deep networks enabling better weight initialization and convergence.",
-    "link": "/files/Greedy_Unsupervised_Layerwise_Training.pdf"
+    "link": "/files/Greedy_Unsupervised_Layerwise_Training.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 11,
@@ -167,7 +183,8 @@
     "date": "2006",
     "tag": "Autoencoders",
     "summary": "Deep autoencoders as powerful alternative to PCA for nonlinear dimensionality reduction.",
-    "link": "/files/Autoencoders.pdf"
+    "link": "/files/Autoencoders.pdf",
+    "category": "Machine Learning"
   },
   {
     "id": 12,
@@ -177,6 +194,7 @@
     "date": "2009",
     "tag": "Learning",
     "summary": "Strategy of training neural networks by progressively increasing task difficulty for improved convergence.",
-    "link": "/files/Curriculum_Learning.pdf"
+    "link": "/files/Curriculum_Learning.pdf",
+    "category": "Machine Learning"
   }
 ]

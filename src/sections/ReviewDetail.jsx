@@ -1,11 +1,14 @@
 import React from 'react';
 import ReviewArticle from '../reviews/ReviewArticle';
+import { categoryOf, categoryClass } from '../data/categories';
 
 function ReviewDetail({ paper, onBack }) {
   if (!paper) return null;
 
+  const category = categoryOf(paper);
+
   return (
-    <div className="review-detail-container">
+    <div className={`review-detail-container ${categoryClass(paper)}`}>
       <button onClick={onBack} className="back-button">
         &larr; Back to Reading List
       </button>
@@ -13,7 +16,10 @@ function ReviewDetail({ paper, onBack }) {
       <article className="review-content">
         <header className="review-header">
           <div className="review-meta">
-            <span className="paper-tag">{paper.tag}</span>
+            <span className="review-category">{category}</span>
+            {paper.tag && paper.tag !== category && (
+              <span className="paper-tag">{paper.tag}</span>
+            )}
             <span className="review-date">{paper.date}</span>
           </div>
           <h2 className="review-title">{paper.title}</h2>
@@ -55,7 +61,7 @@ function ReviewDetail({ paper, onBack }) {
           color: #eee;
         }
         .review-text-content h4 {
-           color: var(--color-accent-blue);
+           color: var(--cat, var(--color-accent-blue));
            margin-top: 1.5rem;
            margin-bottom: 0.5rem;
         }
@@ -67,7 +73,7 @@ function ReviewDetail({ paper, onBack }) {
         .back-button {
           background: transparent;
           border: none;
-          color: var(--color-accent-blue);
+          color: var(--cat, var(--color-accent-blue));
           font-family: var(--font-body);
           font-size: 0.9rem;
           cursor: pointer;
@@ -105,21 +111,38 @@ function ReviewDetail({ paper, onBack }) {
         .review-actions {
           margin-bottom: 2rem;
         }
+        .review-meta {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          flex-wrap: wrap;
+        }
+        .review-category {
+          font-family: var(--font-body);
+          font-size: 0.72rem;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          color: var(--cat, var(--color-accent-blue));
+          background: var(--cat-dim, rgba(14,165,233,0.1));
+          border: 1px solid var(--cat-border, rgba(14,165,233,0.3));
+          padding: 2px 10px;
+          border-radius: 999px;
+        }
         .action-btn.primary {
           display: inline-block;
-          background: rgba(14, 165, 233, 0.1);
-          color: var(--color-accent-blue);
+          background: var(--cat-dim, rgba(14, 165, 233, 0.1));
+          color: var(--cat, var(--color-accent-blue));
           padding: 0.6rem 1.2rem;
           border-radius: 6px;
           text-decoration: none;
-          border: 1px solid rgba(14, 165, 233, 0.3);
+          border: 1px solid var(--cat-border, rgba(14, 165, 233, 0.3));
           transition: all 0.2s;
           font-size: 0.9rem;
           font-weight: 500;
         }
         .action-btn.primary:hover {
-          background: rgba(14, 165, 233, 0.2);
-          box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+          background: var(--cat-dim, rgba(14, 165, 233, 0.2));
+          box-shadow: 0 0 12px var(--cat-glow, rgba(14, 165, 233, 0.15));
         }
         .review-body h3 {
           color: #ddd;
