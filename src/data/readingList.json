@@ -4,19 +4,129 @@
     "title": "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain",
     "authors": "Frank Rosenblatt",
     "venue": "Psychological Review",
-    "date": "Nov 1958",
+    "date": "1958",
     "tag": "Neural Networks",
-    "summary": "The seminal paper introducing the Perceptron. Rosenblatt proposes a probabilistic model for information storage in the brain, laying the mathematical foundation for modern artificial neural networks.",
-    "link": "https://www.ling.upenn.edu/courses/cogs501/Rosenblatt1958.pdf"
+    "summary": "See full review for details.",
+    "link": "/files/Perceptron.pdf"
   },
   {
     "id": 2,
-    "title": "A New Approach to Linear Filtering and Prediction Problems",
+    "title": "ImageNet Classification",
+    "authors": "Krizhevsky, Sutskever, Hinton",
+    "venue": "ILSVRC",
+    "date": "2012",
+    "tag": "Deep Learning",
+    "summary": "See full review for details.",
+    "link": "/files/ImageNet_Classification.pdf"
+  },
+  {
+    "id": 3,
+    "title": "Kalman Filtering",
     "authors": "R. E. Kalman",
     "venue": "Transactions of the ASME",
-    "date": "Mar 1960",
+    "date": "1960",
     "tag": "Signal Processing",
-    "summary": "The landmark paper introducing the Kalman Filter. Kalman presents a recursive solution to the discrete-data linear filtering problem, utilizing state-space methods to handle non-stationary processes—a major departure from classical Wiener filtering.",
-    "link": "https://courses.cs.duke.edu/compsci527/cps274/fall11/papers/Kalman60.pdf"
+    "summary": "See full review for details.",
+    "link": "/files/Kalman.pdf"
+  },
+  {
+    "id": 4,
+    "title": "Learning Representations by Back-propagating Errors",
+    "authors": "Rumelhart, Hinton, Williams",
+    "venue": "Nature",
+    "date": "1986",
+    "tag": "Neural Networks",
+    "summary": "See full review for details.",
+    "link": "/files/Backpropagation.pdf"
+  },
+  {
+    "id": 5,
+    "title": "A Theoretical Framework for Back-Propagation",
+    "authors": "Yann LeCun",
+    "venue": "JMLR",
+    "date": "1988",
+    "tag": "Neural Networks",
+    "summary": "See full review for details.",
+    "link": "/files/Backprop_via_Lagrangians.pdf"
+  },
+  {
+    "id": 6,
+    "title": "Optimal Brain Damage",
+    "authors": "LeCun, Denker, Solla",
+    "venue": "NIPS",
+    "date": "1989",
+    "tag": "Deep Learning",
+    "summary": "See full review for details.",
+    "link": "/files/Optimal_Brain_Damage.pdf"
+  },
+  {
+    "id": 7,
+    "title": "Learning Long-Term Dependencies with Gradient Descent is Difficult",
+    "authors": "Bengio, Simard, Frasconi",
+    "venue": "IEEE TNN",
+    "date": "1994",
+    "tag": "RNN",
+    "summary": "See full review for details.",
+    "link": "/files/Vanishing_Gradient.pdf"
+  },
+  {
+    "id": 8,
+    "title": "Support Vector Networks",
+    "authors": "Cortes, Vapnik",
+    "venue": "ML Journal",
+    "date": "1995",
+    "tag": "SVM",
+    "summary": "See full review for details.",
+    "link": "/files/Support_Vector_Networks.pdf"
+  },
+  {
+    "id": 9,
+    "title": "Bidirectional Recurrent Neural Networks",
+    "authors": "Schuster, Paliwal",
+    "venue": "IEEE",
+    "date": "1997",
+    "tag": "RNN",
+    "summary": "See full review for details.",
+    "link": "/files/BRNNs.pdf"
+  },
+  {
+    "id": 10,
+    "title": "Greedy Layer-Wise Training of Deep Networks",
+    "authors": "Bengio et al.",
+    "venue": "JMLR",
+    "date": "2006",
+    "tag": "Deep Learning",
+    "summary": "See full review for details.",
+    "link": "/files/Greedy_Unsupervised_Layerwise_Training.pdf"
+  },
+  {
+    "id": 11,
+    "title": "Reducing the Dimensionality of Data with Neural Networks",
+    "authors": "Hinton, Salakhutdinov",
+    "venue": "Science",
+    "date": "2006",
+    "tag": "Autoencoders",
+    "summary": "See full review for details.",
+    "link": "/files/Autoencoders.pdf"
+  },
+  {
+    "id": 12,
+    "title": "Curriculum Learning",
+    "authors": "Bengio, Louradour, Collobert, Weston",
+    "venue": "ICML",
+    "date": "2009",
+    "tag": "Learning",
+    "summary": "See full review for details.",
+    "link": "/files/Curriculum_Learning.pdf"
+  },
+  {
+    "id": 13,
+    "title": "Neural Machine Translation by Jointly Learning to Align and Translate",
+    "authors": "Bahdanau, Cho, Bengio",
+    "venue": "EMNLP",
+    "date": "2014",
+    "tag": "NLP",
+    "summary": "See full review for details.",
+    "link": "/files/NMT_via_attention.pdf"
   }
 ]
