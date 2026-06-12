@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import readingList from '../data/readingList.json';
 import ReviewDetail from './ReviewDetail'; // Import the new component
 
+// Sort chronologically by the year in each paper's `date` (oldest first),
+// so the list order is driven by the data, not the JSON ordering.
+const yearOf = (d) => parseInt(String(d).match(/\d{4}/)?.[0] ?? '0', 10);
+const sortedReadingList = [...readingList].sort((a, b) => yearOf(a.date) - yearOf(b.date));
+
 function Reading() {
   const [selectedPaper, setSelectedPaper] = useState(null);
 
@@ -26,7 +31,7 @@ function Reading() {
       </p>
 
       <div className="reading-grid">
-        {readingList.map((paper) => (
+        {sortedReadingList.map((paper) => (
           <article 
             key={paper.id} 
             className="paper-stub" 

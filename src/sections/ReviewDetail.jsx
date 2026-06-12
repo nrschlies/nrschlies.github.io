@@ -1,19 +1,8 @@
-import React, { useEffect } from 'react';
-import reviewRegistry from '../reviews/index'; // Import the registry
+import React from 'react';
+import ReviewArticle from '../reviews/ReviewArticle';
 
 function ReviewDetail({ paper, onBack }) {
   if (!paper) return null;
-
-  // Load MathJax for equation rendering
-  useEffect(() => {
-    if (window.MathJax) {
-      window.MathJax.contentDocument = document;
-      window.MathJax.typesetPromise?.().catch(() => {});
-    }
-  }, [paper]);
-
-  // Find the specific component for this paper ID
-  const ReviewContent = reviewRegistry[paper.id];
 
   return (
     <div className="review-detail-container">
@@ -49,14 +38,7 @@ function ReviewDetail({ paper, onBack }) {
           <p>{paper.summary}</p>
 
           <h3>Notes & Analysis</h3>
-          {/* DYNAMIC CONTENT SWITCHER */}
-          {ReviewContent ? (
-            <ReviewContent />
-          ) : (
-            <div className="placeholder-block">
-              <p><em>Review content for this paper is coming soon.</em></p>
-            </div>
-          )}
+          <ReviewArticle id={paper.id} />
         </div>
       </article>
 
