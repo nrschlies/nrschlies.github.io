@@ -32,67 +32,67 @@ const htmlContent = `<article>
 
             <h3>Background: Neural Machine Translation</h3>
             <p>Neural Machine Translation (NMT) involves maximizing the conditional probability of a correct translation given a source sentence, i.e.,</p>
-            <p class="center">$$ \arg \max_y p(y|x) $$</p>
+            <p class="center">$$ \\arg \\max_y p(y|x) $$</p>
             <p>Encoder-decoder architectures assist such a task by learning this conditional distribution, especially using Recurrent Neural Networks (RNN) or Long Short Term Memory (LSTM) units to encode/decode.</p>
-            <p>Let \( f(z) \) and \( q(z) \) be nonlinear functions and let \( X = \{x_1, ..., x_{T_x}\} \) be a sequence of input vectors. Generally, the hidden state is computed as,</p>
+            <p>Let \\( f(z) \\) and \\( q(z) \\) be nonlinear functions and let \\( X = \\{x_1, ..., x_{T_x}\\} \\) be a sequence of input vectors. Generally, the hidden state is computed as,</p>
             <p class="center">$$ h_t = f(x_t, h_{t-1}) $$</p>
             <p>Notably, the context vector is comprised from the hidden states in a nonlinear function,</p>
-            <p class="center">$$ c = q(\{h_1, ..., h_{T_x}\}) $$</p>
-            <p>In turn, the decoder defines a probability over the translation via joint probability decomposition. For previously predicted words \(\{y_1, ..., y_{t'-1}\}\), the probability of the translation is,</p>
-            <p class="center">$$ p(y) = \prod_{t=1}^T p(y_t | \{y_1, ..., y_{t'-1}\}, c) $$</p>
+            <p class="center">$$ c = q(\\{h_1, ..., h_{T_x}\\}) $$</p>
+            <p>In turn, the decoder defines a probability over the translation via joint probability decomposition. For previously predicted words \\(\\{y_1, ..., y_{t'-1}\\}\\), the probability of the translation is,</p>
+            <p class="center">$$ p(y) = \\prod_{t=1}^T p(y_t | \\{y_1, ..., y_{t'-1}\\}, c) $$</p>
             <p>With an RNN, each conditional probability is modeled as a nonlinear function that considers the previously predicted words, the hidden state, and the context vector,</p>
-            <p class="center">$$ p(y) = \prod_{t=1}^T g(y_{t-1}, s_t, c) $$</p>
+            <p class="center">$$ p(y) = \\prod_{t=1}^T g(y_{t-1}, s_t, c) $$</p>
             <p>Thus, traditional methods encode and decode about a context vector based on the hidden states of a neural network.</p>
 
             <h3>Learning to Align and Translate</h3>
             <p>Before diving into bidirectional RNNs and attention, let’s review bidirectional RNNs. If you haven’t already, check out my primer on RNNs, GRUs, and LSTMs. I also discuss some of these topics in my analysis of Sequence to Sequence Learning with Neural Networks by Ilya Sutskever, Oriol Vinyals, and Quoc V. Le, so feel free to check that out. I also have a primer out on Attention and Transformer Architectures, but such a field has evolved from the additive attention discussed below.</p>
-            <p>Rather than using an LSTM, the authors choose to use a gated recurrent unit (GRU) as their choice of nonlinear function (i.e., \( f(z) \equiv \) Gated Recurrent Unit). The paper itself refers to this unit as a gated hidden unit, but for the sake of coherence about research I will refer to the more popular GRU. Let’s recall an extended formulation for a GRU in the computation of a bidirectional recurrent neural network (BiRNN).</p>
+            <p>Rather than using an LSTM, the authors choose to use a gated recurrent unit (GRU) as their choice of nonlinear function (i.e., \\( f(z) \\equiv \\) Gated Recurrent Unit). The paper itself refers to this unit as a gated hidden unit, but for the sake of coherence about research I will refer to the more popular GRU. Let’s recall an extended formulation for a GRU in the computation of a bidirectional recurrent neural network (BiRNN).</p>
             <p>The GRU and its corresponding BiRNN involves an update gate, reset gate, candidate hidden state, and final hidden state.<sup>[2]</sup> This architecture in turn allows the GRU to maintain long-term dependencies, resolving many of the vanishing gradient issues of traditional RNNs. Here we examine the forward states of a BiRNN encoder which utilizes GRU architecture.</p>
-            <p>Given a word embedding matrix \( E \), we can precompute our embedded input such that,</p>
+            <p>Given a word embedding matrix \\( E \\), we can precompute our embedded input such that,</p>
             <p class="center">$$ x_t = E w_t $$</p>
-            <p>For some one-hot encoded vector \( w_t \). The forward hidden states are computed from the beginning of the sequence, up to token \( t \).</p>
-            <p>The update gate determines the extent to which the previous hidden state is updated with the new candidate hidden state. Let \( x_t \) be the input at time step \( t \) and \( W_z, U_z \) be update gate weight matrices, \( b_z \) be the update gate bias, and \( \sigma \) be the sigmoid activation function:</p>
-            <p class="center">$$ z_t = \sigma(W_z x_t + U_z h_{t-1} + b_z) $$</p>
-            <p>The reset gate determines how much of the previous hidden state should be forgotten. Let \( W_r, U_r \) be reset gate weight matrices, and \( b_r \) be the reset gate bias:</p>
-            <p class="center">$$ r_t = \sigma(W_r x_t + U_r h_{t-1} + b_r) $$</p>
-            <p>The candidate hidden state represents the new hidden state information to potentially be added to the final hidden state. Let \( W_h, U_h \) be candidate hidden state weight matrices, and \( b_h \) be the candidate hidden state bias, and \( \tanh \) be the hyperbolic tangent activation function:</p>
-            <p class="center">$$ h_t = \tanh(W_h x_t + U_h (r_t \odot h_{t-1}) + b_h) $$</p>
+            <p>For some one-hot encoded vector \\( w_t \\). The forward hidden states are computed from the beginning of the sequence, up to token \\( t \\).</p>
+            <p>The update gate determines the extent to which the previous hidden state is updated with the new candidate hidden state. Let \\( x_t \\) be the input at time step \\( t \\) and \\( W_z, U_z \\) be update gate weight matrices, \\( b_z \\) be the update gate bias, and \\( \\sigma \\) be the sigmoid activation function:</p>
+            <p class="center">$$ z_t = \\sigma(W_z x_t + U_z h_{t-1} + b_z) $$</p>
+            <p>The reset gate determines how much of the previous hidden state should be forgotten. Let \\( W_r, U_r \\) be reset gate weight matrices, and \\( b_r \\) be the reset gate bias:</p>
+            <p class="center">$$ r_t = \\sigma(W_r x_t + U_r h_{t-1} + b_r) $$</p>
+            <p>The candidate hidden state represents the new hidden state information to potentially be added to the final hidden state. Let \\( W_h, U_h \\) be candidate hidden state weight matrices, and \\( b_h \\) be the candidate hidden state bias, and \\( \\tanh \\) be the hyperbolic tangent activation function:</p>
+            <p class="center">$$ h_t = \\tanh(W_h x_t + U_h (r_t \\odot h_{t-1}) + b_h) $$</p>
             <p>The final hidden state is a linear interpolation between the previous hidden state and the candidate hidden state controlled by the update gate:</p>
-            <p class="center">$$ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot h_t $$</p>
+            <p class="center">$$ h_t = (1 - z_t) \\odot h_{t-1} + z_t \\odot h_t $$</p>
             <p>When expanded, we obtain,</p>
-            <p class="center">$$ h_t = (1 - \sigma(W_z x_t + U_z h_{t-1} + b_z)) \odot h_{t-1} + \sigma(W_z x_t + U_z h_{t-1} + b_z) \odot \tanh(W_h x_t + U_h (r_t \odot h_{t-1}) + b_h) $$</p>
-            <p>Quite similarly, the backwards states are computed from the tokenized embedding at \( t \) to the last token. We concatenate the forward states and backward states to attain the annotation for each token, \( h_i \). When we do this for all tokens, we obtain \( H \) which in turn is simply an annotation matrix. While this increases the complexity of the encoder twofold, it in turn allows meaningful dependencies to be made in both directions for each token at time \( t \).</p>
+            <p class="center">$$ h_t = (1 - \\sigma(W_z x_t + U_z h_{t-1} + b_z)) \\odot h_{t-1} + \\sigma(W_z x_t + U_z h_{t-1} + b_z) \\odot \\tanh(W_h x_t + U_h (r_t \\odot h_{t-1}) + b_h) $$</p>
+            <p>Quite similarly, the backwards states are computed from the tokenized embedding at \\( t \\) to the last token. We concatenate the forward states and backward states to attain the annotation for each token, \\( h_i \\). When we do this for all tokens, we obtain \\( H \\) which in turn is simply an annotation matrix. While this increases the complexity of the encoder twofold, it in turn allows meaningful dependencies to be made in both directions for each token at time \\( t \\).</p>
             <p>Each annotation represents the relationship between tokens in the input sentence. These annotations are learned at the same time as the decoder, which can utilize the annotations to create a learnable attention mechanism. This creates a synchronous system that learns to create annotations (align) and decode meaning using an attention mechanism (translate).</p>
-            <p>Now that we’ve discussed how the GRU-based BiRNN computes an annotation matrix, let’s address this notion of attention. Let \( s_{i-1} \) be the decoder’s previous state, \( v_a \) be a trainable alignment score vector, \( W_a \) be a trainable weight matrix to transform the decoder’s previous state \( s_{i-1} \), \( U_a \) be a trainable weight matrix to transform the encoder’s annotation \( h_j \). The associated energy of an annotation \( h_j \) is given by,</p>
-            <p class="center">$$ e_{ij} = v_a^T \tanh(W_a s_{i-1} + U_a h_j) $$</p>
+            <p>Now that we’ve discussed how the GRU-based BiRNN computes an annotation matrix, let’s address this notion of attention. Let \\( s_{i-1} \\) be the decoder’s previous state, \\( v_a \\) be a trainable alignment score vector, \\( W_a \\) be a trainable weight matrix to transform the decoder’s previous state \\( s_{i-1} \\), \\( U_a \\) be a trainable weight matrix to transform the encoder’s annotation \\( h_j \\). The associated energy of an annotation \\( h_j \\) is given by,</p>
+            <p class="center">$$ e_{ij} = v_a^T \\tanh(W_a s_{i-1} + U_a h_j) $$</p>
             <p>The associated probability is simply calculated using a softmax function of energies,</p>
-            <p class="center">$$ \alpha_{ij} = \frac{\exp(e_{ij})}{\sum_{k=1}^{T_x} \exp(e_{ik})} $$</p>
-            <p>Our context vector at token \( i \) is just the linear combination of the annotation and its associated probability \( \alpha_{ij} \),</p>
-            <p class="center">$$ c_i = \sum_{j=1}^{T_x} \alpha_{ij} h_j $$</p>
+            <p class="center">$$ \\alpha_{ij} = \\frac{\\exp(e_{ij})}{\\sum_{k=1}^{T_x} \\exp(e_{ik})} $$</p>
+            <p>Our context vector at token \\( i \\) is just the linear combination of the annotation and its associated probability \\( \\alpha_{ij} \\),</p>
+            <p class="center">$$ c_i = \\sum_{j=1}^{T_x} \\alpha_{ij} h_j $$</p>
             <p>We’re now ready to discuss the decoder. Let the previous embedded output be denoted as,</p>
             <p class="center">$$ e_{i-1} = E y_{i-1} $$</p>
             <p>The decoder works just as a unidirectional GRU would, with the context vector multiplied to each bias.</p>
             <p>The update gate is,</p>
-            <p class="center">$$ z_i = \sigma(W_z e_{i-1} + U_z s_{i-1} + b_z c_i) $$</p>
+            <p class="center">$$ z_i = \\sigma(W_z e_{i-1} + U_z s_{i-1} + b_z c_i) $$</p>
             <p>The reset gate is described as,</p>
-            <p class="center">$$ r_i = \sigma(W_r e_{i-1} + U_r s_{i-1} + b_r c_i) $$</p>
+            <p class="center">$$ r_i = \\sigma(W_r e_{i-1} + U_r s_{i-1} + b_r c_i) $$</p>
             <p>The candidate hidden state is,</p>
-            <p class="center">$$ s_i = \tanh(W_h e_{i-1} + U_h (r_i \odot s_{i-1}) + b_h c_i) $$</p>
+            <p class="center">$$ s_i = \\tanh(W_h e_{i-1} + U_h (r_i \\odot s_{i-1}) + b_h c_i) $$</p>
             <p>Lastly, the final hidden state is given by,</p>
-            <p class="center">$$ s_i = (1 - z_i) \odot s_{i-1} + z_i \odot s_i $$</p>
+            <p class="center">$$ s_i = (1 - z_i) \\odot s_{i-1} + z_i \\odot s_i $$</p>
             <p>Which in turn expands to,</p>
-            <p class="center">$$ s_i = (1 - \sigma(W_z e_{i-1} + U_z s_{i-1} + b_z c_i)) \odot s_{i-1} + \sigma(W_z e_{i-1} + U_z s_{i-1} + b_z c_i) \odot \tanh(W_h e_{i-1} + U_h (r_i \odot s_{i-1}) + b_h c_i) $$</p>
+            <p class="center">$$ s_i = (1 - \\sigma(W_z e_{i-1} + U_z s_{i-1} + b_z c_i)) \\odot s_{i-1} + \\sigma(W_z e_{i-1} + U_z s_{i-1} + b_z c_i) \\odot \\tanh(W_h e_{i-1} + U_h (r_i \\odot s_{i-1}) + b_h c_i) $$</p>
             <p>The authors note that the initial decoder hidden state is computed as,</p>
-            <p class="center">$$ s_0 = \tanh(W_s h_{1 \leftarrow}) $$</p>
-            <p>The intermediate vector combines the decoder’s previous hidden state \( s_{i-1} \), the previous embedded output \( e_{i-1} \), and the context vector \( c_i \) with parametrizable weights \( U_0, V_0 \), and bias \( C_0 \) to form a high-dimensional representation that captures the necessary context for the next prediction,</p>
+            <p class="center">$$ s_0 = \\tanh(W_s h_{1 \\leftarrow}) $$</p>
+            <p>The intermediate vector combines the decoder’s previous hidden state \\( s_{i-1} \\), the previous embedded output \\( e_{i-1} \\), and the context vector \\( c_i \\) with parametrizable weights \\( U_0, V_0 \\), and bias \\( C_0 \\) to form a high-dimensional representation that captures the necessary context for the next prediction,</p>
             <p class="center">$$ t_i = U_0 s_{i-1} + V_0 e_{i-1} + C_0 c_i $$</p>
-            <p>The maxout operation is an activation function that selects the maximum value from pairs of elements in the intermediate vector \( t_i \). In other words, the maxout operation takes the maximum value from pairs of linear transformations of the inputs to enhance the representational capacity of the model by capturing complex patterns and in turn reduce the dimensionality of the intermediate vector. Mathematically, it is simply described as,</p>
-            <p class="center">$$ t_i = \max\{t_{i,2j-1}, t_{i,2j}\} \quad \text{for} \quad j=1,...,lT $$</p>
-            <p>From here, we compute the logits (unnormalized probability) for the target word \( y_i \) by taking the dot product of our activated intermediate vector \( t_i \) and a weight matrix \( W_O \),</p>
+            <p>The maxout operation is an activation function that selects the maximum value from pairs of elements in the intermediate vector \\( t_i \\). In other words, the maxout operation takes the maximum value from pairs of linear transformations of the inputs to enhance the representational capacity of the model by capturing complex patterns and in turn reduce the dimensionality of the intermediate vector. Mathematically, it is simply described as,</p>
+            <p class="center">$$ t_i = \\max\\{t_{i,2j-1}, t_{i,2j}\\} \\quad \\text{for} \\quad j=1,...,lT $$</p>
+            <p>From here, we compute the logits (unnormalized probability) for the target word \\( y_i \\) by taking the dot product of our activated intermediate vector \\( t_i \\) and a weight matrix \\( W_O \\),</p>
             <p class="center">$$ z_i = W_O t_i $$</p>
             <p>We perform a softmax activation over these logits to obtain a probability distribution over the target vocabulary,</p>
-            <p class="center">$$ p(y_i|s_i, y_{i-1}, c_i) = \frac{\exp(z_i)}{\sum_{k=1}^{T_x} \exp(z_{ik})} $$</p>
-            <p>Just to briefly recap, we tokenized our sentence using an embedded matrix \( E \), computed an annotation vector for each token using a bidirectionally concatenated GRU (BiRNN), computed the attention weights for each annotation vector using a learnable additive energy mechanism and then normalizing it \( e_{ij} \), obtained the context vector for each token using these weights and the annotation vector, used a GRU decoder network using these context vectors to produce the decoder’s previous states \( s_{i-1} \), performing a maxout on the intermediate vector determined from the decoder states \( t_i \), computing the logits for that activated intermediate vector \( z_i \), and performing a softmax on those logits to obtain a probability distribution over the target vocabulary.</p>
+            <p class="center">$$ p(y_i|s_i, y_{i-1}, c_i) = \\frac{\\exp(z_i)}{\\sum_{k=1}^{T_x} \\exp(z_{ik})} $$</p>
+            <p>Just to briefly recap, we tokenized our sentence using an embedded matrix \\( E \\), computed an annotation vector for each token using a bidirectionally concatenated GRU (BiRNN), computed the attention weights for each annotation vector using a learnable additive energy mechanism and then normalizing it \\( e_{ij} \\), obtained the context vector for each token using these weights and the annotation vector, used a GRU decoder network using these context vectors to produce the decoder’s previous states \\( s_{i-1} \\), performing a maxout on the intermediate vector determined from the decoder states \\( t_i \\), computing the logits for that activated intermediate vector \\( z_i \\), and performing a softmax on those logits to obtain a probability distribution over the target vocabulary.</p>
 
             <h3>Experiment Settings</h3>
             <p>The authors used the English-to-French translation task from the ACL WMT ‘14 dataset totaling 850M words. They reduced the size of the corpus to 348M words and note that it may be possible to use a much larger monolingual corpus to pretrain an encoder.</p>

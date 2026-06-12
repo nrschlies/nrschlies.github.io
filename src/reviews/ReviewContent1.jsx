@@ -77,16 +77,16 @@ const htmlContent = `<article>
     </ul>
     <p>Let’s begin this analysis with the derivation of the joint probability that the A-unit will receive e excitatory inputs and i inhibitory inputs P(e,i). We can use a joint binomial distribution to model such a scenario.</p>
     <p>We first want to consider the probability of having exactly e excitatory inputs out of x excitatory connections,</p>
-    <p>\[ P(e) = \binom{x}{e} R_e^e (1 - R_e)^{x - e} \]</p>
+    <p>\\[ P(e) = \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\]</p>
     <p>Similarly, we want to consider the probability of having exactly i inhibitory inputs out of y inhibitory connections,</p>
-    <p>\[ P(i) = \binom{y}{i} R_i^i (1 - R_i)^{y - i} \]</p>
+    <p>\\[ P(i) = \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\]</p>
     <p>In turn, we can obtain the joint probability of receiving e excitatory inputs and i inhibitory inputs P(e,i) as,</p>
-    <p>\[ P(e,i) = \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \]</p>
+    <p>\\[ P(e,i) = \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\]</p>
     <p>We want to consider the joint probability that the A-unit will receive e excitatory inputs and i inhibitory inputs P(e,i) over all possible values of the number of excitatory signals e from the threshold Θ to the total number of excitatory connections x,</p>
-    <p>\[ P_a = \sum_{e=\Theta}^{x} P(e,i) \]</p>
+    <p>\\[ P_a = \\sum_{e=\\Theta}^{x} P(e,i) \\]</p>
     <p>Similarly, we account for valid inhibitory signals by iterating from the threshold Θ to an upper bound that cannot exceed the total number of inhibitory connections y, but also must satisfy the constraint that the maximum number of inhibitory signals i is limited by the net input condition for activation e - Θ (that is, i ≤ e - Θ). We combine these two constraints into the following upper bound min(y, e - Θ).</p>
     <p>Thus, the expected proportion of activated A-units Pa can be determined by,</p>
-    <p>\[ P_a = \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} P(e,i) = \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \]</p>
+    <p>\\[ P_a = \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} P(e,i) = \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\]</p>
     <p>We can continue by addressing the joint probability of connection change between stimulus transitions P(e,i,le,li,ge,gi). Let,</p>
     <ul>
         <li>L be the proportion of S-points illuminated by S<sub>1</sub> and not by S<sub>2</sub>.</li>
@@ -102,34 +102,34 @@ const htmlContent = `<article>
     </ul>
     <p>The joint probability that accounts for the probabilities of excitatory or inhibitory connections being active, lost, and gained when transitioning from one stimulus to another is the product of each individual binomial distribution.</p>
     <p>Similarly to before, we still want to consider the joint probability of receiving e excitatory inputs and i inhibitory inputs,</p>
-    <p>\[ P(e, i) = \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \]</p>
+    <p>\\[ P(e, i) = \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\]</p>
     <p>We also want to consider the probability of losing exactly le excitatory connections and li inhibitory connections,</p>
-    <p>\[ P(le, li) = \binom{e}{le} L_{le}^{le} (1 - L_{le})^{e - le} \binom{i}{li} L_{li}^{li} (1 - L_{li})^{i - li} \]</p>
+    <p>\\[ P(le, li) = \\binom{e}{le} L_{le}^{le} (1 - L_{le})^{e - le} \\binom{i}{li} L_{li}^{li} (1 - L_{li})^{i - li} \\]</p>
     <p>Lastly, we need to address the probability of gaining ge excitatory connections out of the x-e inactive excitatory connections and of gaining gi inhibitory connections out of the y-i inactive inhibitory connections,</p>
-    <p>\[ P(ge, gi) = \binom{x-e}{ge} G_{ge}^{ge} (1 - G_{ge})^{x - e - ge} \binom{y-i}{gi} G_{gi}^{gi} (1 - G_{gi})^{y - i - gi} \]</p>
+    <p>\\[ P(ge, gi) = \\binom{x-e}{ge} G_{ge}^{ge} (1 - G_{ge})^{x - e - ge} \\binom{y-i}{gi} G_{gi}^{gi} (1 - G_{gi})^{y - i - gi} \\]</p>
     <p>By considering the probabilities of excitatory or inhibitory connections being active, lost, and gained when transitioning between stimulus, we obtain the joint probability P(e,i,le,li,ge,gi),</p>
-    <p>\[ P(e,i,le,li,ge,gi) = \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \binom{e}{le} L_{le}^{le} (1 - L_{le})^{e - le} \binom{i}{li} L_{li}^{li} (1 - L_{li})^{i - li} \binom{x-e}{ge} G_{ge}^{ge} (1 - G_{ge})^{x - e - ge} \binom{y-i}{gi} G_{gi}^{gi} (1 - G_{gi})^{y - i - gi} \]</p>
+    <p>\\[ P(e,i,le,li,ge,gi) = \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\binom{e}{le} L_{le}^{le} (1 - L_{le})^{e - le} \\binom{i}{li} L_{li}^{li} (1 - L_{li})^{i - li} \\binom{x-e}{ge} G_{ge}^{ge} (1 - G_{ge})^{x - e - ge} \\binom{y-i}{gi} G_{gi}^{gi} (1 - G_{gi})^{y - i - gi} \\]</p>
     <p>It is now of interest to find the conditional probability Pc that the A-unit will respond to one stimulus S<sub>1</sub> given another S<sub>2</sub>.</p>
     <p>Since there are six conditional probability binomial states to consider, there are six summation terms:</p>
     <ul>
-        <li>The number of excitatory signals e from 0 to the total number of excitatory connections x; \( e = 0 \) to \( x \).</li>
-        <li>The number of inhibitory signals i from 0 to the total number of inhibitory connections y; \( i = 0 \) to \( y \).</li>
-        <li>The number of excitatory connections lost l<sub>e</sub>e from 0 to the number of signals e; \( le = 0 \) to \( e \).</li>
-        <li>The number of inhibitory connections lost <li>g<sub>i</sub> from 0 to the number of signals i; \( li = 0 \) to \( i \).</li>
-        <li>The number of excitatory connections gained g<sub>e</sub> from 0 to all inactive excitatory connections x-e; \( ge = 0 \) to \( x-e \).</li>
-        <li>The number of inhibitory connections gained g<sub>i</sub> from 0 to all inactive inhibitory connections y-i; \( gi = 0 \) to \( y-i \).</li>
+        <li>The number of excitatory signals e from 0 to the total number of excitatory connections x; \\( e = 0 \\) to \\( x \\).</li>
+        <li>The number of inhibitory signals i from 0 to the total number of inhibitory connections y; \\( i = 0 \\) to \\( y \\).</li>
+        <li>The number of excitatory connections lost l<sub>e</sub>e from 0 to the number of signals e; \\( le = 0 \\) to \\( e \\).</li>
+        <li>The number of inhibitory connections lost <li>g<sub>i</sub> from 0 to the number of signals i; \\( li = 0 \\) to \\( i \\).</li>
+        <li>The number of excitatory connections gained g<sub>e</sub> from 0 to all inactive excitatory connections x-e; \\( ge = 0 \\) to \\( x-e \\).</li>
+        <li>The number of inhibitory connections gained g<sub>i</sub> from 0 to all inactive inhibitory connections y-i; \\( gi = 0 \\) to \\( y-i \\).</li>
     </ul>
     <p>Since P<sub>a</sub> is the baseline probability that any A-unit will be activated by the stimulus, we can normalize our raw total of summations using its reciprocal,</p>
-    <p>\[ \frac{1}{P_a} = \frac{1}{\sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i}} \]</p>
+    <p>\\[ \\frac{1}{P_a} = \\frac{1}{\\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i}} \\]</p>
     <p>Take careful note that the net initial input nt = e - i combined with the net excitatory/inhibitory connections lost lt = li - le and the net excitatory/inhibitory connections gained gt = ge - gi must meet the fixed threshold Θ. That is,</p>
-    <p>\[ e - i + li - le + ge - gi = nt + lt + gt \]</p>
+    <p>\\[ e - i + li - le + ge - gi = nt + lt + gt \\]</p>
     <p>If these conditions are met, then the conditional probability that an A-unit responds to S<sub>1</sub> given S<sub>2</sub> is,</p>
-    <p>\[ P_c = \frac{1}{P_a} \sum_{e=0}^{x} \sum_{i=0}^{y} \sum_{le=0}^{e} \sum_{li=0}^{i} \sum_{ge=0}^{x-e} \sum_{gi=0}^{y-i} P(e,i,le,li,ge,gi) \]</p>
+    <p>\\[ P_c = \\frac{1}{P_a} \\sum_{e=0}^{x} \\sum_{i=0}^{y} \\sum_{le=0}^{e} \\sum_{li=0}^{i} \\sum_{ge=0}^{x-e} \\sum_{gi=0}^{y-i} P(e,i,le,li,ge,gi) \\]</p>
     <p>Which can be expanded as,</p>
-    <p>\[ P_c = \left( \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \right)^{-1} \sum_{e=0}^{x} \sum_{i=0}^{y} \sum_{le=0}^{e} \sum_{li=0}^{i} \sum_{ge=0}^{x-e} \sum_{gi=0}^{y-i} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \binom{e}{le} L_{le}^{le} (1 - L_{le})^{e - le} \binom{i}{li} L_{li}^{li} (1 - L_{li})^{i - li} \binom{x-e}{ge} G_{ge}^{ge} (1 - G_{ge})^{x - e - ge} \binom{y-i}{gi} G_{gi}^{gi} (1 - G_{gi})^{y - i - gi} \]</p>
+    <p>\\[ P_c = \\left( \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\right)^{-1} \\sum_{e=0}^{x} \\sum_{i=0}^{y} \\sum_{le=0}^{e} \\sum_{li=0}^{i} \\sum_{ge=0}^{x-e} \\sum_{gi=0}^{y-i} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\binom{e}{le} L_{le}^{le} (1 - L_{le})^{e - le} \\binom{i}{li} L_{li}^{li} (1 - L_{li})^{i - li} \\binom{x-e}{ge} G_{ge}^{ge} (1 - G_{ge})^{x - e - ge} \\binom{y-i}{gi} G_{gi}^{gi} (1 - G_{gi})^{y - i - gi} \\]</p>
     <p>The authors note that the value of Pa can be reduced by increasing the threshold Θ or increasing the total number of inhibitory connections y. As the threshold Θ increases, Pc reduces even sharper than Pa. They also note that such a conditional probability goes to unity as the stimuli approach identity, which intuitively makes sense.</p>
     <p>Another metric of interest is the minimum conditional probability Pcmin, which entails the least favorable condition under which the perceptron can still recognize or respond to S2. Such a probability can simply be defined as the probability with no excitatory inputs lost (1 - L(x))<sup>x</sup> and no inhibitory inputs gained (1 - G(y))<sup>y</sup> ,</p>
-    <p>\[ P_{c_{min}} = (1 - L)^x (1 - G)^y \]</p>
+    <p>\\[ P_{c_{min}} = (1 - L)^x (1 - G)^y \\]</p>
     <h3>Mathematical Analysis of Learning in the Perceptron</h3>
     <p>Rosenblatt defines the postdominant response as the stage where activity is limited to a single source-set with the other sets being suppressed. He describes two systems to determine the dominant response:</p>
     <ol>
@@ -139,42 +139,42 @@ const htmlContent = `<article>
     <p>In α-systems and β-systems, μ-systems generally are more robust and less influenced by random variations. In γ-systems, the μ-system and Σ-system are identical.</p>
     <p>Rosenblatt notes that perceptrons can benefit from both supervised learning and unsupervised learning. The perceptron can learn from the result of the activity of the A-cells given stimulus patterns and can thrive in supervised learning with positive/negative reinforcement. The probability of correct choice of response between two alternatives is denoted P<sub>r</sub>. Additionally, the model can benefit from the case in which stimuli may be drawn from the same classes and the perceptron can learn to classify without supervision. This probability of a correct generalization is denoted Pg.</p>
     <p>Let’s take a quick aside to talk about ϕ(Z), the normal curve integral from -∞ to Z. This represents the cumulative distribution function (CDF) of the standard normal distribution. Formally, we can write this function as,</p>
-    <p>\[ ϕ(Z) = \frac{1}{\sqrt{2π}} \int_{-∞}^{Z} e^{-t^2/2} dt \]</p>
+    <p>\\[ ϕ(Z) = \\frac{1}{\\sqrt{2π}} \\int_{-∞}^{Z} e^{-t^2/2} dt \\]</p>
     <p>I’ve written a quick Python script to graph this function,</p>
     <img src="/article_images/a06/a06-f03.jpg" alt="Graph of ϕ(Z)" class="figure">
     <p>We then want some way to have a normalized measure of our input stimulus nsr. We first consider a linear transformation Y of nsr by scaling by c1 and shifting by c2,</p>
-    <p>\[ Y = c_1 nsr + c_2 \]</p>
+    <p>\\[ Y = c_1 nsr + c_2 \\]</p>
     <p>The authors then try to capture the variance of nsr given that as nsr increases the variance increases quadratically and linearly, parametrized by two more constants c<sub>3</sub> and c<sub>4</sub>.</p>
-    <p>\[ Var(nsr) = c_3 nsr^2 + c_4 nsr \]</p>
+    <p>\\[ Var(nsr) = c_3 nsr^2 + c_4 nsr \\]</p>
     <p>of which the standard deviation is just,</p>
-    <p>\[ σ(nsr) = \sqrt{Var(nsr)} = \sqrt{c_3 nsr^2 + c_4 nsr} \]</p>
+    <p>\\[ σ(nsr) = \\sqrt{Var(nsr)} = \\sqrt{c_3 nsr^2 + c_4 nsr} \\]</p>
     <p>We can normalize our transformation by dividing by the standard deviation,</p>
-    <p>\[ Z = Y(nsr) = \frac{c_1 nsr + c_2}{\sqrt{c_3 nsr^2 + c_4 nsr}} \]</p>
+    <p>\\[ Z = Y(nsr) = \\frac{c_1 nsr + c_2}{\\sqrt{c_3 nsr^2 + c_4 nsr}} \\]</p>
     <p>This new Z-score uses a statistically robust measurement of the input stimulus as long as the four constants are reasonable.</p>
     <p>First, let’s consider all permutations of constants in terms of their sign (1, 0, or -1) at unity. This should help us gain some intuition for the possible trends and solution space as nsr changes.</p>
     <img src="/article_images/a06/a06-f04.jpg" alt="Z-score Permutations" class="figure">
     <p>While it isn’t too useful intuitively, we can in turn plot these potential Z-scores for their respective CDF curves.</p>
     <img src="/article_images/a06/a06-f05.jpg" alt="Z-score CDF Curves" class="figure">
     <p>Now that we have a meaningful measure ϕ(Z) of capturing the distribution of our input stimulus nsr, we want to find the probability that the net activation of our input stimulus is greater than zero P(nar > 0). This can be described as the complement of the probability that none of the units are activated. If Ne is the number of Ar units and Pa is the expected proportion of activated A-units, the probability that none of these units are activated is (1 - Pa)^Ne. In turn, the probability that at least one Ar unit is activated P(nar > 0) is,</p>
-    <p>\[ P(nar > 0) = 1 - (1 - Pa)^Ne \]</p>
+    <p>\\[ P(nar > 0) = 1 - (1 - Pa)^Ne \\]</p>
     <p>This can be expanded as,</p>
-    <p>\[ P(nar > 0) = 1 - \left(1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i}\right)^Ne \]</p>
+    <p>\\[ P(nar > 0) = 1 - \\left(1 - \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i}\\right)^Ne \\]</p>
     <p>This probability of a correct generalization Pg and the probability of correct choice of response between two alternatives Pr can be approximated to P, where,</p>
-    <p>\[ P = P(nar > 0) \cdot ϕ(Z) \]</p>
+    <p>\\[ P = P(nar > 0) \\cdot ϕ(Z) \\]</p>
     <p>Here we can see that the probability that at least one of the excitatory inputs activate the a-unit P(nar > 0) is simply a scaling factor to the CDF of the normal distribution of the statistically parametrized Z-score of the input.</p>
     <p>Rosenblatt begins with an ideal environment in which there is no attempt to classify similar stimuli, which is a simplified analysis.</p>
     <p>Recall that the α-system entails that at every unit of time the A-unit is active, it gains one unit of value. Let α be the fraction of responses connected to each A-unit (α = 1/Nr for disjunct source-sets). In this instance, the Z-parameters for the α-system in a Σ-system are:</p>
-    <p>\[ c_1 = 0 \]</p>
-    <p>\[ c_2 = 1 - Pa Ne = 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} Ne \]</p>
-    <p>\[ c_3 = 2 Pa = 2 \frac{Ne}{\sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} |_{disjunct}} \]</p>
-    <p>\[ c_4 = 0 \]</p>
+    <p>\\[ c_1 = 0 \\]</p>
+    <p>\\[ c_2 = 1 - Pa Ne = 1 - \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} Ne \\]</p>
+    <p>\\[ c_3 = 2 Pa = 2 \\frac{Ne}{\\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} |_{disjunct}} \\]</p>
+    <p>\\[ c_4 = 0 \\]</p>
     <p>With Python, we can visualize how the probability changes in the Σ-system for the number of A-units Ne for x = 3, y = 3, R = 0.5, Θ = 0, Nr = 2.</p>
     <img src="/article_images/a06/a06-f06.jpg" alt="Σ-system Probability Changes" class="figure">
     <p>Similarly, we can consider the Z parameters for the β-system,</p>
-    <p>\[ c_1 = 0 \]</p>
-    <p>\[ c_2 = 1 - Pa Ne = 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} Ne \]</p>
-    <p>\[ c_3 = 0 \]</p>
-    <p>\[ c_4 = 2 \alpha = 2/Nr \]</p>
+    <p>\\[ c_1 = 0 \\]</p>
+    <p>\\[ c_2 = 1 - Pa Ne = 1 - \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} Ne \\]</p>
+    <p>\\[ c_3 = 0 \\]</p>
+    <p>\\[ c_4 = 2 \\alpha = 2/Nr \\]</p>
     <p>Such a β-system can be characterized by the following probability curves (with the same parameters as the figure above),</p>
     <img src="/article_images/a06/a06-f07.jpg" alt="β-system Probability Curves" class="figure">
     <p>It is useful to consider the performance of a γ-system in which nsr is a random variable. Let,</p>
@@ -186,28 +186,28 @@ const htmlContent = `<article>
     </ul>
 
     <p>The αμ-system can be characterized by:</p>
-    <p>\[ c_1 = 0 \]</p>
-    <p>\[ c_2 = (1 - P_a) = \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \right) \]</p>
-    <p>\[ c_3 = 2 P_a^2 q^2 \left( \frac{Nr - 1}{2 Nr - 2} + 1 \right) = 2 \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \right) Nr \left( 1 - \frac{c N_a}{N_r} \right) \]</p>
-    <p>\[ c_4 = 2 \left( 1 - P_a \right) Nr \left( 1 - \frac{c N_a}{N_r} \right) = 2 \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} \right) Nr \left( 1 - \frac{c N_a}{N_r} \right) \]</p>
+    <p>\\[ c_1 = 0 \\]</p>
+    <p>\\[ c_2 = (1 - P_a) = \\left( 1 - \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\right) \\]</p>
+    <p>\\[ c_3 = 2 P_a^2 q^2 \\left( \\frac{Nr - 1}{2 Nr - 2} + 1 \\right) = 2 \\left( 1 - \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\right) Nr \\left( 1 - \\frac{c N_a}{N_r} \\right) \\]</p>
+    <p>\\[ c_4 = 2 \\left( 1 - P_a \\right) Nr \\left( 1 - \\frac{c N_a}{N_r} \\right) = 2 \\left( 1 - \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} \\right) Nr \\left( 1 - \\frac{c N_a}{N_r} \\right) \\]</p>
     <p>The β-system constants adapted for the μ-system in a random variable scenario are described by:</p>
-    <p>\[ c_1 = 0 \]</p>
-    <p>\[ c_2 = (1 - P_a) N_e = \left( 1 - \sum_{e=\Theta}^{x} \sum_{i=\Theta}^{\min(y, e-\Theta)} \binom{x}{e} R_e^e (1 - R_e)^{x - e} \binom{y}{i} R_i^i (1 - R_i)^{y - i} N_e \right) \]</p>
-    <p>\[ c_3 = 2 P_a N_e q \left( \frac{ω N_r - 1}{2 N_r - 2} \right)^2 \]</p>
-    <p>\[ c_4 = 2 \left( 1 - P_a \right) ω N_r N_e \]</p>
+    <p>\\[ c_1 = 0 \\]</p>
+    <p>\\[ c_2 = (1 - P_a) N_e = \\left( 1 - \\sum_{e=\\Theta}^{x} \\sum_{i=\\Theta}^{\\min(y, e-\\Theta)} \\binom{x}{e} R_e^e (1 - R_e)^{x - e} \\binom{y}{i} R_i^i (1 - R_i)^{y - i} N_e \\right) \\]</p>
+    <p>\\[ c_3 = 2 P_a N_e q \\left( \\frac{ω N_r - 1}{2 N_r - 2} \\right)^2 \\]</p>
+    <p>\\[ c_4 = 2 \\left( 1 - P_a \\right) ω N_r N_e \\]</p>
     <p>The β-system struggles even more than the α-system due to the lack of parasitic impact on the net values. This is why the γ-system performs much better in practice.</p>
     <p>Rosenblatt now considers a “differentiated environment”, where the perceptron is tasked with stimuli classification. He notes that “the equation for the perceptron’s performance after infinite experience with each class of stimuli is identical for P<sub>r</sub> and P<sub>g</sub>”. This probability after infinite training can be modeled as,</p>
-    <p>\[ P_{r_{\infty}} = P_{g_{\infty}} = 1 - \left( 1 - P_a \right)^N_e \cdot ϕ \left( \frac{c_1}{\sqrt{c_3}} \right) \]</p>
+    <p>\\[ P_{r_{\\infty}} = P_{g_{\\infty}} = 1 - \\left( 1 - P_a \\right)^N_e \\cdot ϕ \\left( \\frac{c_1}{\\sqrt{c_3}} \\right) \\]</p>
     <p>After highlighting the importance of usable data, Rosenblatt notes the expected value of Pc between pairs of stimuli drawn at random from classes α and β as Pcαβ. The αΣ-system is then characterized by the following coefficients,</p>
-    <p>\[ c_1 = P N_a N_e \left( P_{c_{11}} - P_{c_{12}} \right) \]</p>
-    <p>\[ c_2 = P N_a N_e \left( 1 - P_{c_{11}} \right) \]</p>
-    <p>\[ c_3 = \sum_{r=1,2} 2 P_a \left( 1 - P_a \right) N_e \left[ \left( P_{c_{1r}} + σ_{c_{1r}}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \times \left( P_{c_{1x}} + σ_{c_{1r}}^2 (P_{c_{1r}}) \right) \right) + 2 (P_{c_{1r}} P_{c_{1x}}) + P_{c_{1r}}^2 \left( σ_{c_{1r}}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \times \left( P_{c_{1x}} + σ_{c_{1r}}^2 (P_{c_{1r}}) \right) \right) \right] \]</p>
-    <p>\[ c_4 = \sum_{r=1,2} P_a N_e \left[ \left( P_{c_{1r}} - P_{c_{1r}}^2 - σ_{s}^2 (P_{c_{1r}}) - σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1) \left( P_{c_{1x}} - P_{c_{1x}}^2 - σ_{j}^2 (P_{c_{1x}}) \right) \right) \right] \]</p>
+    <p>\\[ c_1 = P N_a N_e \\left( P_{c_{11}} - P_{c_{12}} \\right) \\]</p>
+    <p>\\[ c_2 = P N_a N_e \\left( 1 - P_{c_{11}} \\right) \\]</p>
+    <p>\\[ c_3 = \\sum_{r=1,2} 2 P_a \\left( 1 - P_a \\right) N_e \\left[ \\left( P_{c_{1r}} + σ_{c_{1r}}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \\times \\left( P_{c_{1x}} + σ_{c_{1r}}^2 (P_{c_{1r}}) \\right) \\right) + 2 (P_{c_{1r}} P_{c_{1x}}) + P_{c_{1r}}^2 \\left( σ_{c_{1r}}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \\times \\left( P_{c_{1x}} + σ_{c_{1r}}^2 (P_{c_{1r}}) \\right) \\right) \\right] \\]</p>
+    <p>\\[ c_4 = \\sum_{r=1,2} P_a N_e \\left[ \\left( P_{c_{1r}} - P_{c_{1r}}^2 - σ_{s}^2 (P_{c_{1r}}) - σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1) \\left( P_{c_{1x}} - P_{c_{1x}}^2 - σ_{j}^2 (P_{c_{1x}}) \\right) \\right) \\right] \\]</p>
     <p>In turn, the αμ-system is described by,</p>
-    <p>\[ c_1 = \left( P_{c_{11}} - P_{c_{12}} \right) \]</p>
-    <p>\[ c_2 = \left( 1 - P_{c_{11}} \right) \]</p>
-    <p>\[ c_3 = \sum_{r=1,2} \frac{1}{N_e} \left[ P_a \left( \frac{1}{N_e - 1} \right) \left[ σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \times \left( σ_{j}^2 (P_{c_{1r}}) \right) \right] + σ_{s}^2 (P_{c_{1r}}) + \left( ω N_r - 1 \right)^2 \times \left( σ_{s}^2 (P_{c_{1r}}) \right) \right] \]</p>
-    <p>\[ c_4 = \sum_{r=1,2} P_a N_e \left[ \left( P_{c_{1r}} - P_{c_{1r}}^2 - σ_{s}^2 (P_{c_{1r}}) - σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1) \left( P_{c_{1x}} - P_{c_{1x}}^2 - σ_{j}^2 (P_{c_{1x}}) \right) \right) \right] \]</p>
+    <p>\\[ c_1 = \\left( P_{c_{11}} - P_{c_{12}} \\right) \\]</p>
+    <p>\\[ c_2 = \\left( 1 - P_{c_{11}} \\right) \\]</p>
+    <p>\\[ c_3 = \\sum_{r=1,2} \\frac{1}{N_e} \\left[ P_a \\left( \\frac{1}{N_e - 1} \\right) \\left[ σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1)^2 \\times \\left( σ_{j}^2 (P_{c_{1r}}) \\right) \\right] + σ_{s}^2 (P_{c_{1r}}) + \\left( ω N_r - 1 \\right)^2 \\times \\left( σ_{s}^2 (P_{c_{1r}}) \\right) \\right] \\]</p>
+    <p>\\[ c_4 = \\sum_{r=1,2} P_a N_e \\left[ \\left( P_{c_{1r}} - P_{c_{1r}}^2 - σ_{s}^2 (P_{c_{1r}}) - σ_{j}^2 (P_{c_{1r}}) + (ω N_r - 1) \\left( P_{c_{1x}} - P_{c_{1x}}^2 - σ_{j}^2 (P_{c_{1x}}) \\right) \\right) \\right] \\]</p>
 
     <p>As the number of association cells in the system increases, the asymptote approaches unity. Similarly, as the number of responses increases, the system performance decreases. These are both consequences of the Law of Large Numbers in statistical inference. Rosenblatt mentions that this model would improve from binary-coded responses and lays the foundation for feature learning.</p>
     <h3>Bivalent Systems</h3>
